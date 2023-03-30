@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Eling Note</string>
+    <string name="note">Note</string>
+    <string name="checklist">Checklist</string>
+</resources>
