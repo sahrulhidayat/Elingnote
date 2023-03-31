@@ -3,6 +3,7 @@ package com.sahi.elingnote.ui.note_feature.notes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,8 +11,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.theme.ElingNoteTheme
+import com.sahi.elingnote.util.noteDummy
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,41 +33,60 @@ fun NoteScreen(
             modifier = Modifier.padding(paddingValues)
         ) {
             items(state.notes) { note ->
-                // TODO: Implement note list 
+                NoteCard(
+                    note = note,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    // TODO: implement onClick item 
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteCard(modifier: Modifier = Modifier) {
-    Card(modifier = modifier) {
-        Column() {
-            Text(text = "Note title")
+fun NoteCard(
+    modifier: Modifier = Modifier,
+    note: NoteEntity,
+    onClick:() -> Unit,
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(10.dp),
+        onClick = onClick,
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = note.title,
+                style = MaterialTheme.typography.titleMedium
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Note content")
+            Text(
+                text = note.content,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
 
-@Preview
+@Preview(name = "NoteCard preview", widthDp = 360)
 @Composable
 fun PreviewLightTheme() {
 
-    val navController = rememberNavController()
-
     ElingNoteTheme(darkTheme = false) {
-        NoteScreen(navController)
+        NoteCard(note = noteDummy) { }
     }
 }
 
-@Preview
+@Preview(name = "NoteCard preview", widthDp = 360)
 @Composable
 fun PreviewDarkTheme() {
 
-    val navController = rememberNavController()
-
     ElingNoteTheme(darkTheme = true) {
-        NoteScreen(navController)
+        NoteCard(note = noteDummy) { }
     }
 }
