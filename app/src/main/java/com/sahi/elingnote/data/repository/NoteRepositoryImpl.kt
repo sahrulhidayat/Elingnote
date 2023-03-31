@@ -13,7 +13,7 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDao.getNotes()
     }
 
-    override suspend fun getNoteById(id: Int): Flow<NoteEntity> {
+    override fun getNoteById(id: Int): Flow<NoteEntity> {
         return noteDao.getNoteById(id)
     }
 
