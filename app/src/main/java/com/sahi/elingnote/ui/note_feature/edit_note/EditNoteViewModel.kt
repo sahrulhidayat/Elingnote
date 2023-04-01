@@ -83,8 +83,8 @@ class EditNoteViewModel @Inject constructor(
                     noteRepository.insertNote(
                         NoteEntity(
                             id = currentNoteId,
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
+                            title = noteTitle.value.text.ifBlank { "<New note>" },
+                            content = noteContent.value.text.ifBlank { "<Note content>" },
                             timestamp = System.currentTimeMillis(),
                         )
                     )
