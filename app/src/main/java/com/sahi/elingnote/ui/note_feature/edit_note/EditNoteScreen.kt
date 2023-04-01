@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
@@ -16,21 +15,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteScreen(
-    navController: NavController,
-    viewModel: EditNoteViewModel = hiltViewModel()
+    viewModel: EditNoteViewModel = hiltViewModel(),
+    onSaveNote: () -> Unit
 ) {
 
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
 
     val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -40,9 +37,7 @@ fun EditNoteScreen(
                         message = event.message
                     )
                 }
-                is EditNoteViewModel.UiEvent.SaveNote -> {
-                    navController.navigateUp()
-                }
+                is EditNoteViewModel.UiEvent.SaveNote -> onSaveNote()
             }
         }
     }

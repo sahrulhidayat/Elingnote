@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.theme.ElingNoteTheme
 import com.sahi.elingnote.util.noteDummy
@@ -18,13 +17,12 @@ import com.sahi.elingnote.util.noteDummy
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteScreen(
-    navController: NavController,
-    viewModel: NotesViewModel = hiltViewModel()
+    viewModel: NotesViewModel = hiltViewModel(),
+    onClickItem: (noteId: Int?) -> Unit
 ) {
 
     val state by viewModel.state.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -35,11 +33,9 @@ fun NoteScreen(
             items(state.notes) { note ->
                 NoteCard(
                     note = note,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    // TODO: implement onClick item 
-                }
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onClickItem(note.id) }
+                )
             }
         }
     }
