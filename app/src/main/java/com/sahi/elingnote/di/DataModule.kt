@@ -2,6 +2,8 @@ package com.sahi.elingnote.di
 
 import android.content.Context
 import androidx.room.Room
+import com.sahi.elingnote.data.repository.ChecklistRepository
+import com.sahi.elingnote.data.repository.ChecklistRepositoryImpl
 import com.sahi.elingnote.data.repository.NoteRepository
 import com.sahi.elingnote.data.repository.NoteRepositoryImpl
 import com.sahi.elingnote.data.source.ElingNoteDatabase
@@ -32,5 +34,11 @@ object DataModule {
     @Singleton
     fun providesNoteRepository(db: ElingNoteDatabase): NoteRepository {
         return NoteRepositoryImpl(db.noteDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesChecklistRepository(db: ElingNoteDatabase): ChecklistRepository {
+        return ChecklistRepositoryImpl(db.checklistDao)
     }
 }

@@ -1,4 +1,4 @@
-package com.sahi.elingnote.ui.checklist
+package com.sahi.elingnote.ui.checklist_feature
 
 import androidx.compose.runtime.Composable
 
