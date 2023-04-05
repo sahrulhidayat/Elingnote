@@ -39,7 +39,7 @@ class NotesViewModel @Inject constructor(
             }
             is NotesEvent.RestoreNote -> {
                 viewModelScope.launch {
-                    noteRepository.insertNote(recentlyDeletedNote ?: return@launch)
+                    noteRepository.addNote(recentlyDeletedNote ?: return@launch)
                     recentlyDeletedNote = null
                 }
             }

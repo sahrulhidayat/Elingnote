@@ -80,7 +80,7 @@ class EditNoteViewModel @Inject constructor(
             }
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
-                    noteRepository.insertNote(
+                    noteRepository.addNote(
                         NoteEntity(
                             id = currentNoteId,
                             title = noteTitle.value.text.ifBlank { "<New note>" },
