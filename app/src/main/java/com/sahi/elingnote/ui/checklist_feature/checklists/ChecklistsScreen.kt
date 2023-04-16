@@ -12,12 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistEntity
+import com.sahi.elingnote.data.model.ChecklistItem
 
 @Composable
 fun ChecklistsScreen(
-    viewModel: ChecklistsViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    viewModel: ChecklistsViewModel = hiltViewModel(),
+    onClickItem: (checklistId: Int?) -> Unit
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -26,8 +27,17 @@ fun ChecklistsScreen(
         items(state.checklists) { checklist ->
             ChecklistCard(
                 checklist = checklist,
+                onCheckedItem = { item, checked ->
+                    viewModel.onEvent(
+                        ChecklistsEvent.ChangeItemChecked(
+                            checklist.id ?: return@ChecklistCard,
+                            item,
+                            checked
+                        )
+                    )
+                },
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { /* TODO */ },
+                onClick = { onClickItem(checklist.id) },
             )
         }
     }
@@ -37,6 +47,7 @@ fun ChecklistsScreen(
 @Composable
 fun ChecklistCard(
     checklist: ChecklistEntity,
+    onCheckedItem: (ChecklistItem, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -50,22 +61,29 @@ fun ChecklistCard(
         ) {
             Text(text = checklist.title)
             Spacer(modifier = Modifier.height(8.dp))
-
+            checklist.content.onEach { item ->
+                ChecklistItem(
+                    checked = item.checked,
+                    checklistItem = item,
+                    onCheckedChange = { checked -> onCheckedItem(item, checked) }
+                )
+            }
         }
     }
 }
 
 @Composable
 fun ChecklistItem(
-    checked: Boolean,
-    checklistItem: String,
     modifier: Modifier = Modifier,
+    checked: Boolean,
+    checklistItem: ChecklistItem,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(modifier = modifier) {
         Checkbox(
             checked = checked,
-            onCheckedChange = { /*TODO*/ }
+            onCheckedChange = onCheckedChange
         )
-        Text(text = checklistItem)
+        Text(text = checklistItem::label.name)
     }
 }

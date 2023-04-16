@@ -43,6 +43,13 @@ class ChecklistsViewModel @Inject constructor(
                     recentlyDeletedChecklist = null
                 }
             }
+            is ChecklistsEvent.ChangeItemChecked -> {
+                val currentChecklist = _state.value.checklists[event.checklistId]
+
+                currentChecklist.content.find { it.id == event.item.id }?.let { item ->
+                    item.checked = event.item.checked
+                }
+            }
         }
     }
 

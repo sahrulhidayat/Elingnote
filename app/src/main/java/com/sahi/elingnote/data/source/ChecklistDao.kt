@@ -10,8 +10,8 @@ interface ChecklistDao {
     @Query(value = "SELECT * FROM checklists")
     fun getChecklists(): Flow<List<ChecklistEntity>>
 
-    @Query(value = "SELECT * FROM checklists WHERE id = checklistId")
-    suspend fun getChecklistById(id: Int): ChecklistEntity?
+    @Query(value = "SELECT * FROM checklists WHERE id = :checklistId")
+    suspend fun getChecklistById(checklistId: Int): ChecklistEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addChecklist(checklist: ChecklistEntity)
