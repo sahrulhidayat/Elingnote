@@ -1,20 +1,36 @@
-package com.sahi.elingnote.ui.checklist_feature
+package com.sahi.elingnote.ui.checklist_feature.checklists
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistEntity
 
 @Composable
 fun ChecklistsScreen(
-
+    viewModel: ChecklistsViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
 
+    val state by viewModel.state.collectAsState()
+
+    LazyColumn(modifier = modifier) {
+        items(state.checklists) { checklist ->
+            ChecklistCard(
+                checklist = checklist,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { /* TODO */ },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +60,6 @@ fun ChecklistItem(
     checked: Boolean,
     checklistItem: String,
     modifier: Modifier = Modifier,
-    onDeleteClick: () -> Unit
 ) {
     Row(modifier = modifier) {
         Checkbox(
