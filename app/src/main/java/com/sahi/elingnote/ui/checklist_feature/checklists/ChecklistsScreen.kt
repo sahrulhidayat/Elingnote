@@ -61,7 +61,7 @@ fun ChecklistCard(
         ) {
             Text(text = checklist.title)
             Spacer(modifier = Modifier.height(8.dp))
-            checklist.content.onEach { item ->
+            checklist.content?.onEach { item ->
                 ChecklistItem(
                     checked = item.checked,
                     checklistItem = item,

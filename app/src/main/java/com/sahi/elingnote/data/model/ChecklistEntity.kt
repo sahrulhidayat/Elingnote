@@ -11,7 +11,7 @@ data class ChecklistEntity(
     @PrimaryKey
     val id: Int? = null,
     val title: String,
-    val content: MutableList<ChecklistItem>,
+    val content: MutableList<ChecklistItem>?,
     val timestamp: Long
 )
 
