@@ -1,4 +1,4 @@
-package com.sahi.elingnote.ui.component
+package com.sahi.elingnote.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

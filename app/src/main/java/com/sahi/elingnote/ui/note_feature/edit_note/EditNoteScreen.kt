@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sahi.elingnote.ui.component.TransparentHintTextField
+import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

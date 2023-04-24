@@ -13,8 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.sahi.elingnote.navigation.TopLevelDestination
-import com.sahi.elingnote.ui.component.ElingNoteNavigationBar
-import com.sahi.elingnote.ui.component.ElingNoteNavigationBarItem
+import com.sahi.elingnote.ui.components.ElingNoteNavigationBar
+import com.sahi.elingnote.ui.components.ElingNoteNavigationBarItem
 import com.sahi.elingnote.navigation.ElingNoteNavHost
 
 @OptIn(ExperimentalMaterial3Api::class)

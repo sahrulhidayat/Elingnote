@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistItem
-import com.sahi.elingnote.ui.component.TransparentHintTextField
+import com.sahi.elingnote.ui.components.TransparentHintTextField
 
 @Composable
 fun EditChecklistScreen(
