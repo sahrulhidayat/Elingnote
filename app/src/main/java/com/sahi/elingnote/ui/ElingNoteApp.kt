@@ -3,6 +3,8 @@ package com.sahi.elingnote.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -13,7 +15,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.sahi.elingnote.navigation.TopLevelDestination
 import com.sahi.elingnote.ui.component.ElingNoteNavigationBar
 import com.sahi.elingnote.ui.component.ElingNoteNavigationBarItem
-import com.sahi.elingnote.ui.note_feature.NoteNavHost
+import com.sahi.elingnote.navigation.ElingNoteNavHost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +27,14 @@ fun ElingNoteApp(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /*TODO: Adding Fab onclick*/ },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add button")
+            }
+        },
         bottomBar = {
             ElingNoteBottomBar(
                 destinations = appState.topLevelDestinations,
@@ -38,7 +48,7 @@ fun ElingNoteApp(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            NoteNavHost(navController = appState.navController)
+            ElingNoteNavHost(navController = appState.navController)
         }
     }
 }

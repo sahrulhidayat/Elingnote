@@ -14,29 +14,37 @@ import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.theme.ElingNoteTheme
 import com.sahi.elingnote.util.noteDummy
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteScreen(
+fun NotesRoute(
+    onClickItem: (Int?) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: NotesViewModel = hiltViewModel(),
-    onClickItem: (noteId: Int?) -> Unit
 ) {
 
-    val state by viewModel.state.collectAsState()
-    val snackBarHostState = remember { SnackbarHostState() }
+    val notesState by viewModel.state.collectAsState()
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues)
-        ) {
-            items(state.notes) { note ->
-                NoteCard(
-                    note = note,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { onClickItem(note.id) }
-                )
-            }
+    NoteScreen(
+        notesState = notesState,
+        onClickItem = onClickItem,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun NoteScreen(
+    notesState: NotesState,
+    onClickItem: (Int?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        items(notesState.notes) { note ->
+            NoteCard(
+                note = note,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onClickItem(note.id) }
+            )
         }
     }
 }
@@ -46,7 +54,7 @@ fun NoteScreen(
 fun NoteCard(
     modifier: Modifier = Modifier,
     note: NoteEntity,
-    onClick:() -> Unit,
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier,

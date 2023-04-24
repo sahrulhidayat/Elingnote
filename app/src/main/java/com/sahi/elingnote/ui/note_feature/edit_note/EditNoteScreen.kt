@@ -1,8 +1,6 @@
 package com.sahi.elingnote.ui.note_feature.edit_note
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,16 +11,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.ui.component.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditNoteScreen(
+fun EditNoteRoute(
+    onSaveNote: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: EditNoteViewModel = hiltViewModel(),
-    onSaveNote: () -> Unit
 ) {
-
-    val titleState = viewModel.noteTitle.value
-    val contentState = viewModel.noteContent.value
-
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
@@ -39,50 +33,54 @@ fun EditNoteScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.onEvent(EditNoteEvent.SaveNote) },
-            ) {
-                Icon(imageVector = Icons.Filled.Save, contentDescription = "Save note")
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            TransparentHintTextField(
-                text = titleState.text,
-                hint = titleState.hint,
-                onValueChange = {
-                    viewModel.onEvent(EditNoteEvent.EnteredTitle(it))
-                },
-                onFocusChange = {
-                    viewModel.onEvent(EditNoteEvent.ChangeTitleFocus(it))
-                },
-                isHintVisible = titleState.isHintVisible,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TransparentHintTextField(
-                text = contentState.text,
-                hint = contentState.hint,
-                onValueChange = {
-                    viewModel.onEvent(EditNoteEvent.EnteredContent(it))
-                },
-                onFocusChange = {
-                    viewModel.onEvent(EditNoteEvent.ChangeContentFocus(it))
-                },
-                isHintVisible = contentState.isHintVisible,
-                textStyle = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxHeight()
-            )
-        }
+    val titleState = viewModel.noteTitle.value
+    val contentState = viewModel.noteContent.value
+
+    EditNoteScreen(
+        titleState = titleState,
+        contentState = contentState,
+        onEvent = viewModel::onEvent,
+        modifier = modifier
+    )
+
+}
+
+@Composable
+fun EditNoteScreen(
+    titleState: EditNoteState,
+    contentState: EditNoteState,
+    onEvent: (EditNoteEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+    ) {
+        TransparentHintTextField(
+            text = titleState.text,
+            hint = titleState.hint,
+            onValueChange = {
+                onEvent(EditNoteEvent.EnteredTitle(it))
+            },
+            onFocusChange = {
+                onEvent(EditNoteEvent.ChangeTitleFocus(it))
+            },
+            isHintVisible = titleState.isHintVisible,
+            singleLine = true,
+            textStyle = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        TransparentHintTextField(
+            text = contentState.text,
+            hint = contentState.hint,
+            onValueChange = {
+                onEvent(EditNoteEvent.EnteredContent(it))
+            },
+            onFocusChange = {
+                onEvent(EditNoteEvent.ChangeContentFocus(it))
+            },
+            isHintVisible = contentState.isHintVisible,
+            textStyle = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxHeight()
+        )
     }
 }
