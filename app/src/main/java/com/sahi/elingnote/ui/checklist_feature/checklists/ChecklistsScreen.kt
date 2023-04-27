@@ -15,20 +15,35 @@ import com.sahi.elingnote.data.model.ChecklistEntity
 import com.sahi.elingnote.data.model.ChecklistItem
 
 @Composable
-fun ChecklistsScreen(
+fun ChecklistsRoute(
+    onClickItem: (Int?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChecklistsViewModel = hiltViewModel(),
-    onClickItem: (checklistId: Int?) -> Unit
 ) {
 
-    val state by viewModel.state.collectAsState()
+    val checklistsState by viewModel.state.collectAsState()
 
+    ChecklistsScreen(
+        checklistsState = checklistsState,
+        onEvent = viewModel::onEvent,
+        onClickItem = onClickItem,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun ChecklistsScreen(
+    checklistsState: ChecklistsState,
+    onEvent: (ChecklistsEvent) -> Unit,
+    onClickItem: (checklistId: Int?) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier = modifier) {
-        items(state.checklists) { checklist ->
+        items(checklistsState.checklists) { checklist ->
             ChecklistCard(
                 checklist = checklist,
                 onCheckedItem = { item, checked ->
-                    viewModel.onEvent(
+                    onEvent(
                         ChecklistsEvent.ChangeItemChecked(
                             checklist.id ?: return@ChecklistCard,
                             item,

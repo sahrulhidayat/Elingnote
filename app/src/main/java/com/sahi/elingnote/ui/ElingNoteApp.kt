@@ -36,11 +36,15 @@ fun ElingNoteApp(
             }
         },
         bottomBar = {
-            ElingNoteBottomBar(
-                destinations = appState.topLevelDestinations,
-                onNavigateToDestination = appState::navigateToTopLevelDestination,
-                currentDestination = appState.currentDestination,
-            )
+            val destination = appState.currentTopLevelDestination
+
+            if (destination != null) {
+                ElingNoteBottomBar(
+                    destinations = appState.topLevelDestinations,
+                    onNavigateToDestination = appState::navigateToTopLevelDestination,
+                    currentDestination = appState.currentDestination,
+                )
+            }
         }
     ) { paddingValues ->
         Column(

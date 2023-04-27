@@ -24,24 +24,40 @@ import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 
 @Composable
-fun EditChecklistScreen(
+fun EditChecklistRoute(
+    onSaveChecklist: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: EditChecklistViewModel = hiltViewModel(),
-    onSaveChecklist: () -> Unit
 ) {
     val titleState = viewModel.checklistTitle.value
     val contentState = viewModel.checklistContent.value
 
+    EditChecklistScreen(
+        titleState = titleState,
+        contentState = contentState,
+        onEvent = viewModel::onEvent,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun EditChecklistScreen(
+    titleState: EditChecklistState,
+    contentState: EditChecklistState,
+    onEvent: (EditChecklistEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         TransparentHintTextField(
             text = titleState.text,
             hint = titleState.hint,
             onValueChange = {
-                viewModel.onEvent(EditChecklistEvent.EnteredTitle(it))
+                onEvent(EditChecklistEvent.EnteredTitle(it))
             },
             onFocusChange = {
-                viewModel.onEvent(EditChecklistEvent.ChangeTitleFocus(it))
+                onEvent(EditChecklistEvent.ChangeTitleFocus(it))
             },
             isHintVisible = true,
             textStyle = MaterialTheme.typography.titleMedium
@@ -54,12 +70,18 @@ fun EditChecklistScreen(
             )
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn() {
+                LazyColumn {
                     items(contentState.content.toList()) { checklist ->
                         ChecklistItem(
                             checked = checklist.checked,
                             onCheckedChange = { !checklist.checked },
-                            onDeleteClick = { viewModel.onEvent(EditChecklistEvent.DeleteChecklistItem(checklist)) },
+                            onDeleteClick = {
+                                onEvent(
+                                    EditChecklistEvent.DeleteChecklistItem(
+                                        checklist
+                                    )
+                                )
+                            },
                             checklistItem = checklist
                         )
                     }

@@ -11,7 +11,8 @@ import androidx.navigation.navOptions
 import com.sahi.elingnote.navigation.TopLevelDestination
 import com.sahi.elingnote.navigation.TopLevelDestination.CHECKLIST
 import com.sahi.elingnote.navigation.TopLevelDestination.NOTE
-import com.sahi.elingnote.navigation.checklistRoute
+import com.sahi.elingnote.ui.checklist_feature.checklists.checklistsNavigationRoute
+import com.sahi.elingnote.ui.checklist_feature.checklists.navigateToChecklists
 import com.sahi.elingnote.ui.note_feature.notes.navigateToNotes
 import com.sahi.elingnote.ui.note_feature.notes.notesNavigationRoute
 
@@ -34,7 +35,7 @@ class ElingNoteAppState(
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
             notesNavigationRoute -> NOTE
-            checklistNavigationRoute -> CHECKLIST
+            checklistsNavigationRoute -> CHECKLIST
             else -> null
         }
 
@@ -51,7 +52,7 @@ class ElingNoteAppState(
 
         when (topLevelDestination) {
             NOTE -> navController.navigateToNotes(topLevelNavOptions)
-            CHECKLIST -> navController.navigateToChecklist(topLevelNavOptions)
+            CHECKLIST -> navController.navigateToChecklists(topLevelNavOptions)
         }
 
     }
