@@ -42,7 +42,9 @@ fun NoteScreen(
         items(notesState.notes) { note ->
             NoteCard(
                 note = note,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
                 onClick = { onClickItem(note.id) }
             )
         }
@@ -82,7 +84,9 @@ fun NoteCard(
 fun PreviewLightTheme() {
 
     ElingNoteTheme(darkTheme = false) {
-        NoteCard(note = noteDummy) { }
+        NoteScreen(
+            notesState = NotesState(notes = listOf(noteDummy, noteDummy, noteDummy)),
+            onClickItem = {})
     }
 }
 
@@ -91,6 +95,8 @@ fun PreviewLightTheme() {
 fun PreviewDarkTheme() {
 
     ElingNoteTheme(darkTheme = true) {
-        NoteCard(note = noteDummy) { }
+        NoteScreen(
+            notesState = NotesState(notes = listOf(noteDummy, noteDummy, noteDummy)),
+            onClickItem = {})
     }
 }
