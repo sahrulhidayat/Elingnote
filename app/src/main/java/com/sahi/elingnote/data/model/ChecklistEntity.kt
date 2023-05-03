@@ -29,5 +29,5 @@ data class ChecklistWithItem(
         parentColumn = "id",
         entityColumn = "checklistId"
     )
-    val checklistItem: ArrayList<ChecklistItem>
+    val checklistItem: List<ChecklistItem>
 )
