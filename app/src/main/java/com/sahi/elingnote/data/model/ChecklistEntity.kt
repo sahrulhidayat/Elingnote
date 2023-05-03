@@ -1,24 +1,33 @@
 package com.sahi.elingnote.data.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
-@Entity(tableName = "checklists")
+@Entity(tableName = "checklist")
 data class ChecklistEntity(
     @PrimaryKey
-    val id: Int? = null,
+    val id: Int,
     val title: String,
-    val content: MutableList<ChecklistItem>?,
     val timestamp: Long
 )
 
-class ChecklistItem(
-    val id: Int,
+@Entity(tableName = "checklist_item")
+data class ChecklistItem(
+    @PrimaryKey
+    val itemId: Int,
+    val checklistId: Int,
     val label: String,
-    initialChecked: Boolean = false
-) {
-    var checked: Boolean by mutableStateOf(initialChecked)
-}
+    var checked: Boolean = false
+)
+
+data class ChecklistWithItem(
+    @Embedded
+    val checklist: ChecklistEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "checklistId"
+    )
+    val checklistItem: ArrayList<ChecklistItem>
+)
