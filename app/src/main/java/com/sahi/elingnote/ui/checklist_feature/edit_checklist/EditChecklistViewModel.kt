@@ -33,10 +33,10 @@ class EditChecklistViewModel @Inject constructor(
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
             if (checklistId != -1) {
                 viewModelScope.launch {
-                    checklistRepository.getChecklistById(checklistId)?.also { checklist ->
-                        currentChecklistId = checklist.id
+                    checklistRepository.getChecklistById(checklistId).also {
+                        currentChecklistId = it.checklist.id
                         _checklistTitle.value = checklistTitle.value.copy(
-                            text = checklist.title,
+                            text = it.checklist.title,
                             isHintVisible = false
                         )
                         _checklistContent.value = checklistContent.value.copy(
@@ -71,20 +71,19 @@ class EditChecklistViewModel @Inject constructor(
             }
 
             is EditChecklistEvent.AddChecklistItem -> {
-                _checklistContent.value.content?.add(event.item)
+                _checklistContent.value.checklistItems.add(event.item)
             }
 
             is EditChecklistEvent.DeleteChecklistItem -> {
-                _checklistContent.value.content?.remove(event.item)
+                _checklistContent.value.checklistItems.remove(event.item)
             }
 
             is EditChecklistEvent.SaveChecklist -> {
                 viewModelScope.launch {
                     checklistRepository.addChecklist(
                         ChecklistEntity(
-                            id = currentChecklistId,
+                            id = currentChecklistId ?: 0,
                             title = checklistTitle.value.text.ifBlank { "<New checklist>" },
-                            content = checklistContent.value.content,
                             timestamp = System.currentTimeMillis(),
                         )
                     )

@@ -44,10 +44,10 @@ class ChecklistsViewModel @Inject constructor(
                 }
             }
             is ChecklistsEvent.ChangeItemChecked -> {
-                val currentChecklist = _state.value.checklists[event.checklistId]
+                val checklistItems = _state.value.checklistItems
 
-                currentChecklist.content?.find { it.id == event.item.id }?.let { item ->
-                    item.checked = event.item.checked
+                checklistItems.find { it.itemId == event.itemId }.let { item ->
+                    item?.checked = event.checked
                 }
             }
         }

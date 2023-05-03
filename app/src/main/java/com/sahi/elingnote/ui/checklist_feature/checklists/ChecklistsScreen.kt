@@ -11,8 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sahi.elingnote.data.model.ChecklistEntity
 import com.sahi.elingnote.data.model.ChecklistItem
+import com.sahi.elingnote.data.model.ChecklistWithItem
 
 @Composable
 fun ChecklistsRoute(
@@ -39,20 +39,19 @@ fun ChecklistsScreen(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        items(checklistsState.checklists) { checklist ->
+        items(checklistsState.checklists) {
             ChecklistCard(
-                checklist = checklist,
+                checklist = it,
                 onCheckedItem = { item, checked ->
                     onEvent(
                         ChecklistsEvent.ChangeItemChecked(
-                            checklist.id ?: return@ChecklistCard,
-                            item,
+                            it.checklistItem[item.checklistId].itemId,
                             checked
                         )
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onClickItem(checklist.id) },
+                onClick = { onClickItem(it.checklist.id) },
             )
         }
     }
@@ -61,7 +60,7 @@ fun ChecklistsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChecklistCard(
-    checklist: ChecklistEntity,
+    checklist: ChecklistWithItem,
     onCheckedItem: (ChecklistItem, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -74,9 +73,9 @@ fun ChecklistCard(
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(text = checklist.title)
+            Text(text = checklist.checklist.title)
             Spacer(modifier = Modifier.height(8.dp))
-            checklist.content?.onEach { item ->
+            checklist.checklistItem.onEach { item ->
                 ChecklistItem(
                     checked = item.checked,
                     checklistItem = item,

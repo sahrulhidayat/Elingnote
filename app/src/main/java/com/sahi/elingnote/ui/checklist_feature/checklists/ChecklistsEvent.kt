@@ -6,5 +6,5 @@ import com.sahi.elingnote.data.model.ChecklistItem
 sealed class ChecklistsEvent {
     data class DeleteChecklist(val checklist: ChecklistEntity): ChecklistsEvent()
     object RestoreChecklist: ChecklistsEvent()
-    data class ChangeItemChecked(val checklistId: Int, val item: ChecklistItem, val checked: Boolean): ChecklistsEvent()
+    data class ChangeItemChecked(val itemId: Int, val checked: Boolean): ChecklistsEvent()
 }

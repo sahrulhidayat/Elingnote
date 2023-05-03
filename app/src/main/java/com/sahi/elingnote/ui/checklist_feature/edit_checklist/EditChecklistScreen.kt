@@ -63,7 +63,7 @@ fun EditChecklistScreen(
             textStyle = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
-        if (contentState.content.isNullOrEmpty()) {
+        if (contentState.checklistItems.isEmpty()) {
             Text(
                 text = "Add item",
                 color = Color.DarkGray
@@ -71,7 +71,7 @@ fun EditChecklistScreen(
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn {
-                    items(contentState.content.toList()) { checklist ->
+                    items(contentState.checklistItems.toList()) { checklist ->
                         ChecklistItem(
                             checked = checklist.checked,
                             onCheckedChange = { !checklist.checked },
