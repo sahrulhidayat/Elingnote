@@ -17,17 +17,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.sahi.elingnote.navigation.ElingNoteNavHost
 import com.sahi.elingnote.navigation.TopLevelDestination
+import com.sahi.elingnote.ui.checklist_feature.edit_checklist.navigateToEditChecklist
 import com.sahi.elingnote.ui.components.ElingNoteNavigationBar
 import com.sahi.elingnote.ui.components.ElingNoteNavigationBarItem
-import com.sahi.elingnote.navigation.ElingNoteNavHost
+import com.sahi.elingnote.ui.note_feature.edit_note.navigateToEditNote
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,32 +36,37 @@ fun ElingNoteApp(
     appState: ElingNoteAppState = rememberElingNoteAppState()
 ) {
 
-    val scope = rememberCoroutineScope()
-
     val snackbarHostState = remember { SnackbarHostState() }
 
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState()
 
+    val destination = appState.currentTopLevelDestination
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { openBottomSheet = !openBottomSheet },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add button")
+            if (destination != null) {
+                FloatingActionButton(
+                    onClick = { openBottomSheet = !openBottomSheet },
+                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                ) {
+                    Icon(Icons.Filled.Add, "Add button")
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-            val destination = appState.currentTopLevelDestination
-
             if (destination != null) {
-                ElingNoteBottomBar(
-                    destinations = appState.topLevelDestinations,
-                    onNavigateToDestination = appState::navigateToTopLevelDestination,
-                    currentDestination = appState.currentDestination,
+                BottomAppBar(
+                    actions = {
+                        ElingNoteBottomBar(
+                            destinations = appState.topLevelDestinations,
+                            onNavigateToDestination = appState::navigateToTopLevelDestination,
+                            currentDestination = appState.currentDestination,
+                        )
+                    }
                 )
             }
         },
@@ -86,7 +92,10 @@ fun ElingNoteApp(
                         items(1) {
                             ListItem(
                                 modifier = Modifier
-                                    .clickable { /*TODO: Adding onclick new note*/ },
+                                    .clickable {
+                                        appState.navController.navigateToEditNote()
+                                        openBottomSheet = !openBottomSheet
+                                    },
                                 headlineContent = { Text(text = "New note") },
                                 leadingContent = {
                                     Icon(Icons.Filled.Note, contentDescription = "New note")
@@ -94,14 +103,19 @@ fun ElingNoteApp(
                             )
                             ListItem(
                                 modifier = Modifier
-                                    .clickable { /*TODO: Adding onclick new checklist*/ },
+                                    .clickable {
+                                        appState.navController.navigateToEditChecklist()
+                                        openBottomSheet = !openBottomSheet
+                                    },
                                 headlineContent = { Text(text = "New checklist") },
                                 leadingContent = {
-                                    Icon(Icons.Filled.Checklist, contentDescription = "New checklist")
+                                    Icon(
+                                        Icons.Filled.Checklist,
+                                        contentDescription = "New checklist"
+                                    )
                                 }
                             )
                         }
-
                     }
                 }
             }
