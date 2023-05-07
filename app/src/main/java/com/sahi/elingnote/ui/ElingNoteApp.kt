@@ -20,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.sahi.elingnote.navigation.ElingNoteNavHost
@@ -49,14 +51,15 @@ fun ElingNoteApp(
             if (destination != null) {
                 FloatingActionButton(
                     onClick = { openBottomSheet = !openBottomSheet },
-                    containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                    modifier = Modifier.shadow(elevation = 4.dp, shape = MaterialTheme.shapes.medium)
                 ) {
-                    Icon(Icons.Filled.Add, "Add button")
+                    Icon(Icons.Default.Add, "Add button")
                 }
             }
         },
-        floatingActionButtonPosition = FabPosition.Center,
+        topBar = { },
         bottomBar = {
             if (destination != null) {
                 BottomAppBar(

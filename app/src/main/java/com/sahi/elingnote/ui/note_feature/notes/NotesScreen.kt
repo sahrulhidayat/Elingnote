@@ -26,7 +26,7 @@ fun NotesRoute(
     NoteScreen(
         notesState = notesState,
         onClickItem = onClickItem,
-        modifier = modifier,
+        modifier = modifier
     )
 }
 
@@ -44,7 +44,7 @@ fun NoteScreen(
                 note = note,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(vertical = 4.dp, horizontal = 8.dp),
                 onClick = { onClickItem(note.id) }
             )
         }
@@ -60,7 +60,7 @@ fun NoteCard(
 ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(10.dp),
+        shape = MaterialTheme.shapes.medium,
         onClick = onClick,
     ) {
         Column(
