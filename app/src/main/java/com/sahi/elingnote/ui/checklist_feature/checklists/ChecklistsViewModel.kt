@@ -2,7 +2,7 @@ package com.sahi.elingnote.ui.checklist_feature.checklists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.elingnote.data.model.ChecklistEntity
+import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.repository.ChecklistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -18,10 +18,10 @@ class ChecklistsViewModel @Inject constructor(
     private val checklistRepository: ChecklistRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ChecklistsState())
-    val state = _state.asStateFlow()
+    private val _checklistsState = MutableStateFlow(ChecklistsState())
+    val checklistsState = _checklistsState.asStateFlow()
 
-    private var recentlyDeletedChecklist: ChecklistEntity? = null
+    private var recentlyDeletedChecklist: Checklist? = null
 
     private var getChecklistsJob: Job? = null
 
@@ -43,13 +43,6 @@ class ChecklistsViewModel @Inject constructor(
                     recentlyDeletedChecklist = null
                 }
             }
-            is ChecklistsEvent.ChangeItemChecked -> {
-                val checklistItems = _state.value.checklistItems
-
-                checklistItems.find { it.itemId == event.itemId }.let { item ->
-                    item?.checked = event.checked
-                }
-            }
         }
     }
 
@@ -57,7 +50,7 @@ class ChecklistsViewModel @Inject constructor(
         getChecklistsJob?.cancel()
         getChecklistsJob = checklistRepository.getChecklists()
             .onEach { checklists ->
-                _state.value = state.value.copy(
+                _checklistsState.value = checklistsState.value.copy(
                     checklists = checklists
                 )
             }

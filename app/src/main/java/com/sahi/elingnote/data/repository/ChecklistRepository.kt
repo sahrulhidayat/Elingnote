@@ -1,19 +1,19 @@
 package com.sahi.elingnote.data.repository
 
-import com.sahi.elingnote.data.model.ChecklistEntity
+import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistItem
-import com.sahi.elingnote.data.model.ChecklistWithItem
+import com.sahi.elingnote.data.model.ChecklistWithItems
 import kotlinx.coroutines.flow.Flow
 
 interface ChecklistRepository {
 
-    fun getChecklists(): Flow<List<ChecklistWithItem>>
+    fun getChecklists(): Flow<List<ChecklistWithItems>>
 
-    suspend fun getChecklistById(id: Int): ChecklistWithItem
+    suspend fun getChecklistWithItems(id: Int): ChecklistWithItems
 
-    suspend fun addChecklist(checklist: ChecklistEntity)
+    suspend fun addChecklist(checklist: Checklist)
 
-    suspend fun deleteChecklist(checklist: ChecklistEntity)
+    suspend fun deleteChecklist(checklist: Checklist)
 
     suspend fun addChecklistItem(item: ChecklistItem)
 

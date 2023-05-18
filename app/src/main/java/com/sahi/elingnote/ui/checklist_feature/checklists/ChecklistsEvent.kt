@@ -1,10 +1,8 @@
 package com.sahi.elingnote.ui.checklist_feature.checklists
 
-import com.sahi.elingnote.data.model.ChecklistEntity
-import com.sahi.elingnote.data.model.ChecklistItem
+import com.sahi.elingnote.data.model.Checklist
 
 sealed class ChecklistsEvent {
-    data class DeleteChecklist(val checklist: ChecklistEntity): ChecklistsEvent()
+    data class DeleteChecklist(val checklist: Checklist): ChecklistsEvent()
     object RestoreChecklist: ChecklistsEvent()
-    data class ChangeItemChecked(val itemId: Int, val checked: Boolean): ChecklistsEvent()
 }

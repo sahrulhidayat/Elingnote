@@ -11,8 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sahi.elingnote.data.model.ChecklistItem
-import com.sahi.elingnote.data.model.ChecklistWithItem
+import com.sahi.elingnote.data.model.ChecklistWithItems
+import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
 
 @Composable
 fun ChecklistsRoute(
@@ -21,7 +21,7 @@ fun ChecklistsRoute(
     viewModel: ChecklistsViewModel = hiltViewModel(),
 ) {
 
-    val checklistsState by viewModel.state.collectAsState()
+    val checklistsState by viewModel.checklistsState.collectAsState()
 
     ChecklistsScreen(
         checklistsState = checklistsState,
@@ -41,16 +41,10 @@ fun ChecklistsScreen(
     LazyColumn(modifier = modifier) {
         items(checklistsState.checklists) {
             ChecklistCard(
-                checklist = it,
-                onCheckedItem = { item, checked ->
-                    onEvent(
-                        ChecklistsEvent.ChangeItemChecked(
-                            it.checklistItem[item.checklistId].itemId,
-                            checked
-                        )
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
+                checklistWithItems = it,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp, horizontal = 8.dp),
                 onClick = { onClickItem(it.checklist.id) },
             )
         }
@@ -60,8 +54,7 @@ fun ChecklistsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChecklistCard(
-    checklist: ChecklistWithItem,
-    onCheckedItem: (ChecklistItem, Boolean) -> Unit,
+    checklistWithItems: ChecklistWithItems,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -73,31 +66,13 @@ fun ChecklistCard(
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(text = checklist.checklist.title)
-            Spacer(modifier = Modifier.height(8.dp))
-            checklist.checklistItem.onEach { item ->
-                ChecklistItem(
-                    checked = item.checked,
-                    checklistItem = item,
-                    onCheckedChange = { checked -> onCheckedItem(item, checked) }
-                )
+            Text(text = checklistWithItems.checklist.title)
+            Spacer(modifier = Modifier.height(4.dp))
+            if (checklistWithItems.checklistItems.isNotEmpty()) {
+                checklistWithItems.checklistItems.forEach { item ->
+                    ItemChecklist(item = item)
+                }
             }
         }
-    }
-}
-
-@Composable
-fun ChecklistItem(
-    modifier: Modifier = Modifier,
-    checked: Boolean,
-    checklistItem: ChecklistItem,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(modifier = modifier) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
-        Text(text = checklistItem::label.name)
     }
 }

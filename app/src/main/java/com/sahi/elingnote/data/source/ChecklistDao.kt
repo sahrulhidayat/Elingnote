@@ -1,27 +1,27 @@
 package com.sahi.elingnote.data.source
 
 import androidx.room.*
-import com.sahi.elingnote.data.model.ChecklistEntity
+import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistItem
-import com.sahi.elingnote.data.model.ChecklistWithItem
+import com.sahi.elingnote.data.model.ChecklistWithItems
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChecklistDao {
 
     @Transaction
-    @Query(value = "SELECT * FROM checklist")
-    fun getChecklists(): Flow<List<ChecklistWithItem>>
+    @Query(value = "SELECT * FROM Checklist")
+    fun getChecklists(): Flow<List<ChecklistWithItems>>
 
     @Transaction
-    @Query(value = "SELECT * FROM checklist WHERE id = :checklistId")
-    suspend fun getChecklistById(checklistId: Int): ChecklistWithItem
+    @Query(value = "SELECT * FROM Checklist WHERE id = :checklistId")
+    suspend fun getChecklistWithItems(checklistId: Int): ChecklistWithItems
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addChecklist(checklist: ChecklistEntity)
+    suspend fun addChecklist(checklist: Checklist)
 
     @Delete
-    suspend fun deleteChecklist(checklist: ChecklistEntity)
+    suspend fun deleteChecklist(checklist: Checklist)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addChecklistItem(item: ChecklistItem)

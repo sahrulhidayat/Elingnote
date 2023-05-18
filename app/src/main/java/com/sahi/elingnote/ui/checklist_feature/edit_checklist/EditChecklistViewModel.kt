@@ -1,13 +1,20 @@
 package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.elingnote.data.model.ChecklistEntity
+import com.sahi.elingnote.data.model.Checklist
+import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.data.repository.ChecklistRepository
+import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,26 +29,37 @@ class EditChecklistViewModel @Inject constructor(
     )
     val checklistTitle: State<EditChecklistState> = _checklistTitle
 
-    private val _checklistContent = mutableStateOf(
-        EditChecklistState(hint = "Add checklist")
-    )
-    val checklistContent: State<EditChecklistState> = _checklistContent
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var currentChecklistId: Int? = null
+
+    var items = mutableStateListOf<ChecklistItem>()
+        private set
+    var itemState = MutableStateFlow(
+        ChecklistItem(
+            checklistId = currentChecklistId ?: 0,
+            label = "",
+            checked = false
+        )
+    )
+        private set
 
     init {
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
             if (checklistId != -1) {
                 viewModelScope.launch {
-                    checklistRepository.getChecklistById(checklistId).also {
-                        currentChecklistId = it.checklist.id
+                    checklistRepository.getChecklistWithItems(checklistId).also {
+                        currentChecklistId = checklistId
                         _checklistTitle.value = checklistTitle.value.copy(
-                            text = it.checklist.title,
+                            title = it.checklist.title,
                             isHintVisible = false
                         )
-                        _checklistContent.value = checklistContent.value.copy(
-                            isHintVisible = false
-                        )
+
+                        it.checklistItems.forEach { item ->
+                            items.add(item)
+                        }
                     }
                 }
             }
@@ -52,43 +70,88 @@ class EditChecklistViewModel @Inject constructor(
         when (event) {
             is EditChecklistEvent.EnteredTitle -> {
                 _checklistTitle.value = checklistTitle.value.copy(
-                    text = event.value
+                    title = event.value
                 )
             }
 
             is EditChecklistEvent.ChangeTitleFocus -> {
                 _checklistTitle.value = checklistTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
-                            checklistTitle.value.text.isBlank()
+                            checklistTitle.value.title.isBlank()
                 )
-            }
-
-            is EditChecklistEvent.ChangeContentFocus -> {
-                _checklistContent.value = checklistContent.value.copy(
-                    isHintVisible = !event.focusState.isFocused &&
-                            checklistContent.value.text.isBlank()
-                )
-            }
-
-            is EditChecklistEvent.AddChecklistItem -> {
-                _checklistContent.value.checklistItems.add(event.item)
-            }
-
-            is EditChecklistEvent.DeleteChecklistItem -> {
-                _checklistContent.value.checklistItems.remove(event.item)
             }
 
             is EditChecklistEvent.SaveChecklist -> {
                 viewModelScope.launch {
                     checklistRepository.addChecklist(
-                        ChecklistEntity(
-                            id = currentChecklistId ?: 0,
-                            title = checklistTitle.value.text.ifBlank { "<New checklist>" },
+                        Checklist(
+                            id = currentChecklistId,
+                            title = checklistTitle.value.title.ifBlank { "<New checklist>" },
                             timestamp = System.currentTimeMillis(),
                         )
                     )
+                    _eventFlow.emit(UiEvent.SaveChecklist)
                 }
             }
+
         }
+    }
+
+    fun itemEvent(event: ChecklistItemEvent) {
+        when (event) {
+            is ChecklistItemEvent.ChangeChecked -> {
+                itemState.update {
+                    it.copy(
+                        checked = event.checked
+                    )
+                }
+            }
+
+            is ChecklistItemEvent.ChangeLabelFocus -> {
+
+            }
+
+            is ChecklistItemEvent.EnteredLabel -> {
+                itemState.update {
+                    it.copy(
+                        label = event.label
+                    )
+                }
+            }
+
+            is ChecklistItemEvent.DeleteItem -> {
+                viewModelScope.launch {
+                    checklistRepository.deleteChecklistItem(event.item)
+                }
+                items.remove(event.item)
+            }
+
+            is ChecklistItemEvent.AddItem -> {
+                val item = ChecklistItem(
+                    checklistId = currentChecklistId ?: 0,
+                    label = itemState.value.label,
+                    checked = itemState.value.checked
+                )
+
+                viewModelScope.launch {
+                    checklistRepository.addChecklistItem(item)
+                }
+
+                itemState.update {
+                    it.copy(
+                        checklistId = currentChecklistId ?: 0,
+                        label = "",
+                        checked = false
+                    )
+                }
+
+                items.add(item)
+            }
+        }
+    }
+
+    sealed class UiEvent {
+        data class ShowSnackBar(val message: String) : UiEvent()
+        object SaveChecklist : UiEvent()
     }
 }

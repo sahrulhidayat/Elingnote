@@ -1,8 +1,8 @@
 package com.sahi.elingnote.data.repository
 
-import com.sahi.elingnote.data.model.ChecklistEntity
+import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistItem
-import com.sahi.elingnote.data.model.ChecklistWithItem
+import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.data.source.ChecklistDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -10,19 +10,19 @@ import javax.inject.Inject
 class ChecklistRepositoryImpl @Inject constructor(
     private val checklistDao: ChecklistDao
 ) : ChecklistRepository {
-    override fun getChecklists(): Flow<List<ChecklistWithItem>> {
+    override fun getChecklists(): Flow<List<ChecklistWithItems>> {
         return checklistDao.getChecklists()
     }
 
-    override suspend fun getChecklistById(id: Int): ChecklistWithItem {
-        return checklistDao.getChecklistById(id)
+    override suspend fun getChecklistWithItems(id: Int): ChecklistWithItems {
+        return checklistDao.getChecklistWithItems(id)
     }
 
-    override suspend fun addChecklist(checklist: ChecklistEntity) {
+    override suspend fun addChecklist(checklist: Checklist) {
         return checklistDao.addChecklist(checklist)
     }
 
-    override suspend fun deleteChecklist(checklist: ChecklistEntity) {
+    override suspend fun deleteChecklist(checklist: Checklist) {
         return checklistDao.deleteChecklist(checklist)
     }
 

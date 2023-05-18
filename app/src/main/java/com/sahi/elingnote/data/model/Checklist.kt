@@ -5,29 +5,29 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-@Entity(tableName = "checklist")
-data class ChecklistEntity(
+@Entity
+data class Checklist(
     @PrimaryKey
-    val id: Int,
+    val id: Int? = null,
     val title: String,
     val timestamp: Long
 )
 
-@Entity(tableName = "checklist_item")
+@Entity
 data class ChecklistItem(
     @PrimaryKey
-    val itemId: Int,
+    val itemId: Int? = null,
     val checklistId: Int,
     val label: String,
-    var checked: Boolean = false
+    var checked: Boolean
 )
 
-data class ChecklistWithItem(
+data class ChecklistWithItems(
     @Embedded
-    val checklist: ChecklistEntity,
+    val checklist: Checklist,
     @Relation(
         parentColumn = "id",
         entityColumn = "checklistId"
     )
-    val checklistItem: List<ChecklistItem>
+    val checklistItems: List<ChecklistItem>
 )
