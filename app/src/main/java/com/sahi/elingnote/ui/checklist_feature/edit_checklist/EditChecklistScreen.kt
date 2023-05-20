@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -39,7 +40,7 @@ fun EditChecklistRoute(
     val snackBarHostState = remember { SnackbarHostState() }
 
     val titleState by viewModel.checklistTitle
-    val items = viewModel.items
+    val items by viewModel.itemsFlow.collectAsState()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -113,7 +114,8 @@ fun EditChecklistScreen(
             if (items.isNotEmpty()) {
                 LazyColumn {
                     items(items) { item ->
-                        EditItemChecklist(item = item, itemEvent = itemEvent)
+                        val index = items.indexOf(item)
+                        EditItemChecklist(item = item, index = index)
                     }
                 }
             }

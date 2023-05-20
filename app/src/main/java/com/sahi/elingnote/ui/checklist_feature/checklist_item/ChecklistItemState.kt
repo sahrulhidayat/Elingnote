@@ -3,51 +3,67 @@ package com.sahi.elingnote.ui.checklist_feature.checklist_item
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusState
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistItem
+import com.sahi.elingnote.ui.checklist_feature.edit_checklist.EditChecklistViewModel
 
-class ChecklistItemState(hint: String, item: ChecklistItem) {
+class ChecklistItemState(
+    hint: String,
+    item: ChecklistItem,
+    private val editChecklistViewModel: EditChecklistViewModel
+) {
 
     var hint by mutableStateOf(hint)
     val isHintVisible: Boolean
-        get() = label.isBlank()
+        @Composable get() = label.isBlank()
 
     var label by mutableStateOf(item.label)
-    fun updateLabel(newLabel: String) {
-        label = newLabel
-    }
-
     var checked by mutableStateOf(item.checked)
-    fun updateChecked(isChecked: Boolean) {
-        checked = isChecked
+    private var checklistId by mutableStateOf(item.checklistId)
+
+    fun updateLabel(newLabel: String, index: Int) {
+        label = newLabel
+        editChecklistViewModel.itemEvent(ChecklistItemEvent.EnteredLabel(index, newLabel))
     }
 
-    var checklistId: Int = 0
+    fun updateChecked(checkedValue: Boolean, index: Int) {
+        checked = checkedValue
+        editChecklistViewModel.itemEvent(ChecklistItemEvent.ChangeChecked(index, checkedValue))
+    }
 
-    companion object {
-        val Saver: Saver<ChecklistItemState, *> = listSaver(
-            save = { listOf(it.hint, it.label, it.checked, it.checklistId) },
-            restore = {
-                ChecklistItemState(
-                    hint = it[0] as String,
-                    item = ChecklistItem(
-                        label = it[1] as String,
-                        checked = it[2] as Boolean,
-                        checklistId = it[3] as Int
-                    )
-                )
-            }
+    fun onFocusChange(focusState: FocusState, index: Int) {
+        editChecklistViewModel.itemEvent(ChecklistItemEvent.ChangeLabelFocus(index, focusState))
+    }
+
+    fun onDeleteItem(item: ChecklistItem) {
+        editChecklistViewModel.itemEvent(ChecklistItemEvent.DeleteItem(item))
+    }
+
+    val item = mutableStateOf(
+        ChecklistItem(
+            checklistId = checklistId,
+            label = label,
+            checked = checked
         )
-    }
+    )
+
 }
 
 @Composable
-fun rememberChecklistItemState(hint: String, item: ChecklistItem) : ChecklistItemState =
-    rememberSaveable(hint, item, saver = ChecklistItemState.Saver) {
-        ChecklistItemState(hint, item)
+fun rememberChecklistItemState(
+    hint: String,
+    item: ChecklistItem,
+    editChecklistViewModel: EditChecklistViewModel = hiltViewModel()
+): ChecklistItemState =
+    remember {
+        ChecklistItemState(
+            hint,
+            item,
+            editChecklistViewModel = editChecklistViewModel
+        )
     }
 
 

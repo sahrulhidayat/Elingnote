@@ -11,7 +11,7 @@ interface ChecklistRepository {
 
     suspend fun getChecklistWithItems(id: Int): ChecklistWithItems
 
-    suspend fun addChecklist(checklist: Checklist)
+    suspend fun addChecklist(checklist: Checklist): Long
 
     suspend fun deleteChecklist(checklist: Checklist)
 

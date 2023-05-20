@@ -13,6 +13,7 @@ import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,21 +31,16 @@ class EditChecklistViewModel @Inject constructor(
     val checklistTitle: State<EditChecklistState> = _checklistTitle
 
 
+    private var items = mutableStateListOf<ChecklistItem>()
+
+    private var _itemsFlow = MutableStateFlow(items)
+    val itemsFlow: StateFlow<List<ChecklistItem>> = _itemsFlow
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
+
     val eventFlow = _eventFlow.asSharedFlow()
 
     private var currentChecklistId: Int? = null
-
-    var items = mutableStateListOf<ChecklistItem>()
-        private set
-    var itemState = MutableStateFlow(
-        ChecklistItem(
-            checklistId = currentChecklistId ?: 0,
-            label = "",
-            checked = false
-        )
-    )
-        private set
 
     init {
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
@@ -60,6 +56,17 @@ class EditChecklistViewModel @Inject constructor(
                         it.checklistItems.forEach { item ->
                             items.add(item)
                         }
+                    }
+                }
+            } else {
+                viewModelScope.launch {
+                    checklistRepository.addChecklist(
+                        Checklist(
+                            title = checklistTitle.value.title.ifBlank { "<New checklist>" },
+                            timestamp = System.currentTimeMillis(),
+                        )
+                    ).also {
+                        currentChecklistId = it.toInt()
                     }
                 }
             }
@@ -90,6 +97,13 @@ class EditChecklistViewModel @Inject constructor(
                             timestamp = System.currentTimeMillis(),
                         )
                     )
+
+                    items.forEach { item ->
+                        viewModelScope.launch {
+                            checklistRepository.addChecklistItem(item)
+                        }
+                    }
+
                     _eventFlow.emit(UiEvent.SaveChecklist)
                 }
             }
@@ -100,11 +114,7 @@ class EditChecklistViewModel @Inject constructor(
     fun itemEvent(event: ChecklistItemEvent) {
         when (event) {
             is ChecklistItemEvent.ChangeChecked -> {
-                itemState.update {
-                    it.copy(
-                        checked = event.checked
-                    )
-                }
+                items[event.index] = items[event.index].copy(checked = event.checked)
             }
 
             is ChecklistItemEvent.ChangeLabelFocus -> {
@@ -112,11 +122,7 @@ class EditChecklistViewModel @Inject constructor(
             }
 
             is ChecklistItemEvent.EnteredLabel -> {
-                itemState.update {
-                    it.copy(
-                        label = event.label
-                    )
-                }
+                items[event.index] = items[event.index].copy(label = event.label)
             }
 
             is ChecklistItemEvent.DeleteItem -> {
@@ -127,25 +133,13 @@ class EditChecklistViewModel @Inject constructor(
             }
 
             is ChecklistItemEvent.AddItem -> {
-                val item = ChecklistItem(
-                    checklistId = currentChecklistId ?: 0,
-                    label = itemState.value.label,
-                    checked = itemState.value.checked
-                )
-
-                viewModelScope.launch {
-                    checklistRepository.addChecklistItem(item)
-                }
-
-                itemState.update {
-                    it.copy(
+                items.add(
+                    ChecklistItem(
                         checklistId = currentChecklistId ?: 0,
                         label = "",
                         checked = false
                     )
-                }
-
-                items.add(item)
+                )
             }
         }
     }

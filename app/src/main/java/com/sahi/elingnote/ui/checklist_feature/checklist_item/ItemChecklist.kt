@@ -17,10 +17,9 @@ import com.sahi.elingnote.ui.components.TransparentHintTextField
 @Composable
 fun ItemChecklist(
     modifier: Modifier = Modifier,
-    item: ChecklistItem,
+    item: ChecklistItem
 ) {
-    val state = rememberChecklistItemState(hint = "New item", item = item)
-
+    val state = rememberChecklistItemState(hint = "New item", item)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -41,10 +40,11 @@ fun ItemChecklist(
 @Composable
 fun EditItemChecklist(
     modifier: Modifier = Modifier,
-    item: ChecklistItem,
-    itemEvent: (ChecklistItemEvent) -> Unit,
+    index: Int,
+    item: ChecklistItem
 ) {
-    val state = rememberChecklistItemState(hint = "New item", item = item)
+
+    val state = rememberChecklistItemState(hint = "New item", item)
 
     Row(
         modifier = modifier,
@@ -53,25 +53,23 @@ fun EditItemChecklist(
         Checkbox(
             checked = state.checked,
             onCheckedChange = {
-                state.updateChecked(it)
-                itemEvent(ChecklistItemEvent.ChangeChecked(it))
+                state.updateChecked(it, index)
             }
         )
         TransparentHintTextField(
             text = state.label,
-            hint = if (state.isHintVisible) state.hint else "",
+            hint = state.hint,
             onValueChange = {
-                state.updateLabel(it)
-                itemEvent(ChecklistItemEvent.EnteredLabel(it))
+                state.updateLabel(it, index)
             },
             onFocusChange = {
-                itemEvent(ChecklistItemEvent.ChangeLabelFocus(it))
+                state.onFocusChange(it, index)
             },
             modifier = Modifier.weight(1f)
         )
         IconButton(
             onClick = {
-                itemEvent(ChecklistItemEvent.DeleteItem(item))
+                state.onDeleteItem(state.item.value)
             },
         ) {
             Icon(

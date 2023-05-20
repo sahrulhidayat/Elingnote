@@ -18,12 +18,12 @@ interface ChecklistDao {
     suspend fun getChecklistWithItems(checklistId: Int): ChecklistWithItems
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addChecklist(checklist: Checklist)
+    suspend fun addChecklist(checklist: Checklist): Long
 
     @Delete
     suspend fun deleteChecklist(checklist: Checklist)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun addChecklistItem(item: ChecklistItem)
 
     @Delete
