@@ -25,8 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
+import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.EditItemChecklist
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
@@ -40,7 +40,7 @@ fun EditChecklistRoute(
     val snackBarHostState = remember { SnackbarHostState() }
 
     val titleState by viewModel.checklistTitle
-    val items by viewModel.itemsFlow.collectAsState()
+    val itemsState by viewModel.itemsFlow.collectAsState()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -58,7 +58,7 @@ fun EditChecklistRoute(
 
     EditChecklistScreen(
         titleState = titleState,
-        items = items,
+        itemsState = itemsState,
         onEvent = viewModel::onEvent,
         itemEvent = viewModel::itemEvent,
         modifier = modifier.padding(16.dp),
@@ -68,7 +68,7 @@ fun EditChecklistRoute(
 @Composable
 fun EditChecklistScreen(
     titleState: EditChecklistState,
-    items: List<ChecklistItem>,
+    itemsState: List<ChecklistItemState>,
     onEvent: (EditChecklistEvent) -> Unit,
     itemEvent: (ChecklistItemEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -111,12 +111,10 @@ fun EditChecklistScreen(
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (items.isNotEmpty()) {
-                LazyColumn {
-                    items(items) { item ->
-                        val index = items.indexOf(item)
-                        EditItemChecklist(item = item, index = index)
-                    }
+            LazyColumn {
+                items(itemsState) { item ->
+                    val index = itemsState.indexOf(item)
+                    EditItemChecklist(state = item, index = index, itemEvent = itemEvent)
                 }
             }
             IconButton(

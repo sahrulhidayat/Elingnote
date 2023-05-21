@@ -10,12 +10,13 @@ import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.data.repository.ChecklistRepository
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
+import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,14 +31,12 @@ class EditChecklistViewModel @Inject constructor(
     )
     val checklistTitle: State<EditChecklistState> = _checklistTitle
 
+    private val items = mutableStateListOf<ChecklistItemState>()
 
-    private var items = mutableStateListOf<ChecklistItem>()
-
-    private var _itemsFlow = MutableStateFlow(items)
-    val itemsFlow: StateFlow<List<ChecklistItem>> = _itemsFlow
+    private val _itemsFlow = MutableStateFlow(items)
+    val itemsFlow: StateFlow<List<ChecklistItemState>> = _itemsFlow
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
-
     val eventFlow = _eventFlow.asSharedFlow()
 
     private var currentChecklistId: Int? = null
@@ -54,7 +53,14 @@ class EditChecklistViewModel @Inject constructor(
                         )
 
                         it.checklistItems.forEach { item ->
-                            items.add(item)
+                            items.add(
+                                ChecklistItemState(
+                                    itemId = item.itemId ?: 0,
+                                    label = item.label,
+                                    checked = item.checked,
+                                    checklistId = item.checklistId
+                                )
+                            )
                         }
                     }
                 }
@@ -65,8 +71,8 @@ class EditChecklistViewModel @Inject constructor(
                             title = checklistTitle.value.title.ifBlank { "<New checklist>" },
                             timestamp = System.currentTimeMillis(),
                         )
-                    ).also {
-                        currentChecklistId = it.toInt()
+                    ).also { checklistId ->
+                        currentChecklistId = checklistId.toInt()
                     }
                 }
             }
@@ -98,13 +104,22 @@ class EditChecklistViewModel @Inject constructor(
                         )
                     )
 
-                    items.forEach { item ->
-                        viewModelScope.launch {
-                            checklistRepository.addChecklistItem(item)
+                    _eventFlow.emit(UiEvent.SaveChecklist)
+
+                    itemsFlow.collectLatest { items ->
+                        if (items.isEmpty()) return@collectLatest
+
+                        items.map {
+                            ChecklistItem(
+                                itemId = it.itemId,
+                                checklistId = it.checklistId,
+                                label = it.label,
+                                checked = it.checked
+                            )
+                        }.forEach {
+                            checklistRepository.updateChecklistItem(it)
                         }
                     }
-
-                    _eventFlow.emit(UiEvent.SaveChecklist)
                 }
             }
 
@@ -118,7 +133,11 @@ class EditChecklistViewModel @Inject constructor(
             }
 
             is ChecklistItemEvent.ChangeLabelFocus -> {
-
+                items[event.index] = items[event.index]
+                    .copy(
+                        isHintVisible = !event.focusState.isFocused &&
+                                items[event.index].label.isBlank()
+                    )
             }
 
             is ChecklistItemEvent.EnteredLabel -> {
@@ -126,20 +145,41 @@ class EditChecklistViewModel @Inject constructor(
             }
 
             is ChecklistItemEvent.DeleteItem -> {
-                viewModelScope.launch {
-                    checklistRepository.deleteChecklistItem(event.item)
+                items.removeAt(event.index).also {
+                    viewModelScope.launch {
+                        checklistRepository.deleteChecklistItem(
+                            ChecklistItem(
+                                itemId = it.itemId,
+                                checklistId = it.checklistId,
+                                label = it.label,
+                                checked = it.checked
+                            )
+                        )
+                    }
                 }
-                items.remove(event.item)
+
             }
 
             is ChecklistItemEvent.AddItem -> {
-                items.add(
-                    ChecklistItem(
-                        checklistId = currentChecklistId ?: 0,
-                        label = "",
-                        checked = false
-                    )
-                )
+                viewModelScope.launch {
+                    checklistRepository.addChecklistItem(
+                        ChecklistItem(
+                            checklistId = currentChecklistId ?: 0,
+                            label = "",
+                            checked = false
+                        )
+                    ).also { itemId ->
+                        items.add(
+                            ChecklistItemState(
+                                itemId = itemId.toInt(),
+                                checklistId = currentChecklistId ?: 0,
+                                label = "",
+                                checked = false
+                            )
+                        )
+                    }
+                }
+
             }
         }
     }

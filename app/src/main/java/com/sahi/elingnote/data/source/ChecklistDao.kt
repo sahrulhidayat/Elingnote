@@ -17,14 +17,17 @@ interface ChecklistDao {
     @Query(value = "SELECT * FROM Checklist WHERE id = :checklistId")
     suspend fun getChecklistWithItems(checklistId: Int): ChecklistWithItems
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun addChecklist(checklist: Checklist): Long
 
     @Delete
     suspend fun deleteChecklist(checklist: Checklist)
 
-    @Upsert
-    suspend fun addChecklistItem(item: ChecklistItem)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addChecklistItem(item: ChecklistItem): Long
+
+    @Update
+    suspend fun updateChecklistItem(item: ChecklistItem)
 
     @Delete
     suspend fun deleteChecklistItem(item: ChecklistItem)

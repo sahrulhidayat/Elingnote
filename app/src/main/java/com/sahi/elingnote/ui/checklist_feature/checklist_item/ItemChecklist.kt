@@ -1,5 +1,6 @@
 package com.sahi.elingnote.ui.checklist_feature.checklist_item
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -7,28 +8,25 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 
 @Composable
 fun ItemChecklist(
     modifier: Modifier = Modifier,
-    item: ChecklistItem
+    state: ChecklistItemState,
 ) {
-    val state = rememberChecklistItemState(hint = "New item", item)
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             checked = state.checked,
-            onCheckedChange = {
-
-            }
+            onCheckedChange = {},
         )
         Text(
             text = state.label,
@@ -41,10 +39,9 @@ fun ItemChecklist(
 fun EditItemChecklist(
     modifier: Modifier = Modifier,
     index: Int,
-    item: ChecklistItem
+    state: ChecklistItemState,
+    itemEvent: (ChecklistItemEvent) -> Unit
 ) {
-
-    val state = rememberChecklistItemState(hint = "New item", item)
 
     Row(
         modifier = modifier,
@@ -53,23 +50,25 @@ fun EditItemChecklist(
         Checkbox(
             checked = state.checked,
             onCheckedChange = {
-                state.updateChecked(it, index)
+                itemEvent(ChecklistItemEvent.ChangeChecked(index, it))
             }
         )
         TransparentHintTextField(
             text = state.label,
             hint = state.hint,
+            isHintVisible = state.isHintVisible,
             onValueChange = {
-                state.updateLabel(it, index)
+                itemEvent(ChecklistItemEvent.EnteredLabel(index, it))
             },
             onFocusChange = {
-                state.onFocusChange(it, index)
+                itemEvent(ChecklistItemEvent.ChangeLabelFocus(index, it))
             },
+            singleLine = true,
             modifier = Modifier.weight(1f)
         )
         IconButton(
             onClick = {
-                state.onDeleteItem(state.item.value)
+                itemEvent(ChecklistItemEvent.DeleteItem(index))
             },
         ) {
             Icon(

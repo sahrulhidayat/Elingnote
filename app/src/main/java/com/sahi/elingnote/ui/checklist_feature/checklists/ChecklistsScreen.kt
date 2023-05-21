@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistWithItems
+import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
 
 @Composable
@@ -66,11 +67,20 @@ fun ChecklistCard(
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(text = checklistWithItems.checklist.title)
+            Text(
+                text = checklistWithItems.checklist.title,
+                style = MaterialTheme.typography.titleMedium,
+            )
             Spacer(modifier = Modifier.height(4.dp))
             if (checklistWithItems.checklistItems.isNotEmpty()) {
                 checklistWithItems.checklistItems.forEach { item ->
-                    ItemChecklist(item = item)
+                    ItemChecklist(
+                        state = ChecklistItemState(
+                            checklistId = item.checklistId,
+                            label = item.label,
+                            checked = item.checked
+                        )
+                    )
                 }
             }
         }
