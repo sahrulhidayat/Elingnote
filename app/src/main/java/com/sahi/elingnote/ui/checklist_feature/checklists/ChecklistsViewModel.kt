@@ -1,5 +1,6 @@
 package com.sahi.elingnote.ui.checklist_feature.checklists
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.Checklist
@@ -21,7 +22,9 @@ class ChecklistsViewModel @Inject constructor(
     private val _checklistsState = MutableStateFlow(ChecklistsState())
     val checklistsState = _checklistsState.asStateFlow()
 
-    private var recentlyDeletedChecklist: Checklist? = null
+    val itemSelectedIndexes = mutableStateListOf(false)
+
+    private var recentlyDeletedChecklists = mutableListOf<Checklist>()
 
     private var getChecklistsJob: Job? = null
 
@@ -33,15 +36,14 @@ class ChecklistsViewModel @Inject constructor(
         when(event) {
             is ChecklistsEvent.DeleteChecklist -> {
                 viewModelScope.launch {
-                    checklistRepository.deleteChecklist(event.checklist)
-                    recentlyDeletedChecklist = event.checklist
+                    checklistRepository.deleteChecklist(event.checklistWithItems.checklist)
+                    event.checklistWithItems.checklistItems.forEach {
+                        checklistRepository.deleteChecklistItem(it)
+                    }
                 }
             }
             is ChecklistsEvent.RestoreChecklist -> {
-                viewModelScope.launch {
-                    checklistRepository.addChecklist(recentlyDeletedChecklist ?: return@launch)
-                    recentlyDeletedChecklist = null
-                }
+
             }
         }
     }

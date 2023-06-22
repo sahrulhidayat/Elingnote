@@ -53,13 +53,15 @@ fun ElingNoteApp(
                     onClick = { openBottomSheet = !openBottomSheet },
                     containerColor = MaterialTheme.colorScheme.primary,
                     elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
-                    modifier = Modifier.shadow(elevation = 4.dp, shape = MaterialTheme.shapes.medium)
+                    modifier = Modifier.shadow(
+                        elevation = 4.dp,
+                        shape = MaterialTheme.shapes.medium
+                    )
                 ) {
                     Icon(Icons.Default.Add, "Add button")
                 }
             }
         },
-        topBar = { },
         bottomBar = {
             if (destination != null) {
                 BottomAppBar(
