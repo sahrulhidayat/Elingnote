@@ -14,6 +14,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class NotesState(
+    val notes: List<NoteEntity> = emptyList()
+)
+
 @HiltViewModel
 class NotesViewModel @Inject constructor(
     private val noteRepository: NoteRepository
@@ -33,13 +37,14 @@ class NotesViewModel @Inject constructor(
     }
 
     fun onEvent(event: NotesEvent) {
-        when(event) {
+        when (event) {
             is NotesEvent.DeleteNote -> {
                 viewModelScope.launch {
                     noteRepository.deleteNote(event.note)
                     recentlyDeletedNote = event.note
                 }
             }
+
             is NotesEvent.RestoreNote -> {
                 viewModelScope.launch {
                     noteRepository.addNote(recentlyDeletedNote ?: return@launch)
@@ -59,4 +64,9 @@ class NotesViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
+}
+
+sealed class NotesEvent {
+    data class DeleteNote(val note: NoteEntity) : NotesEvent()
+    object RestoreNote : NotesEvent()
 }
