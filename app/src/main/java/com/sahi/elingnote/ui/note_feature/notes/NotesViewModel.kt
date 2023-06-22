@@ -1,5 +1,6 @@
 package com.sahi.elingnote.ui.note_feature.notes
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.NoteEntity
@@ -20,6 +21,8 @@ class NotesViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(NotesState())
     val state = _state.asStateFlow()
+
+    val selectedIndexes = mutableStateListOf(false)
 
     private var recentlyDeletedNote: NoteEntity? = null
 
