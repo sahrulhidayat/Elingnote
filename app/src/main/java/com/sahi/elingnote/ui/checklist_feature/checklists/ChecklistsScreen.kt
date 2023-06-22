@@ -76,7 +76,13 @@ fun ChecklistsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "${selectedIndexes.size}") },
+                title = {
+                    val selected = selectedIndexes.filter { value -> value }
+                    if (enterSelectMode)
+                        Text(text = "${selected.size} Selected")
+                    else
+                        Text("Your Checklists")
+                },
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
