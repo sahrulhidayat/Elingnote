@@ -35,11 +35,11 @@ fun ChecklistsRoute(
 ) {
 
     val checklistsState by viewModel.checklistsState.collectAsState()
-    val itemSelectedIndexes = viewModel.itemSelectedIndexes
+    val selectedIndexes = viewModel.selectedIndexes
 
     ChecklistsScreen(
         checklistsState = checklistsState,
-        itemSelectedIndexes = itemSelectedIndexes,
+        selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
         onClickItem = onClickItem,
         modifier = modifier,
@@ -50,7 +50,7 @@ fun ChecklistsRoute(
 @Composable
 fun ChecklistsScreen(
     checklistsState: ChecklistsState,
-    itemSelectedIndexes: SnapshotStateList<Boolean>,
+    selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
     onClickItem: (checklistId: Int?) -> Unit,
     modifier: Modifier = Modifier
@@ -63,9 +63,9 @@ fun ChecklistsScreen(
     fun resetSelected() {
         enterSelectMode = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            itemSelectedIndexes.replaceAll { false }
+            selectedIndexes.replaceAll { false }
         } else {
-            Collections.replaceAll(itemSelectedIndexes, true, false)
+            Collections.replaceAll(selectedIndexes, true, false)
         }
     }
 
@@ -76,12 +76,12 @@ fun ChecklistsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "${itemSelectedIndexes.size}") },
+                title = { Text(text = "${selectedIndexes.size}") },
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
                             onClick = {
-                                itemSelectedIndexes.withIndex().forEach { item ->
+                                selectedIndexes.withIndex().forEach { item ->
                                     if (item.value) {
                                         val selected = checklistsState.checklists[item.index]
                                         onEvent(ChecklistsEvent.DeleteChecklist(selected))
@@ -100,24 +100,24 @@ fun ChecklistsScreen(
         LazyColumn(modifier = modifier.padding(padding)) {
             items(checklistsState.checklists) {
                 val index = checklistsState.checklists.indexOf(it)
-                if(itemSelectedIndexes.size < checklistsState.checklists.size) {
-                    itemSelectedIndexes.add(false)
+                if(selectedIndexes.size < checklistsState.checklists.size) {
+                    selectedIndexes.add(false)
                 }
                 ChecklistCard(
                     checklistWithItems = it,
-                    isSelected = itemSelectedIndexes[index],
+                    isSelected = selectedIndexes[index],
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp, horizontal = 8.dp),
                     onClick = {
                         if (enterSelectMode)
-                            itemSelectedIndexes[index] = !itemSelectedIndexes[index]
+                            selectedIndexes[index] = !selectedIndexes[index]
                         else
                             onClickItem(it.checklist.id)
                     },
                     onLongClick = {
                         enterSelectMode = true
-                        itemSelectedIndexes[index] = !itemSelectedIndexes[index]
+                        selectedIndexes[index] = !selectedIndexes[index]
                     }
                 )
             }

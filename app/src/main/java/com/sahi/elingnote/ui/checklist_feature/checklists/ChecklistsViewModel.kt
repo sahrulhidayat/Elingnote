@@ -22,9 +22,7 @@ class ChecklistsViewModel @Inject constructor(
     private val _checklistsState = MutableStateFlow(ChecklistsState())
     val checklistsState = _checklistsState.asStateFlow()
 
-    val itemSelectedIndexes = mutableStateListOf(false)
-
-    private var recentlyDeletedChecklists = mutableListOf<Checklist>()
+    val selectedIndexes = mutableStateListOf(false)
 
     private var getChecklistsJob: Job? = null
 
