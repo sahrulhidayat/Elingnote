@@ -73,6 +73,10 @@ fun ChecklistsScreen(
         resetSelected()
     }
 
+    if (!selectedIndexes.contains(true)) {
+        resetSelected()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(

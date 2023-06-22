@@ -66,6 +66,10 @@ fun NotesScreen(
         resetSelected()
     }
 
+    if (!selectedIndexes.contains(true)) {
+        resetSelected()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
