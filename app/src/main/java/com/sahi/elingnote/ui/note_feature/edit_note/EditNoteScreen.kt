@@ -34,13 +34,13 @@ fun EditNoteRoute(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is EditNoteViewModel.UiEvent.ShowSnackBar -> {
+                is UiEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(
                         message = event.message
                     )
                 }
 
-                is EditNoteViewModel.UiEvent.SaveNote -> onSaveNote()
+                is UiEvent.SaveNote -> onSaveNote()
             }
         }
     }

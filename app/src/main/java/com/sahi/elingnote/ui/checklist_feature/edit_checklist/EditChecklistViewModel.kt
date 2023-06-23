@@ -3,6 +3,7 @@ package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.focus.FocusState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +20,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class EditChecklistState(
+    val title: String = "",
+    val hint: String = "",
+    val isHintVisible: Boolean = true,
+)
 
 @HiltViewModel
 class EditChecklistViewModel @Inject constructor(
@@ -183,9 +190,15 @@ class EditChecklistViewModel @Inject constructor(
             }
         }
     }
+}
 
-    sealed class UiEvent {
-        data class ShowSnackBar(val message: String) : UiEvent()
-        object SaveChecklist : UiEvent()
-    }
+sealed class UiEvent {
+    data class ShowSnackBar(val message: String) : UiEvent()
+    object SaveChecklist : UiEvent()
+}
+
+sealed class EditChecklistEvent {
+    data class EnteredTitle(val value: String) : EditChecklistEvent()
+    data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
+    object SaveChecklist : EditChecklistEvent()
 }

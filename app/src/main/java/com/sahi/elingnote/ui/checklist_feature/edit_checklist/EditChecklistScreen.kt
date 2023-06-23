@@ -45,13 +45,13 @@ fun EditChecklistRoute(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is EditChecklistViewModel.UiEvent.ShowSnackBar -> {
+                is UiEvent.ShowSnackBar -> {
                     snackBarHostState.showSnackbar(
                         message = event.message
                     )
                 }
 
-                is EditChecklistViewModel.UiEvent.SaveChecklist -> onSaveChecklist()
+                is UiEvent.SaveChecklist -> onSaveChecklist()
             }
         }
     }

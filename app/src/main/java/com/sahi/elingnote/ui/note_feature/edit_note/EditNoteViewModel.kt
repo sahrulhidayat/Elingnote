@@ -2,6 +2,7 @@ package com.sahi.elingnote.ui.note_feature.edit_note
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.focus.FocusState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class EditNoteState(
+    val text: String = "",
+    val hint: String = "",
+    val isHintVisible: Boolean = true,
+)
 
 @HiltViewModel
 class EditNoteViewModel @Inject constructor(
@@ -55,29 +62,33 @@ class EditNoteViewModel @Inject constructor(
     }
 
     fun onEvent(event: EditNoteEvent) {
-        when(event) {
+        when (event) {
             is EditNoteEvent.EnteredTitle -> {
                 _noteTitle.value = noteTitle.value.copy(
                     text = event.value
                 )
             }
+
             is EditNoteEvent.ChangeTitleFocus -> {
                 _noteTitle.value = noteTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteTitle.value.text.isBlank()
                 )
             }
+
             is EditNoteEvent.EnteredContent -> {
                 _noteContent.value = noteContent.value.copy(
                     text = event.value
                 )
             }
+
             is EditNoteEvent.ChangeContentFocus -> {
                 _noteContent.value = noteContent.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteContent.value.text.isBlank()
                 )
             }
+
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     noteRepository.addNote(
@@ -93,9 +104,17 @@ class EditNoteViewModel @Inject constructor(
             }
         }
     }
+}
 
-    sealed class UiEvent {
-        data class ShowSnackBar(val message: String): UiEvent()
-        object SaveNote: UiEvent()
-    }
+sealed class UiEvent {
+    data class ShowSnackBar(val message: String) : UiEvent()
+    object SaveNote : UiEvent()
+}
+
+sealed class EditNoteEvent {
+    data class EnteredTitle(val value: String) : EditNoteEvent()
+    data class ChangeTitleFocus(val focusState: FocusState) : EditNoteEvent()
+    data class EnteredContent(val value: String) : EditNoteEvent()
+    data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
+    object SaveNote : EditNoteEvent()
 }
