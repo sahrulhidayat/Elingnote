@@ -1,5 +1,6 @@
 package com.sahi.elingnote.ui.note_feature.edit_note
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sahi.elingnote.ui.checklist_feature.edit_checklist.EditChecklistEvent
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 
@@ -64,6 +66,11 @@ fun EditNoteScreen(
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    BackHandler(enabled = true) {
+        onEvent(EditNoteEvent.SaveNote)
+    }
+
     Scaffold(
         topBar = { },
         bottomBar = {

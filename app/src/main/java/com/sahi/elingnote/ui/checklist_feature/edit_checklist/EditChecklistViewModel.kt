@@ -112,7 +112,9 @@ class EditChecklistViewModel @Inject constructor(
                     )
 
                     itemsFlow.collectLatest { items ->
-                        if (items.isEmpty()) return@collectLatest
+                        if (items.isEmpty()) {
+                            _eventFlow.emit(UiEvent.SaveChecklist)
+                        }
 
                         items.map {
                             ChecklistItem(
@@ -124,9 +126,9 @@ class EditChecklistViewModel @Inject constructor(
                         }.forEach {
                             checklistRepository.updateChecklistItem(it)
                         }
-                    }
 
-                    _eventFlow.emit(UiEvent.SaveChecklist)
+                        _eventFlow.emit(UiEvent.SaveChecklist)
+                    }
                 }
             }
         }

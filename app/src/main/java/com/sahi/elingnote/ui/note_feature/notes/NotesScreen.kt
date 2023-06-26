@@ -110,9 +110,12 @@ fun NotesScreen(
         ) {
             items(notesState.notes) { note ->
                 val index = notesState.notes.indexOf(note)
-                if (selectedIndexes.size < notesState.notes.size) {
+                if (selectedIndexes.size <= notesState.notes.size) {
                     selectedIndexes.add(false)
+                } else {
+                    selectedIndexes.removeLast()
                 }
+
                 NoteCard(
                     note = note,
                     isSelected = selectedIndexes[index],

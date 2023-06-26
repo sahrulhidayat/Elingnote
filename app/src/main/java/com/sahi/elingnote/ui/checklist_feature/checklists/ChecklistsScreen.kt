@@ -115,9 +115,12 @@ fun ChecklistsScreen(
         LazyColumn(modifier = modifier.padding(padding)) {
             items(checklistsState.checklists) {
                 val index = checklistsState.checklists.indexOf(it)
-                if (selectedIndexes.size < checklistsState.checklists.size) {
+                if (selectedIndexes.size <= checklistsState.checklists.size) {
                     selectedIndexes.add(false)
+                } else {
+                    selectedIndexes.removeLast()
                 }
+
                 ChecklistCard(
                     checklistWithItems = it,
                     isSelected = selectedIndexes[index],
