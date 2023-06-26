@@ -103,7 +103,12 @@ fun ChecklistsScreen(
                             Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                         }
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
         },
     ) { padding ->
