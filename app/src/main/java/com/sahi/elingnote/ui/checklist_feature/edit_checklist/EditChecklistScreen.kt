@@ -73,7 +73,6 @@ fun EditChecklistScreen(
     itemEvent: (ChecklistItemEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -117,14 +116,18 @@ fun EditChecklistScreen(
                     EditItemChecklist(state = item, index = index, itemEvent = itemEvent)
                 }
             }
-            IconButton(
-                onClick = {
-                    itemEvent(ChecklistItemEvent.AddItem)
-                }
+            if (
+                itemsState.lastOrNull()?.label?.isNotEmpty() == true
+                || itemsState.isEmpty()
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add checklist item")
+                IconButton(
+                    onClick = {
+                        itemEvent(ChecklistItemEvent.AddItem)
+                    }
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add checklist item")
+                }
             }
         }
     }
-
 }

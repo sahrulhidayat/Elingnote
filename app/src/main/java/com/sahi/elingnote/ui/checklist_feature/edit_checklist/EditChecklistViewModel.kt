@@ -111,8 +111,6 @@ class EditChecklistViewModel @Inject constructor(
                         )
                     )
 
-                    _eventFlow.emit(UiEvent.SaveChecklist)
-
                     itemsFlow.collectLatest { items ->
                         if (items.isEmpty()) return@collectLatest
 
@@ -127,9 +125,10 @@ class EditChecklistViewModel @Inject constructor(
                             checklistRepository.updateChecklistItem(it)
                         }
                     }
+
+                    _eventFlow.emit(UiEvent.SaveChecklist)
                 }
             }
-
         }
     }
 
@@ -143,7 +142,8 @@ class EditChecklistViewModel @Inject constructor(
                 items[event.index] = items[event.index]
                     .copy(
                         isHintVisible = !event.focusState.isFocused &&
-                                items[event.index].label.isBlank()
+                                items[event.index].label.isBlank(),
+                        isFocused = event.focusState.isFocused
                     )
             }
 
@@ -181,7 +181,7 @@ class EditChecklistViewModel @Inject constructor(
                                 itemId = itemId.toInt(),
                                 checklistId = currentChecklistId ?: 0,
                                 label = "",
-                                checked = false
+                                checked = false,
                             )
                         )
                     }

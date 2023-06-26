@@ -5,7 +5,8 @@ data class ChecklistItemState(
     var label: String = "",
     var checked: Boolean = false,
     val hint: String = "New item",
-    val isHintVisible: Boolean = true
+    val isHintVisible: Boolean = true,
+    val isFocused: Boolean = false
 )
 
 
