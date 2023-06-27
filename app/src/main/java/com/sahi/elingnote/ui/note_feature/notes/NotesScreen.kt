@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -73,6 +74,18 @@ fun NotesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    if (enterSelectMode)
+                        IconButton(
+                            onClick = { resetSelected() }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = "Cancel select"
+                            )
+                        }
+                },
                 title = {
                     val selected = selectedIndexes.filter { value -> value }
                     if (enterSelectMode)
@@ -93,7 +106,7 @@ fun NotesScreen(
                                 resetSelected()
                             }
                         ) {
-                            Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
                         }
                     }
                 },
