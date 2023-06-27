@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -92,6 +93,7 @@ fun EditChecklistScreen(
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = { onEvent(EditChecklistEvent.SaveChecklist) },
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
                         Icon(Icons.Default.Save, contentDescription = "Save note")
                     }
@@ -137,6 +139,7 @@ fun EditChecklistScreen(
                             Icon(Icons.Default.Add, contentDescription = "Add checklist item")
                         }
                     }
+                    Spacer(modifier = Modifier.height(100.dp))
                 }
             }
 

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sahi.elingnote.ui.checklist_feature.edit_checklist.EditChecklistEvent
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 
@@ -72,7 +72,6 @@ fun EditNoteScreen(
     }
 
     Scaffold(
-        topBar = { },
         bottomBar = {
             BottomAppBar(
                 actions = {
@@ -83,6 +82,7 @@ fun EditNoteScreen(
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = { onEvent(EditNoteEvent.SaveNote) },
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
                         Icon(Icons.Default.Save, contentDescription = "Save note")
                     }

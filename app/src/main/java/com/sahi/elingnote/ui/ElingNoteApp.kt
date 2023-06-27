@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -52,11 +51,7 @@ fun ElingNoteApp(
                 FloatingActionButton(
                     onClick = { openBottomSheet = !openBottomSheet },
                     containerColor = MaterialTheme.colorScheme.primary,
-                    elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
-                    modifier = Modifier.shadow(
-                        elevation = 4.dp,
-                        shape = MaterialTheme.shapes.medium
-                    )
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp),
                 ) {
                     Icon(Icons.Default.Add, "Add button")
                 }

@@ -106,7 +106,9 @@ fun NotesScreen(
         },
     ) { padding ->
         LazyColumn(
-            modifier = modifier.padding(padding),
+            modifier = modifier
+                .padding(padding)
+                .padding(vertical = 4.dp)
         ) {
             items(notesState.notes) { note ->
                 val index = notesState.notes.indexOf(note)

@@ -112,7 +112,11 @@ fun ChecklistsScreen(
             )
         },
     ) { padding ->
-        LazyColumn(modifier = modifier.padding(padding)) {
+        LazyColumn(
+            modifier = modifier
+                .padding(padding)
+                .padding(vertical = 4.dp)
+        ) {
             items(checklistsState.checklists) {
                 val index = checklistsState.checklists.indexOf(it)
                 if (selectedIndexes.size <= checklistsState.checklists.size) {
