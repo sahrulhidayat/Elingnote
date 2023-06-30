@@ -16,11 +16,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistWithItems
@@ -169,8 +174,11 @@ fun ChecklistCard(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {
+    var itemCount by remember { mutableIntStateOf(0) }
     Card(
         modifier = modifier
+            .heightIn(max = 210.dp)
+            .clip(RoundedCornerShape(10.dp))
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
@@ -178,26 +186,66 @@ fun ChecklistCard(
         shape = RoundedCornerShape(10.dp),
         border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
     ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-        ) {
+        Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 text = checklistWithItems.checklist.title,
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            if (checklistWithItems.checklistItems.isNotEmpty()) {
-                checklistWithItems.checklistItems.forEach { item ->
-                    ItemChecklist(
-                        state = ChecklistItemState(
-                            checklistId = item.checklistId,
-                            label = item.label,
-                            checked = item.checked
+            ChecklistItems(
+                onPlacementComplete = { itemCount = it }
+            ) {
+                if (checklistWithItems.checklistItems.isNotEmpty()) {
+                    checklistWithItems.checklistItems.forEach { item ->
+                        ItemChecklist(
+                            state = ChecklistItemState(
+                                checklistId = item.checklistId,
+                                label = item.label,
+                                checked = item.checked
+                            )
                         )
-                    )
+                    }
                 }
             }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "+${checklistWithItems.checklistItems.size - itemCount} items",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
+
+@Composable
+fun ChecklistItems(
+    modifier: Modifier = Modifier,
+    onPlacementComplete: (Int) -> Unit,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+
+        val placeables = measurables.map { it.measure(constraints) }
+        data class Item(val placeable: Placeable, val yPosition: Int)
+
+        val items = mutableListOf<Item>()
+        var yPosition = 0
+        for (placeable in placeables) {
+            if (yPosition + placeable.height > constraints.maxHeight) break
+            items.add(Item(placeable, yPosition))
+            yPosition += placeable.height
+        }
+
+        layout(
+            width = items.maxOf { it.placeable.width },
+            height = items.last().let { it.yPosition + it.placeable.height },
+        ) {
+            items.forEach {
+                it.placeable.place(0, it.yPosition)
+            }
+            onPlacementComplete(items.count())
         }
     }
 }
