@@ -184,6 +184,7 @@ class EditChecklistViewModel @Inject constructor(
                                 checklistId = currentChecklistId ?: 0,
                                 label = "",
                                 checked = false,
+                                isFocused = true,
                             )
                         )
                     }

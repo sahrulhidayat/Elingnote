@@ -21,12 +21,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -72,7 +75,7 @@ fun ItemChecklist(
                 text = state.label,
                 style = MaterialTheme.typography.bodyMedium,
                 textDecoration = if (state.checked) TextDecoration.LineThrough else TextDecoration.None,
-                maxLines = 3,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -88,6 +91,13 @@ fun EditItemChecklist(
     itemEvent: (ChecklistItemEvent) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+
+    SideEffect {
+        if (state.isFocused)
+            focusRequester.requestFocus()
+    }
+
     Row(
         modifier = modifier,
     ) {
@@ -105,10 +115,15 @@ fun EditItemChecklist(
             TransparentHintTextField(
                 text = state.label,
                 hint = state.hint,
-                textStyle = if (state.checked)
-                                TextStyle(textDecoration = TextDecoration.LineThrough)
-                            else
-                                TextStyle(textDecoration = TextDecoration.None),
+                textStyle =
+                    if (state.checked)
+                        MaterialTheme.typography.bodyMedium.copy(
+                            textDecoration = TextDecoration.LineThrough
+                        )
+                    else
+                        MaterialTheme.typography.bodyMedium.copy(
+                            textDecoration = TextDecoration.None
+                        ),
                 isHintVisible = state.isHintVisible,
                 onValueChange = {
                     itemEvent(ChecklistItemEvent.EnteredLabel(index, it))
@@ -116,6 +131,8 @@ fun EditItemChecklist(
                 onFocusChange = {
                     itemEvent(ChecklistItemEvent.ChangeLabelFocus(index, it))
                 },
+                modifier = modifier
+                    .focusRequester(focusRequester)
             )
         }
         if (state.isFocused) {

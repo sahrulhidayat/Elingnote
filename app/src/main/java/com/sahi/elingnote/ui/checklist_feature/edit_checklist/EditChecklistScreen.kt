@@ -76,8 +76,6 @@ fun EditChecklistScreen(
     itemEvent: (ChecklistItemEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val focusManager = LocalFocusManager.current
-
     BackHandler(enabled = true) {
         onEvent(EditChecklistEvent.SaveChecklist)
     }
@@ -133,7 +131,6 @@ fun EditChecklistScreen(
                         IconButton(
                             onClick = {
                                 itemEvent(ChecklistItemEvent.AddItem)
-                                focusManager.clearFocus()
                             }
                         ) {
                             Icon(Icons.Default.Add, contentDescription = "Add checklist item")
