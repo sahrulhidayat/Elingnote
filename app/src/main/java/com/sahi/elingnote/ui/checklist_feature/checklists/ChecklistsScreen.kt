@@ -192,10 +192,10 @@ fun ChecklistCard(
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            ChecklistItems(
-                onPlacementComplete = { itemCount = it }
-            ) {
-                if (checklistWithItems.checklistItems.isNotEmpty()) {
+            if (checklistWithItems.checklistItems.isNotEmpty()) {
+                ChecklistItems(
+                    onPlacementComplete = { itemCount = it }
+                ) {
                     checklistWithItems.checklistItems.forEach { item ->
                         ItemChecklist(
                             state = ChecklistItemState(
@@ -206,12 +206,17 @@ fun ChecklistCard(
                         )
                     }
                 }
+
+                val overflowItems: Int = checklistWithItems.checklistItems.size - itemCount
+
+                if (overflowItems > 0) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "+ $overflowItems items",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "+${checklistWithItems.checklistItems.size - itemCount} items",
-                style = MaterialTheme.typography.bodySmall
-            )
         }
     }
 }
@@ -228,6 +233,7 @@ fun ChecklistItems(
     ) { measurables, constraints ->
 
         val placeables = measurables.map { it.measure(constraints) }
+
         data class Item(val placeable: Placeable, val yPosition: Int)
 
         val items = mutableListOf<Item>()
