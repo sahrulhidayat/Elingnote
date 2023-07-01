@@ -117,11 +117,11 @@ fun EditItemChecklist(
                 hint = state.hint,
                 textStyle =
                     if (state.checked)
-                        MaterialTheme.typography.bodyMedium.copy(
+                        MaterialTheme.typography.bodyLarge.copy(
                             textDecoration = TextDecoration.LineThrough
                         )
                     else
-                        MaterialTheme.typography.bodyMedium.copy(
+                        MaterialTheme.typography.bodyLarge.copy(
                             textDecoration = TextDecoration.None
                         ),
                 isHintVisible = state.isHintVisible,

@@ -25,7 +25,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
@@ -117,7 +116,7 @@ fun EditChecklistScreen(
                 textStyle = MaterialTheme.typography.titleLarge,
                 singleLine = true
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             LazyColumn {
                 items(itemsState) { item ->
                     val index = itemsState.indexOf(item)

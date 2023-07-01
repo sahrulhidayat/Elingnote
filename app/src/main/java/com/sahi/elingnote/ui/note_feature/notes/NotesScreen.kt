@@ -183,7 +183,7 @@ fun NoteCard(
                 text = note.title,
                 style = MaterialTheme.typography.titleMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = note.content,
                 style = MaterialTheme.typography.bodyMedium,
