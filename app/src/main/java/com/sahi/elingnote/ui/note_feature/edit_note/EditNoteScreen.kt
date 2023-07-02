@@ -2,15 +2,15 @@ package com.sahi.elingnote.ui.note_feature.edit_note
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +54,7 @@ fun EditNoteRoute(
         titleState = titleState,
         contentState = contentState,
         onEvent = viewModel::onEvent,
-        modifier = modifier.padding(16.dp)
+        modifier = modifier
     )
 
 }
@@ -74,57 +74,55 @@ fun EditNoteScreen(
     Scaffold(
         bottomBar = {
             BottomAppBar(
+                modifier = Modifier.height(44.dp),
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { onEvent(EditNoteEvent.SaveNote) }) {
+                        Icon(Icons.Outlined.Save, contentDescription = "Save note")
                     }
                 },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = { onEvent(EditNoteEvent.SaveNote) },
-                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
-                    ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save note")
-                    }
-                },
+                contentPadding = PaddingValues(vertical = 4.dp, horizontal = 8.dp)
             )
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = modifier.padding(padding)
         ) {
-            TransparentHintTextField(
-                text = titleState.text,
-                hint = titleState.hint,
-                onValueChange = {
-                    onEvent(EditNoteEvent.EnteredTitle(it))
-                },
-                onFocusChange = {
-                    onEvent(EditNoteEvent.ChangeTitleFocus(it))
-                },
-                isHintVisible = titleState.isHintVisible,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TransparentHintTextField(
-                text = contentState.text,
-                hint = contentState.hint,
-                onValueChange = {
-                    onEvent(EditNoteEvent.EnteredContent(it))
-                },
-                onFocusChange = {
-                    onEvent(EditNoteEvent.ChangeContentFocus(it))
-                },
-                isHintVisible = contentState.isHintVisible,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                ),
-                modifier = Modifier.fillMaxHeight()
-            )
+            item {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    TransparentHintTextField(
+                        text = titleState.text,
+                        hint = titleState.hint,
+                        onValueChange = {
+                            onEvent(EditNoteEvent.EnteredTitle(it))
+                        },
+                        onFocusChange = {
+                            onEvent(EditNoteEvent.ChangeTitleFocus(it))
+                        },
+                        isHintVisible = titleState.isHintVisible,
+                        singleLine = true,
+                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TransparentHintTextField(
+                        text = contentState.text,
+                        hint = contentState.hint,
+                        onValueChange = {
+                            onEvent(EditNoteEvent.EnteredContent(it))
+                        },
+                        onFocusChange = {
+                            onEvent(EditNoteEvent.ChangeContentFocus(it))
+                        },
+                        isHintVisible = contentState.isHintVisible,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onBackground
+                        ),
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                }
+            }
         }
     }
-
 }

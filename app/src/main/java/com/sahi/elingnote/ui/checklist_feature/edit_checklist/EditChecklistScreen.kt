@@ -1,19 +1,17 @@
 package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -63,7 +61,7 @@ fun EditChecklistRoute(
         itemsState = itemsState,
         onEvent = viewModel::onEvent,
         itemEvent = viewModel::itemEvent,
-        modifier = modifier.padding(16.dp),
+        modifier = modifier
     )
 }
 
@@ -82,49 +80,46 @@ fun EditChecklistScreen(
     Scaffold(
         bottomBar = {
             BottomAppBar(
+                modifier = Modifier.height(44.dp),
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { onEvent(EditChecklistEvent.SaveChecklist) }) {
+                        Icon(Icons.Outlined.Save, contentDescription = "Save checklist")
                     }
                 },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = { onEvent(EditChecklistEvent.SaveChecklist) },
-                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
-                    ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save note")
-                    }
-                },
+                contentPadding = PaddingValues(vertical = 4.dp, horizontal = 8.dp)
             )
         }
     ) { padding ->
-        Column(
-            modifier = modifier
-                .padding(padding)
-                .fillMaxSize()
+        LazyColumn(
+            modifier = modifier.padding(padding)
         ) {
-            TransparentHintTextField(
-                text = titleState.title,
-                hint = titleState.hint,
-                onValueChange = {
-                    onEvent(EditChecklistEvent.EnteredTitle(it))
-                },
-                onFocusChange = {
-                    onEvent(EditChecklistEvent.ChangeTitleFocus(it))
-                },
-                isHintVisible = titleState.isHintVisible,
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                ),
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            LazyColumn {
-                items(itemsState) { item ->
-                    val index = itemsState.indexOf(item)
+            item {
+                TransparentHintTextField(
+                    text = titleState.title,
+                    hint = titleState.hint,
+                    onValueChange = {
+                        onEvent(EditChecklistEvent.EnteredTitle(it))
+                    },
+                    onFocusChange = {
+                        onEvent(EditChecklistEvent.ChangeTitleFocus(it))
+                    },
+                    isHintVisible = titleState.isHintVisible,
+                    textStyle = MaterialTheme.typography.titleLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    singleLine = true,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+                )
+            }
+            items(itemsState) { item ->
+                val index = itemsState.indexOf(item)
+                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                     EditItemChecklist(state = item, index = index, itemEvent = itemEvent)
                 }
-                item {
+            }
+            item {
+                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                     if (
                         itemsState.lastOrNull()?.label?.isNotEmpty() == true
                         || itemsState.isEmpty()
@@ -137,10 +132,9 @@ fun EditChecklistScreen(
                             Icon(Icons.Default.Add, contentDescription = "Add checklist item")
                         }
                     }
-                    Spacer(modifier = Modifier.height(100.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
                 }
             }
-
         }
     }
 }
