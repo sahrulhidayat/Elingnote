@@ -113,7 +113,9 @@ fun EditChecklistScreen(
                     onEvent(EditChecklistEvent.ChangeTitleFocus(it))
                 },
                 isHintVisible = titleState.isHintVisible,
-                textStyle = MaterialTheme.typography.titleLarge,
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(8.dp))

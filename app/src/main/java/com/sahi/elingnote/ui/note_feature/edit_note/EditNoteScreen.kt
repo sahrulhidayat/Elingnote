@@ -104,7 +104,9 @@ fun EditNoteScreen(
                 },
                 isHintVisible = titleState.isHintVisible,
                 singleLine = true,
-                textStyle = MaterialTheme.typography.titleLarge
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             )
             Spacer(modifier = Modifier.height(16.dp))
             TransparentHintTextField(
@@ -117,7 +119,9 @@ fun EditNoteScreen(
                     onEvent(EditNoteEvent.ChangeContentFocus(it))
                 },
                 isHintVisible = contentState.isHintVisible,
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
                 modifier = Modifier.fillMaxHeight()
             )
         }

@@ -116,14 +116,16 @@ fun EditItemChecklist(
                 text = state.label,
                 hint = state.hint,
                 textStyle =
-                    if (state.checked)
-                        MaterialTheme.typography.bodyLarge.copy(
-                            textDecoration = TextDecoration.LineThrough
-                        )
-                    else
-                        MaterialTheme.typography.bodyLarge.copy(
-                            textDecoration = TextDecoration.None
-                        ),
+                if (state.checked)
+                    MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                else
+                    MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textDecoration = TextDecoration.None
+                    ),
                 isHintVisible = state.isHintVisible,
                 onValueChange = {
                     itemEvent(ChecklistItemEvent.EnteredLabel(index, it))
