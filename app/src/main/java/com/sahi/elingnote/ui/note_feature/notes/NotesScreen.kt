@@ -1,7 +1,6 @@
 package com.sahi.elingnote.ui.note_feature.notes
 
 import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
