@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.NoteEntity
+import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import java.util.Collections
 
 @Composable
@@ -43,7 +43,6 @@ fun NotesRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(
     notesState: NotesState,
@@ -66,36 +65,10 @@ fun NotesScreen(
         }
     }
 
-    BackHandler(enabled = enterSelectMode) {
-        resetSelected()
-    }
-
-    if (!selectedIndexes.contains(true)) {
-        resetSelected()
-    }
-
     Scaffold(
         topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    if (enterSelectMode)
-                        IconButton(
-                            onClick = { resetSelected() }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = "Cancel select"
-                            )
-                        }
-                },
-                title = {
-                    val selected = selectedIndexes.filter { value -> value }
-                    if (enterSelectMode)
-                        Text(text = "${selected.size} Selected")
-                    else
-                        Text("Your Notes")
-                },
+            ElingNoteTopAppBar(
+                title = "Your Notes",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
@@ -113,11 +86,9 @@ fun NotesScreen(
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                enterSelectMode = enterSelectMode,
+                selectedIndexes = selectedIndexes,
+                onResetSelect = { resetSelected() }
             )
         },
     ) { padding ->

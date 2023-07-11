@@ -1,7 +1,6 @@
 package com.sahi.elingnote.ui.checklist_feature.checklists
 
 import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -10,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -31,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
+import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import java.util.Collections
 
 @Composable
@@ -52,7 +51,6 @@ fun ChecklistsRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChecklistsScreen(
     checklistsState: ChecklistsState,
@@ -75,36 +73,10 @@ fun ChecklistsScreen(
         }
     }
 
-    BackHandler(enabled = enterSelectMode) {
-        resetSelected()
-    }
-
-    if (!selectedIndexes.contains(true)) {
-        resetSelected()
-    }
-
     Scaffold(
         topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    if (enterSelectMode)
-                        IconButton(
-                            onClick = { resetSelected() }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = "Cancel select"
-                            )
-                        }
-                },
-                title = {
-                    val selected = selectedIndexes.filter { value -> value }
-                    if (enterSelectMode)
-                        Text(text = "${selected.size} Selected")
-                    else
-                        Text("Your Checklists")
-                },
+            ElingNoteTopAppBar(
+                title = "Your Checklists",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
@@ -122,11 +94,9 @@ fun ChecklistsScreen(
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                enterSelectMode = enterSelectMode,
+                selectedIndexes = selectedIndexes,
+                onResetSelect = { resetSelected() }
             )
         },
     ) { padding ->
