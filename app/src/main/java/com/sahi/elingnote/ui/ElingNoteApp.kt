@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Checklist
-import androidx.compose.material.icons.filled.Note
+import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -100,7 +100,7 @@ fun ElingNoteApp(
                                     },
                                 headlineContent = { Text(text = "New note") },
                                 leadingContent = {
-                                    Icon(Icons.Filled.Note, contentDescription = "New note")
+                                    Icon(Icons.Filled.Notes, contentDescription = "New note")
                                 },
                             )
                             ListItem(
