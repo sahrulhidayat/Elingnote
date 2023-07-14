@@ -10,7 +10,8 @@ data class Checklist(
     @PrimaryKey
     val id: Int? = null,
     val title: String,
-    val timestamp: Long
+    val timestamp: Long,
+    var isTrash: Boolean = false,
 )
 
 @Entity
