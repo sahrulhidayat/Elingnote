@@ -1,7 +1,9 @@
 package com.sahi.elingnote.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
@@ -14,10 +16,20 @@ data class Checklist(
     var isTrash: Boolean = false,
 )
 
-@Entity
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Checklist::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("checklistId"),
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class ChecklistItem(
     @PrimaryKey
     val itemId: Int? = null,
+    @ColumnInfo(index = true)
     val checklistId: Int,
     val label: String,
     var checked: Boolean
@@ -28,7 +40,7 @@ data class ChecklistWithItems(
     val checklist: Checklist,
     @Relation(
         parentColumn = "id",
-        entityColumn = "checklistId"
+        entityColumn = "checklistId",
     )
     val checklistItems: List<ChecklistItem>
 )
