@@ -40,9 +40,11 @@ class TrashViewModel @Inject constructor(
         when (event) {
             is TrashEvent.RestoreItem -> {
                 viewModelScope.launch {
-                    noteRepository.addNote(
-                        event.note?.copy(isTrash = false) ?: return@launch
-                    )
+                    event.note?.let {
+                        noteRepository.addNote(
+                            it.copy(isTrash = false)
+                        )
+                    }
                     checklistRepository.addChecklist(
                         event.checklistWithItems?.checklist?.copy(isTrash = false) ?: return@launch
                     )
