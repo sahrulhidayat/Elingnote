@@ -11,10 +11,13 @@ import androidx.navigation.navOptions
 import com.sahi.elingnote.navigation.TopLevelDestination
 import com.sahi.elingnote.navigation.TopLevelDestination.CHECKLIST
 import com.sahi.elingnote.navigation.TopLevelDestination.NOTE
+import com.sahi.elingnote.navigation.TopLevelDestination.TRASH
 import com.sahi.elingnote.ui.checklist_feature.checklists.checklistsNavigationRoute
 import com.sahi.elingnote.ui.checklist_feature.checklists.navigateToChecklists
 import com.sahi.elingnote.ui.note_feature.notes.navigateToNotes
 import com.sahi.elingnote.ui.note_feature.notes.notesNavigationRoute
+import com.sahi.elingnote.ui.trash_feature.navigateToTrashScreen
+import com.sahi.elingnote.ui.trash_feature.trashNavigationRoute
 
 @Composable
 fun rememberElingNoteAppState(
@@ -36,6 +39,7 @@ class ElingNoteAppState(
         @Composable get() = when (currentDestination?.route) {
             notesNavigationRoute -> NOTE
             checklistsNavigationRoute -> CHECKLIST
+            trashNavigationRoute -> TRASH
             else -> null
         }
 
@@ -53,6 +57,7 @@ class ElingNoteAppState(
         when (topLevelDestination) {
             NOTE -> navController.navigateToNotes(topLevelNavOptions)
             CHECKLIST -> navController.navigateToChecklists(topLevelNavOptions)
+            TRASH -> navController.navigateToTrashScreen(topLevelNavOptions)
         }
 
     }
