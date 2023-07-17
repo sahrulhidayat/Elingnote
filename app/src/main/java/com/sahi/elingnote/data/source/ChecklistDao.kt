@@ -20,8 +20,9 @@ interface ChecklistDao {
     @Upsert
     suspend fun addChecklist(checklist: Checklist): Long
 
-    @Delete
-    suspend fun deleteChecklist(checklist: Checklist)
+    @Transaction
+    @Query(value = "DELETE FROM Checklist WHERE isTrash")
+    suspend fun deleteTrashChecklists()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addChecklistItem(item: ChecklistItem): Long

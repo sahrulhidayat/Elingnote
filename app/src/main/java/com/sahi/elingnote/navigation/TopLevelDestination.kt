@@ -4,9 +4,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Note
 import androidx.compose.material.icons.filled.NoteAlt
+import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.Note
 import androidx.compose.material.icons.outlined.NoteAlt
+import androidx.compose.material.icons.outlined.RestoreFromTrash
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.sahi.elingnote.R
 
@@ -27,5 +29,11 @@ enum class TopLevelDestination(
         unselectedIcon = Icons.Outlined.Assignment,
         iconTextId = R.string.checklist,
         titleTextId = R.string.checklist,
+    ),
+    TRASH(
+        selectedIcon = Icons.Filled.RestoreFromTrash,
+        unselectedIcon = Icons.Outlined.RestoreFromTrash,
+        iconTextId = R.string.trash,
+        titleTextId = R.string.trash,
     )
 }

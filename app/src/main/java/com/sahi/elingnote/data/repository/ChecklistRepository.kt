@@ -13,7 +13,7 @@ interface ChecklistRepository {
 
     suspend fun addChecklist(checklist: Checklist): Long
 
-    suspend fun deleteChecklist(checklist: Checklist)
+    suspend fun deleteTrashChecklists()
 
     suspend fun addChecklistItem(item: ChecklistItem): Long
 

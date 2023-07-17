@@ -28,8 +28,6 @@ class NotesViewModel @Inject constructor(
 
     val selectedIndexes = mutableStateListOf(false)
 
-    private var recentlyDeletedNote: NoteEntity? = null
-
     private var getNotesJob: Job? = null
 
     init {
@@ -40,15 +38,7 @@ class NotesViewModel @Inject constructor(
         when (event) {
             is NotesEvent.DeleteNote -> {
                 viewModelScope.launch {
-                    noteRepository.deleteNote(event.note)
-                    recentlyDeletedNote = event.note
-                }
-            }
-
-            is NotesEvent.RestoreNote -> {
-                viewModelScope.launch {
-                    noteRepository.addNote(recentlyDeletedNote ?: return@launch)
-                    recentlyDeletedNote = null
+                    noteRepository.addNote(event.note.copy(isTrash = true))
                 }
             }
         }
@@ -68,5 +58,4 @@ class NotesViewModel @Inject constructor(
 
 sealed class NotesEvent {
     data class DeleteNote(val note: NoteEntity) : NotesEvent()
-    object RestoreNote : NotesEvent()
 }

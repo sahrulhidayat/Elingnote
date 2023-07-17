@@ -10,4 +10,5 @@ data class NoteEntity(
     val title: String,
     val content: String,
     val timestamp: Long,
+    var isTrash: Boolean = false,
 )

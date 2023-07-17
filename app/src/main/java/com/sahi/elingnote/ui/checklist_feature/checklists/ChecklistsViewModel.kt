@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,15 +39,8 @@ class ChecklistsViewModel @Inject constructor(
         when (event) {
             is ChecklistsEvent.DeleteChecklist -> {
                 viewModelScope.launch {
-                    checklistRepository.deleteChecklist(event.checklistWithItems.checklist)
-                    event.checklistWithItems.checklistItems.forEach {
-                        checklistRepository.deleteChecklistItem(it)
-                    }
+                    checklistRepository.addChecklist(event.checklistWithItems.checklist.copy(isTrash = true))
                 }
-            }
-
-            is ChecklistsEvent.RestoreChecklist -> {
-
             }
         }
     }
@@ -65,5 +59,4 @@ class ChecklistsViewModel @Inject constructor(
 
 sealed class ChecklistsEvent {
     data class DeleteChecklist(val checklistWithItems: ChecklistWithItems) : ChecklistsEvent()
-    object RestoreChecklist : ChecklistsEvent()
 }

@@ -98,30 +98,32 @@ fun NotesScreen(
                 Spacer(modifier = Modifier.height(4.dp))
             }
             items(notesState.notes) { note ->
-                val index = notesState.notes.indexOf(note)
-                if (selectedIndexes.size <= notesState.notes.size) {
-                    selectedIndexes.add(false)
-                } else {
-                    selectedIndexes.removeLast()
-                }
-
-                NoteCard(
-                    note = note,
-                    isSelected = selectedIndexes[index],
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 8.dp),
-                    onClick = {
-                        if (enterSelectMode)
-                            selectedIndexes[index] = !selectedIndexes[index]
-                        else
-                            onClickItem(note.id)
-                    },
-                    onLongClick = {
-                        enterSelectMode = true
-                        selectedIndexes[index] = !selectedIndexes[index]
+                if (!note.isTrash) {
+                    val index = notesState.notes.indexOf(note)
+                    if (selectedIndexes.size <= notesState.notes.size) {
+                        selectedIndexes.add(false)
+                    } else {
+                        selectedIndexes.removeLast()
                     }
-                )
+
+                    NoteCard(
+                        note = note,
+                        isSelected = selectedIndexes[index],
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 8.dp),
+                        onClick = {
+                            if (enterSelectMode)
+                                selectedIndexes[index] = !selectedIndexes[index]
+                            else
+                                onClickItem(note.id)
+                        },
+                        onLongClick = {
+                            enterSelectMode = true
+                            selectedIndexes[index] = !selectedIndexes[index]
+                        }
+                    )
+                }
             }
         }
     }

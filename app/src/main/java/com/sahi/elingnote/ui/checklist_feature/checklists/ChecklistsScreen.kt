@@ -103,34 +103,36 @@ fun ChecklistsScreen(
         LazyColumn(
             modifier = modifier.padding(padding)
         ) {
-            item { 
+            item {
                 Spacer(modifier = Modifier.height(4.dp))
             }
-            items(checklistsState.checklists) {
-                val index = checklistsState.checklists.indexOf(it)
-                if (selectedIndexes.size <= checklistsState.checklists.size) {
-                    selectedIndexes.add(false)
-                } else {
-                    selectedIndexes.removeLast()
-                }
-
-                ChecklistCard(
-                    checklistWithItems = it,
-                    isSelected = selectedIndexes[index],
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 8.dp),
-                    onClick = {
-                        if (enterSelectMode)
-                            selectedIndexes[index] = !selectedIndexes[index]
-                        else
-                            onClickItem(it.checklist.id)
-                    },
-                    onLongClick = {
-                        enterSelectMode = true
-                        selectedIndexes[index] = !selectedIndexes[index]
+            items(checklistsState.checklists) { checklistWithItems ->
+                if (!checklistWithItems.checklist.isTrash) {
+                    val index = checklistsState.checklists.indexOf(checklistWithItems)
+                    if (selectedIndexes.size <= checklistsState.checklists.size) {
+                        selectedIndexes.add(false)
+                    } else {
+                        selectedIndexes.removeLast()
                     }
-                )
+
+                    ChecklistCard(
+                        checklistWithItems = checklistWithItems,
+                        isSelected = selectedIndexes[index],
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 8.dp),
+                        onClick = {
+                            if (enterSelectMode)
+                                selectedIndexes[index] = !selectedIndexes[index]
+                            else
+                                onClickItem(checklistWithItems.checklist.id)
+                        },
+                        onLongClick = {
+                            enterSelectMode = true
+                            selectedIndexes[index] = !selectedIndexes[index]
+                        }
+                    )
+                }
             }
         }
     }
