@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -82,10 +83,13 @@ fun TrashScreen(
                 }
                 Box(
                     modifier = Modifier
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(10.dp))
                 ) {
-                    Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(text = note.title)
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(onClick = {
@@ -106,10 +110,13 @@ fun TrashScreen(
             items(state.trashChecklist) { checklistWithItems ->
                 Box(
                     modifier = Modifier
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp)),
                 ) {
-                    Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(text = checklistWithItems.checklist.title)
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(onClick = {
