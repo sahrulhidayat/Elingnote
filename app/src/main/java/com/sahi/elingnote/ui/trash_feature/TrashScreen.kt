@@ -59,7 +59,7 @@ fun TrashScreen(
                 Row {
                     Text(text = note.title)
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { onEvent(TrashEvent.RestoreItem(note = note, checklistWithItems = null)) }) {
                         Icon(
                             imageVector = Icons.Default.RestoreFromTrash,
                             contentDescription = "Restore from trash"

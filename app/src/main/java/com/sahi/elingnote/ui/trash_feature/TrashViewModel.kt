@@ -38,28 +38,21 @@ class TrashViewModel @Inject constructor(
 
     fun onEvent(event: TrashEvent) {
         when (event) {
-            is TrashEvent.DeleteItem -> {
-                viewModelScope.launch {
-
-                    noteRepository.deleteNote(event.note)
-
-                    viewModelScope.launch {
-                        checklistRepository.deleteChecklist(event.checklistWithItems.checklist)
-                        event.checklistWithItems.checklistItems.forEach {
-                            checklistRepository.deleteChecklistItem(it)
-                        }
-                    }
-                }
-            }
-
             is TrashEvent.RestoreItem -> {
                 viewModelScope.launch {
                     noteRepository.addNote(
-                        event.note.copy(isTrash = false)
+                        event.note?.copy(isTrash = false) ?: return@launch
                     )
                     checklistRepository.addChecklist(
-                        event.checklistWithItems.checklist.copy(isTrash = false)
+                        event.checklistWithItems?.checklist?.copy(isTrash = false) ?: return@launch
                     )
+                }
+            }
+
+            is TrashEvent.DeleteAll -> {
+                viewModelScope.launch {
+                    noteRepository.deleteTrashNotes()
+                    checklistRepository.deleteTrashChecklists()
                 }
             }
         }
@@ -97,13 +90,10 @@ class TrashViewModel @Inject constructor(
 
 sealed class TrashEvent {
 
-    data class DeleteItem(
-        val note: NoteEntity,
-        val checklistWithItems: ChecklistWithItems
+    data class RestoreItem(
+        val note: NoteEntity? = null,
+        val checklistWithItems: ChecklistWithItems? = null
     ) : TrashEvent()
 
-    data class RestoreItem(
-        val note: NoteEntity,
-        val checklistWithItems: ChecklistWithItems
-    ) : TrashEvent()
+    object DeleteAll : TrashEvent()
 }

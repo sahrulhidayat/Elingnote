@@ -21,7 +21,7 @@ class NoteRepositoryImpl @Inject constructor(
         noteDao.addNote(note)
     }
 
-    override suspend fun deleteNote(note: NoteEntity) {
-        noteDao.deleteNote(note)
+    override suspend fun deleteTrashNotes() {
+        noteDao.deleteTrashNotes()
     }
 }

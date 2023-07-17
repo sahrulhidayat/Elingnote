@@ -22,8 +22,8 @@ class ChecklistRepositoryImpl @Inject constructor(
         return checklistDao.addChecklist(checklist)
     }
 
-    override suspend fun deleteChecklist(checklist: Checklist) {
-        return checklistDao.deleteChecklist(checklist)
+    override suspend fun deleteTrashChecklists() {
+        return checklistDao.deleteTrashChecklists()
     }
 
     override suspend fun addChecklistItem(item: ChecklistItem): Long {
