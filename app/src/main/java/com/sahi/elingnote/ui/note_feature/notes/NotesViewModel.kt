@@ -48,6 +48,11 @@ class NotesViewModel @Inject constructor(
         getNotesJob?.cancel()
         getNotesJob = noteRepository.getNotes()
             .onEach { notes ->
+                selectedIndexes.clear()
+                while (selectedIndexes.size < notes.size) {
+                    selectedIndexes.add(false)
+                }
+
                 _state.value = state.value.copy(
                     notes = notes
                 )

@@ -6,7 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -67,7 +67,7 @@ fun NotesScreen(
     Scaffold(
         topBar = {
             ElingNoteTopAppBar(
-                title = "Your Notes",
+                title = "${selectedIndexes.size}",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
@@ -97,15 +97,8 @@ fun NotesScreen(
             item {
                 Spacer(modifier = Modifier.height(4.dp))
             }
-            items(notesState.notes) { note ->
+            itemsIndexed(notesState.notes) { index, note ->
                 if (!note.isTrash) {
-                    val index = notesState.notes.indexOf(note)
-                    if (selectedIndexes.size <= notesState.notes.size) {
-                        selectedIndexes.add(false)
-                    } else {
-                        selectedIndexes.removeLast()
-                    }
-
                     NoteCard(
                         note = note,
                         isSelected = selectedIndexes[index],

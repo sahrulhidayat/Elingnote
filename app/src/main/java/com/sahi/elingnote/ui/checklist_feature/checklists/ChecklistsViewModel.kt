@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,6 +48,11 @@ class ChecklistsViewModel @Inject constructor(
         getChecklistsJob?.cancel()
         getChecklistsJob = checklistRepository.getChecklists()
             .onEach { checklists ->
+                selectedIndexes.clear()
+                while (selectedIndexes.size < checklists.size) {
+                    selectedIndexes.add(false)
+                }
+
                 _checklistsState.value = checklistsState.value.copy(
                     checklists = checklists
                 )
