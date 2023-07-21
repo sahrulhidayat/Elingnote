@@ -67,7 +67,7 @@ fun NotesScreen(
     Scaffold(
         topBar = {
             ElingNoteTopAppBar(
-                title = "${selectedIndexes.size}",
+                title = "Your Notes",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(

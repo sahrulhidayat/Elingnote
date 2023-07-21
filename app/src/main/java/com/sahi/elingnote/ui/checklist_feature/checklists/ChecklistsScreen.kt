@@ -76,7 +76,7 @@ fun ChecklistsScreen(
     Scaffold(
         topBar = {
             ElingNoteTopAppBar(
-                title = "${selectedIndexes.size}",
+                title = "Your Checklists",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
