@@ -1,17 +1,18 @@
 package com.sahi.elingnote.ui.trash_feature
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.RestoreFromTrash
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -55,16 +58,13 @@ fun TrashScreen(
             TopAppBar(
                 title = { Text(text = "Trash") },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            onEvent(TrashEvent.DeleteAll)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DeleteForever,
-                            contentDescription = "Delete all"
+                    if (state.trashNotes.isNotEmpty() || state.trashChecklist.isNotEmpty())
+                        Text(
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .clickable { onEvent(TrashEvent.DeleteAll) },
+                            text = "Delete all"
                         )
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -77,33 +77,93 @@ fun TrashScreen(
         LazyColumn(
             modifier = modifier.padding(padding)
         ) {
-            items(state.trashNotes) { note ->
-                if (state.trashNotes.isEmpty()) {
-                    Spacer(modifier = Modifier.height(70.dp))
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Deleted Notes :",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
+                if (state.trashNotes.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "- Nothing -",
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
+            }
+            items(state.trashNotes) { note ->
                 Box(
                     modifier = Modifier
                         .padding(vertical = 4.dp, horizontal = 8.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(10.dp))
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                     ) {
-                        Text(text = note.title)
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = {
-                            onEvent(
-                                TrashEvent.RestoreItem(
-                                    note = note
+                        Row(
+                            modifier = Modifier.padding(start = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = note.title,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = {
+                                onEvent(
+                                    TrashEvent.RestoreItem(
+                                        note = note
+                                    )
                                 )
-                            )
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.RestoreFromTrash,
-                                contentDescription = "Restore from trash"
-                            )
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Restore,
+                                    contentDescription = "Restore from trash"
+                                )
+                            }
                         }
+                    }
+                }
+            }
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Deleted Checklists :",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                if (state.trashChecklist.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = "- Nothing -",
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.outline
+                        )
                     }
                 }
             }
@@ -114,22 +174,31 @@ fun TrashScreen(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(10.dp)),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                     ) {
-                        Text(text = checklistWithItems.checklist.title)
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = {
-                            onEvent(
-                                TrashEvent.RestoreItem(
-                                    checklistWithItems = checklistWithItems
+                        Row(
+                            modifier = Modifier.padding(start = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = checklistWithItems.checklist.title,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = {
+                                onEvent(
+                                    TrashEvent.RestoreItem(
+                                        checklistWithItems = checklistWithItems
+                                    )
                                 )
-                            )
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.RestoreFromTrash,
-                                contentDescription = "Restore from trash"
-                            )
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Restore,
+                                    contentDescription = "Restore from trash"
+                                )
+                            }
                         }
                     }
                 }
