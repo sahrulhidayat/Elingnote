@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
@@ -153,6 +154,7 @@ fun NoteCard(
             Text(
                 text = note.content,
                 style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 1.2.em,
                 overflow = TextOverflow.Ellipsis
             )
         }
