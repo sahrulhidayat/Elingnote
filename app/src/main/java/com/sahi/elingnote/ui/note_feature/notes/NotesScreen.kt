@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.em
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
+import com.sahi.elingnote.ui.components.EmptyStateAnimation
 import java.util.Collections
 
 @Composable
@@ -119,6 +120,10 @@ fun NotesScreen(
                     )
                 }
             }
+        }
+        val items = notesState.notes.filter { !it.isTrash }
+        if (items.isEmpty()) {
+            EmptyStateAnimation(modifier = Modifier.fillMaxSize())
         }
     }
 }

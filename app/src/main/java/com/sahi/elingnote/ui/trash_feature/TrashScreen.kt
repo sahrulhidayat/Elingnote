@@ -85,7 +85,7 @@ fun TrashScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Deleted Notes :",
+                            text = "Notes :",
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -97,7 +97,7 @@ fun TrashScreen(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = "- Nothing -",
+                            text = "- Empty -",
                             fontStyle = FontStyle.Italic,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -148,7 +148,7 @@ fun TrashScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "Deleted Checklists :",
+                            text = "Checklists :",
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -160,7 +160,7 @@ fun TrashScreen(
                             .fillMaxWidth(),
                     ) {
                         Text(
-                            text = "- Nothing -",
+                            text = "- Empty -",
                             fontStyle = FontStyle.Italic,
                             color = MaterialTheme.colorScheme.outline
                         )

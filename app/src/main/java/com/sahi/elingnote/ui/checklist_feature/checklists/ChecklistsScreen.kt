@@ -30,6 +30,7 @@ import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
+import com.sahi.elingnote.ui.components.EmptyStateAnimation
 import java.util.Collections
 
 @Composable
@@ -127,6 +128,10 @@ fun ChecklistsScreen(
                     )
                 }
             }
+        }
+        val items = checklistsState.checklists.filter { !it.checklist.isTrash }
+        if (items.isEmpty()) {
+            EmptyStateAnimation(modifier = Modifier.fillMaxSize())
         }
     }
 }
