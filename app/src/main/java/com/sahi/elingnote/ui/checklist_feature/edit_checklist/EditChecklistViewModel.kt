@@ -112,21 +112,18 @@ class EditChecklistViewModel @Inject constructor(
                     )
 
                     itemsFlow.collectLatest { items ->
-                        if (items.isEmpty()) {
-                            _eventFlow.emit(UiEvent.SaveChecklist)
+                        if (items.isNotEmpty()) {
+                            items.map {
+                                ChecklistItem(
+                                    itemId = it.itemId,
+                                    checklistId = it.checklistId,
+                                    label = it.label,
+                                    checked = it.checked
+                                )
+                            }.forEach {
+                                checklistRepository.updateChecklistItem(it)
+                            }
                         }
-
-                        items.map {
-                            ChecklistItem(
-                                itemId = it.itemId,
-                                checklistId = it.checklistId,
-                                label = it.label,
-                                checked = it.checked
-                            )
-                        }.forEach {
-                            checklistRepository.updateChecklistItem(it)
-                        }
-
                         _eventFlow.emit(UiEvent.SaveChecklist)
                     }
                 }
