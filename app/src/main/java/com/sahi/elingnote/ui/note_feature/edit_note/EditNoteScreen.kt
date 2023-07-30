@@ -27,15 +27,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun EditNoteRoute(
     onSaveNote: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditNoteViewModel = hiltViewModel(),
+    viewModel: EditNoteViewModel = getViewModel(),
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 

@@ -2,7 +2,6 @@ package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -30,18 +29,18 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.EditItemChecklist
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun EditChecklistRoute(
     onSaveChecklist: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditChecklistViewModel = hiltViewModel(),
+    viewModel: EditChecklistViewModel = getViewModel(),
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
