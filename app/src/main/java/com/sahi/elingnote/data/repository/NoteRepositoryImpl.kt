@@ -3,9 +3,8 @@ package com.sahi.elingnote.data.repository
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.data.source.NoteDao
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class NoteRepositoryImpl @Inject constructor(
+class NoteRepositoryImpl(
     private val noteDao: NoteDao
 ) : NoteRepository {
 

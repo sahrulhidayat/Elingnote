@@ -5,9 +5,8 @@ import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.data.source.ChecklistDao
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class ChecklistRepositoryImpl @Inject constructor(
+class ChecklistRepositoryImpl(
     private val checklistDao: ChecklistDao
 ) : ChecklistRepository {
     override fun getChecklists(): Flow<List<ChecklistWithItems>> {

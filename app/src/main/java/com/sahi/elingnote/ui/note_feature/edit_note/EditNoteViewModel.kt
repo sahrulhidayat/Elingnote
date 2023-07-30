@@ -18,7 +18,7 @@ data class EditNoteState(
     val isHintVisible: Boolean = true,
 )
 
-class EditNoteViewModel (
+class EditNoteViewModel(
     private val noteRepository: NoteRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {

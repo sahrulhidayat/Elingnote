@@ -16,7 +16,7 @@ data class ChecklistsState(
     val checklists: List<ChecklistWithItems> = emptyList(),
 )
 
-class ChecklistsViewModel (
+class ChecklistsViewModel(
     private val checklistRepository: ChecklistRepository
 ) : ViewModel() {
 

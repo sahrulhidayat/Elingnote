@@ -18,7 +18,7 @@ data class TrashState(
     val trashChecklist: List<ChecklistWithItems> = emptyList()
 )
 
-class TrashViewModel (
+class TrashViewModel(
     private val noteRepository: NoteRepository,
     private val checklistRepository: ChecklistRepository
 ) : ViewModel() {

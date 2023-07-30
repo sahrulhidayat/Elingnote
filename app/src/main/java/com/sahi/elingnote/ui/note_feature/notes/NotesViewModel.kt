@@ -16,7 +16,7 @@ data class NotesState(
     val notes: List<NoteEntity> = emptyList()
 )
 
-class NotesViewModel (
+class NotesViewModel(
     private val noteRepository: NoteRepository
 ) : ViewModel() {
 

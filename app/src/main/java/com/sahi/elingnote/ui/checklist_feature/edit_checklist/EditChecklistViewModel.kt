@@ -12,14 +12,12 @@ import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.data.repository.ChecklistRepository
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class EditChecklistState(
     val title: String = "",
@@ -27,8 +25,7 @@ data class EditChecklistState(
     val isHintVisible: Boolean = true,
 )
 
-@HiltViewModel
-class EditChecklistViewModel @Inject constructor(
+class EditChecklistViewModel(
     private val checklistRepository: ChecklistRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
