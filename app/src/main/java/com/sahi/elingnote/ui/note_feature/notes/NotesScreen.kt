@@ -22,16 +22,15 @@ import androidx.compose.ui.unit.em
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
 @Composable
 fun NotesRoute(
     onClickItem: (Int?) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NotesViewModel = getViewModel(),
+    viewModel: NotesViewModel = koinViewModel(),
 ) {
-
     val notesState by viewModel.state.collectAsState()
     val selectedIndexes = viewModel.selectedIndexes
 

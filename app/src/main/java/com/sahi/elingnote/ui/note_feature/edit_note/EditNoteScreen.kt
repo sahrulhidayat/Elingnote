@@ -29,13 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditNoteRoute(
     onSaveNote: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditNoteViewModel = getViewModel(),
+    viewModel: EditNoteViewModel = koinViewModel(),
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 

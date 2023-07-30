@@ -34,13 +34,13 @@ import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.EditItemChecklist
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditChecklistRoute(
     onSaveChecklist: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditChecklistViewModel = getViewModel(),
+    viewModel: EditChecklistViewModel = koinViewModel(),
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 

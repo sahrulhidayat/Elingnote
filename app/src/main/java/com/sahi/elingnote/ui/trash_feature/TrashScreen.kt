@@ -35,12 +35,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TrashRoute(
     modifier: Modifier = Modifier,
-    viewModel: TrashViewModel = getViewModel(),
+    viewModel: TrashViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
 

@@ -30,16 +30,15 @@ import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
 @Composable
 fun ChecklistsRoute(
     onClickItem: (Int?) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ChecklistsViewModel = getViewModel(),
+    viewModel: ChecklistsViewModel = koinViewModel(),
 ) {
-
     val checklistsState by viewModel.checklistsState.collectAsState()
     val selectedIndexes = viewModel.selectedIndexes
 
