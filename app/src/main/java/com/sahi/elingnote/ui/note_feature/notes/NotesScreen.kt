@@ -156,12 +156,13 @@ fun NoteCard(
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = note.content,
-                style = MaterialTheme.typography.bodyMedium,
-                lineHeight = 1.2.em,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (note.content.isNotBlank())
+                Text(
+                    text = note.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    lineHeight = 1.2.em,
+                    overflow = TextOverflow.Ellipsis
+                )
         }
     }
 }

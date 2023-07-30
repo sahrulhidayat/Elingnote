@@ -2,12 +2,15 @@ package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Save
@@ -23,6 +26,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
@@ -76,6 +82,7 @@ fun EditChecklistScreen(
     BackHandler(enabled = true) {
         onEvent(EditChecklistEvent.SaveChecklist)
     }
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         bottomBar = {
@@ -95,22 +102,26 @@ fun EditChecklistScreen(
             modifier = modifier.padding(padding)
         ) {
             item {
-                TransparentHintTextField(
-                    text = titleState.title,
-                    hint = titleState.hint,
-                    onValueChange = {
-                        onEvent(EditChecklistEvent.EnteredTitle(it))
-                    },
-                    onFocusChange = {
-                        onEvent(EditChecklistEvent.ChangeTitleFocus(it))
-                    },
-                    isHintVisible = titleState.isHintVisible,
-                    textStyle = MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    ),
-                    singleLine = true,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-                )
+                Box(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    TransparentHintTextField(
+                        text = titleState.title,
+                        hint = titleState.hint,
+                        onValueChange = {
+                            onEvent(EditChecklistEvent.EnteredTitle(it))
+                        },
+                        onFocusChange = {
+                            onEvent(EditChecklistEvent.ChangeTitleFocus(it))
+                        },
+                        isHintVisible = titleState.isHintVisible,
+                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onBackground
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
+                    )
+                }
             }
             itemsIndexed(itemsState) { index, item ->
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {

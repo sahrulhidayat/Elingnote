@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.BottomAppBar
@@ -20,6 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,10 +72,10 @@ fun EditNoteScreen(
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     BackHandler(enabled = true) {
         onEvent(EditNoteEvent.SaveNote)
     }
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         bottomBar = {
@@ -101,10 +106,11 @@ fun EditNoteScreen(
                             onEvent(EditNoteEvent.ChangeTitleFocus(it))
                         },
                         isHintVisible = titleState.isHintVisible,
-                        singleLine = true,
                         textStyle = MaterialTheme.typography.titleLarge.copy(
                             color = MaterialTheme.colorScheme.onBackground
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     TransparentHintTextField(

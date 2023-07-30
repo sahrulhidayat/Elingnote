@@ -49,11 +49,11 @@ class EditNoteViewModel @Inject constructor(
                         currentNoteId = note.id
                         _noteTitle.value = noteTitle.value.copy(
                             text = note.title,
-                            isHintVisible = false
+                            isHintVisible = note.title.isBlank()
                         )
                         _noteContent.value = noteContent.value.copy(
                             text = note.content,
-                            isHintVisible = false
+                            isHintVisible = note.content.isBlank()
                         )
                     }
                 }
@@ -95,7 +95,7 @@ class EditNoteViewModel @Inject constructor(
                         NoteEntity(
                             id = currentNoteId,
                             title = noteTitle.value.text.ifBlank { "<New note>" },
-                            content = noteContent.value.text.ifBlank { "<Note content>" },
+                            content = noteContent.value.text.ifBlank { "" },
                             timestamp = System.currentTimeMillis(),
                         )
                     )
