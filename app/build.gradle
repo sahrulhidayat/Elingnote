@@ -70,9 +70,11 @@ dependencies {
 
     // Koin
     def koinVersion = '3.4.3'
-    implementation "io.insert-koin:koin-android:$koinVersion"
     implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
+
+    //Koin tests
     testImplementation "io.insert-koin:koin-test-junit4:$koinVersion"
+    testImplementation "io.insert-koin:koin-android-test:$koinVersion"
 
     // Visual
     implementation "com.airbnb.android:lottie-compose:6.1.0"

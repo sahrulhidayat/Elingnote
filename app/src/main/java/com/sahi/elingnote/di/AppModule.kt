@@ -12,7 +12,9 @@ import com.sahi.elingnote.ui.note_feature.edit_note.EditNoteViewModel
 import com.sahi.elingnote.ui.note_feature.notes.NotesViewModel
 import com.sahi.elingnote.ui.trash_feature.TrashViewModel
 import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val appModule = module {
@@ -23,14 +25,19 @@ val appModule = module {
             ElingNoteDatabase.DATABASE_NAME
         ).build()
     }
-    single<NoteRepository> { NoteRepositoryImpl(get()) }
-    single<ChecklistRepository> { ChecklistRepositoryImpl(get()) }
-
-    viewModel {
-        NotesViewModel(get())
-        EditNoteViewModel(get(), get())
-        ChecklistsViewModel(get())
-        EditChecklistViewModel(get(), get())
-        TrashViewModel(get(), get())
+    single {
+        val database = get<ElingNoteDatabase>()
+        database.noteDao
     }
+    single {
+        val database = get<ElingNoteDatabase>()
+        database.checklistDao
+    }
+    singleOf(::NoteRepositoryImpl) { bind<NoteRepository>() }
+    singleOf(::ChecklistRepositoryImpl) { bind<ChecklistRepository>() }
+    viewModelOf(::NotesViewModel)
+    viewModelOf(::EditNoteViewModel)
+    viewModelOf(::ChecklistsViewModel)
+    viewModelOf(::EditChecklistViewModel)
+    viewModelOf(::TrashViewModel)
 }
