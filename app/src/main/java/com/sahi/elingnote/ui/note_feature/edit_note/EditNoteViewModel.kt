@@ -8,11 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.data.repository.NoteRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class EditNoteState(
     val text: String = "",
@@ -20,8 +18,7 @@ data class EditNoteState(
     val isHintVisible: Boolean = true,
 )
 
-@HiltViewModel
-class EditNoteViewModel @Inject constructor(
+class EditNoteViewModel(
     private val noteRepository: NoteRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {

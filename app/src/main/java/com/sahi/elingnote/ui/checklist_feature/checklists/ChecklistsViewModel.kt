@@ -5,21 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.data.repository.ChecklistRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class ChecklistsState(
     val checklists: List<ChecklistWithItems> = emptyList(),
 )
 
-@HiltViewModel
-class ChecklistsViewModel @Inject constructor(
+class ChecklistsViewModel(
     private val checklistRepository: ChecklistRepository
 ) : ViewModel() {
 

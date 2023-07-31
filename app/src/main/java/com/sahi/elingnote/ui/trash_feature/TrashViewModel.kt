@@ -6,22 +6,19 @@ import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.data.repository.ChecklistRepository
 import com.sahi.elingnote.data.repository.NoteRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class TrashState(
     val trashNotes: List<NoteEntity> = emptyList(),
     val trashChecklist: List<ChecklistWithItems> = emptyList()
 )
 
-@HiltViewModel
-class TrashViewModel @Inject constructor(
+class TrashViewModel(
     private val noteRepository: NoteRepository,
     private val checklistRepository: ChecklistRepository
 ) : ViewModel() {

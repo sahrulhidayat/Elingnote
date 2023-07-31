@@ -19,19 +19,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahi.elingnote.data.model.NoteEntity
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
+import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
 @Composable
 fun NotesRoute(
     onClickItem: (Int?) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: NotesViewModel = hiltViewModel(),
+    viewModel: NotesViewModel = koinViewModel(),
 ) {
-
     val notesState by viewModel.state.collectAsState()
     val selectedIndexes = viewModel.selectedIndexes
 
