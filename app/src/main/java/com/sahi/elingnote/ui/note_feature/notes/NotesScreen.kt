@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import com.sahi.elingnote.data.model.NoteEntity
+import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
 import org.koin.androidx.compose.koinViewModel
@@ -132,7 +132,7 @@ fun NotesScreen(
 fun NoteCard(
     modifier: Modifier = Modifier,
     isSelected: Boolean,
-    note: NoteEntity,
+    note: Note,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {

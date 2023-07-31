@@ -6,7 +6,7 @@ import androidx.compose.ui.focus.FocusState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.elingnote.data.model.NoteEntity
+import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -89,7 +89,7 @@ class EditNoteViewModel(
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     noteRepository.addNote(
-                        NoteEntity(
+                        Note(
                             id = currentNoteId,
                             title = noteTitle.value.text.ifBlank { "<New note>" },
                             content = noteContent.value.text.ifBlank { "" },

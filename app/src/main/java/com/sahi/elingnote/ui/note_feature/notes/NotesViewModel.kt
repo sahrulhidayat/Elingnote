@@ -3,7 +3,7 @@ package com.sahi.elingnote.ui.note_feature.notes
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.elingnote.data.model.NoteEntity
+import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 data class NotesState(
-    val notes: List<NoteEntity> = emptyList()
+    val notes: List<Note> = emptyList()
 )
 
 class NotesViewModel(
@@ -59,5 +59,5 @@ class NotesViewModel(
 }
 
 sealed class NotesEvent {
-    data class DeleteNote(val note: NoteEntity) : NotesEvent()
+    data class DeleteNote(val note: Note) : NotesEvent()
 }
