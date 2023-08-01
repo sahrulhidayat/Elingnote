@@ -24,17 +24,21 @@ fun ElingNoteNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        notesScreen { noteId ->
-            navController.navigate(
-                "$editNoteNavigationRoute?noteId=${noteId}"
-            )
-        }
+        notesScreen(
+            onClickItem = { noteId ->
+                navController.navigate(
+                    "$editNoteNavigationRoute?noteId=${noteId}"
+                )
+            },
+        )
         editNoteScreen(onSaveNote = { navController.navigateUp() })
-        checklistsScreen { checklistId ->
-            navController.navigate(
-                "$editChecklistNavigationRoute?checklistId=${checklistId}"
-            )
-        }
+        checklistsScreen(
+            onClickItem = { checklistId ->
+                navController.navigate(
+                    "$editChecklistNavigationRoute?checklistId=${checklistId}"
+                )
+            },
+        )
         editChecklistScreen(onSaveChecklist = { navController.navigateUp() })
         trashScreen()
     }

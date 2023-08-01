@@ -6,9 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.NoteAdd
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,41 +30,41 @@ import com.sahi.elingnote.ui.note_feature.edit_note.navigateToEditNote
 fun ElingNoteApp(
     appState: ElingNoteAppState = rememberElingNoteAppState()
 ) {
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val destination = appState.currentTopLevelDestination
-
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             if (destination != null && destination != TopLevelDestination.TRASH) {
-                FloatingActionButton(
-                    onClick = {
-                        when (destination) {
-                            TopLevelDestination.NOTE -> appState.navController.navigateToEditNote()
-                            TopLevelDestination.CHECKLIST -> appState.navController.navigateToEditChecklist()
-                            else -> {}
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                    content = {
-                        when (destination) {
-                            TopLevelDestination.NOTE -> Icon(
-                                imageVector = Icons.Default.NoteAdd,
-                                contentDescription = "New note"
-                            )
-
-                            TopLevelDestination.CHECKLIST -> Icon(
-                                imageVector = Icons.Default.AddTask,
-                                contentDescription = "New checklist"
-                            )
-
-                            else -> {}
-                        }
+                when (destination) {
+                    TopLevelDestination.NOTE -> {
+                        FloatingActionButton(
+                            onClick = { appState.navController.navigateToEditNote() },
+                            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.NoteAdd,
+                                    contentDescription = "New note"
+                                )
+                            }
+                        )
                     }
-                )
+
+                    TopLevelDestination.CHECKLIST -> {
+                        FloatingActionButton(
+                            onClick = { appState.navController.navigateToEditChecklist() },
+                            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.AddTask,
+                                    contentDescription = "New checklist"
+                                )
+                            }
+                        )
+                    }
+
+                    else -> {}
+                }
             }
         },
         bottomBar = {
