@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,6 +29,9 @@ class NotesViewModel(
 
     private var getNotesJob: Job? = null
 
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     init {
         getNotes()
     }
@@ -36,6 +41,11 @@ class NotesViewModel(
             is NotesEvent.DeleteNote -> {
                 viewModelScope.launch {
                     noteRepository.addNote(event.note.copy(isTrash = true))
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackBar(
+                            message = "Items are moved to the trash"
+                        )
+                    )
                 }
             }
         }
@@ -56,6 +66,10 @@ class NotesViewModel(
             }
             .launchIn(viewModelScope)
     }
+}
+
+sealed class UiEvent {
+    data class ShowSnackBar(val message: String) : UiEvent()
 }
 
 sealed class NotesEvent {

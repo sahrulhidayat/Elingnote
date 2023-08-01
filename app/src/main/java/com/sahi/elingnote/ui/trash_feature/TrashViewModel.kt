@@ -7,7 +7,9 @@ import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.data.repository.ChecklistRepository
 import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -25,6 +27,9 @@ class TrashViewModel(
 
     var state = MutableStateFlow(TrashState())
         private set
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var getNotesJob: Job? = null
     private var getChecklistsJob: Job? = null
@@ -45,6 +50,7 @@ class TrashViewModel(
                     checklistRepository.addChecklist(
                         event.checklistWithItems?.checklist?.copy(isTrash = false) ?: return@launch
                     )
+                    _eventFlow.emit(UiEvent.ShowSnackBar(message = "Item restored"))
                 }
             }
 
@@ -52,6 +58,7 @@ class TrashViewModel(
                 viewModelScope.launch {
                     noteRepository.deleteTrashNotes()
                     checklistRepository.deleteTrashChecklists()
+                    _eventFlow.emit(UiEvent.ShowSnackBar(message = "Items are deleted"))
                 }
             }
         }
@@ -85,6 +92,10 @@ class TrashViewModel(
             }
             .launchIn(viewModelScope)
     }
+}
+
+sealed class UiEvent {
+    data class ShowSnackBar(val message: String) : UiEvent()
 }
 
 sealed class TrashEvent {

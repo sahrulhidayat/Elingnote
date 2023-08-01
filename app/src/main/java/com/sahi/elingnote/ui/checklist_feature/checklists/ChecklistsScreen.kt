@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,6 +31,7 @@ import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
@@ -41,9 +43,23 @@ fun ChecklistsRoute(
 ) {
     val checklistsState by viewModel.checklistsState.collectAsState()
     val selectedIndexes = viewModel.selectedIndexes
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+            }
+        }
+    }
 
     ChecklistsScreen(
         checklistsState = checklistsState,
+        snackBarHostState = snackBarHostState,
         selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
         onClickItem = onClickItem,
@@ -54,6 +70,7 @@ fun ChecklistsRoute(
 @Composable
 fun ChecklistsScreen(
     checklistsState: ChecklistsState,
+    snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
     onClickItem: (checklistId: Int?) -> Unit,
@@ -74,6 +91,9 @@ fun ChecklistsScreen(
     }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             ElingNoteTopAppBar(
                 title = "Your Checklists",

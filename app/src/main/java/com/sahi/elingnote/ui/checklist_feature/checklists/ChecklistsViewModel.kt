@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.data.repository.ChecklistRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,6 +29,9 @@ class ChecklistsViewModel(
 
     private var getChecklistsJob: Job? = null
 
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     init {
         getChecklists()
     }
@@ -36,6 +41,11 @@ class ChecklistsViewModel(
             is ChecklistsEvent.DeleteChecklist -> {
                 viewModelScope.launch {
                     checklistRepository.addChecklist(event.checklistWithItems.checklist.copy(isTrash = true))
+                    _eventFlow.emit(
+                        UiEvent.ShowSnackBar(
+                            message = "Items are moved to the trash"
+                        )
+                    )
                 }
             }
         }
@@ -56,6 +66,10 @@ class ChecklistsViewModel(
             }
             .launchIn(viewModelScope)
     }
+}
+
+sealed class UiEvent {
+    data class ShowSnackBar(val message: String) : UiEvent()
 }
 
 sealed class ChecklistsEvent {

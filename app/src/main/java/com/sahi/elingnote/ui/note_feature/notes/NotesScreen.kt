@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.em
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
@@ -33,9 +34,23 @@ fun NotesRoute(
 ) {
     val notesState by viewModel.state.collectAsState()
     val selectedIndexes = viewModel.selectedIndexes
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+            }
+        }
+    }
 
     NotesScreen(
         notesState = notesState,
+        snackBarHostState = snackBarHostState,
         selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
         onClickItem = onClickItem,
@@ -46,6 +61,7 @@ fun NotesRoute(
 @Composable
 fun NotesScreen(
     notesState: NotesState,
+    snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (NotesEvent) -> Unit,
     onClickItem: (Int?) -> Unit,
@@ -66,6 +82,9 @@ fun NotesScreen(
     }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        },
         topBar = {
             ElingNoteTopAppBar(
                 title = "Your Notes",
