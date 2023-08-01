@@ -43,7 +43,7 @@ class ChecklistsViewModel(
                     checklistRepository.addChecklist(event.checklistWithItems.checklist.copy(isTrash = true))
                     _eventFlow.emit(
                         UiEvent.ShowSnackBar(
-                            message = "Items are moved to the trash"
+                            message = "Checklists are moved to the trash"
                         )
                     )
                 }

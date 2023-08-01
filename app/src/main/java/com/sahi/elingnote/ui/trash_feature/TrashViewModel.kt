@@ -47,10 +47,11 @@ class TrashViewModel(
                             it.copy(isTrash = false)
                         )
                     }
+                    _eventFlow.emit(UiEvent.ShowSnackBar(message = "Note restored"))
                     checklistRepository.addChecklist(
                         event.checklistWithItems?.checklist?.copy(isTrash = false) ?: return@launch
                     )
-                    _eventFlow.emit(UiEvent.ShowSnackBar(message = "Item restored"))
+                    _eventFlow.emit(UiEvent.ShowSnackBar(message = "Checklist restored"))
                 }
             }
 

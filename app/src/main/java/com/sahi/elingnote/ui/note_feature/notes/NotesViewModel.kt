@@ -43,7 +43,7 @@ class NotesViewModel(
                     noteRepository.addNote(event.note.copy(isTrash = true))
                     _eventFlow.emit(
                         UiEvent.ShowSnackBar(
-                            message = "Items are moved to the trash"
+                            message = "Notes are moved to the trash"
                         )
                     )
                 }
