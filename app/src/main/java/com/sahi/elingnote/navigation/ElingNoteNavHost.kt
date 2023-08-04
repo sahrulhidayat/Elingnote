@@ -25,9 +25,9 @@ fun ElingNoteNavHost(
         modifier = modifier,
     ) {
         notesScreen(
-            onClickItem = { noteId ->
+            onClickItem = { note ->
                 navController.navigate(
-                    "$editNoteNavigationRoute?noteId=${noteId}"
+                    "$editNoteNavigationRoute?noteId=${note.id}&noteColor=${note.color}"
                 )
             },
         )

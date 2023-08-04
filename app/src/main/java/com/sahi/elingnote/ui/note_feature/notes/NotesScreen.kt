@@ -1,8 +1,9 @@
 package com.sahi.elingnote.ui.note_feature.notes
 
 import android.os.Build
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -28,7 +30,7 @@ import java.util.Collections
 
 @Composable
 fun NotesRoute(
-    onClickItem: (Int?) -> Unit,
+    onClickItem: (Note) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NotesViewModel = koinViewModel(),
 ) {
@@ -64,7 +66,7 @@ fun NotesScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (NotesEvent) -> Unit,
-    onClickItem: (Int?) -> Unit,
+    onClickItem: (Note) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -129,7 +131,7 @@ fun NotesScreen(
                             if (enterSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
-                                onClickItem(note.id)
+                                onClickItem(note)
                         },
                         onLongClick = {
                             enterSelectMode = true
@@ -155,29 +157,49 @@ fun NoteCard(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {
-    Card(
-        modifier = modifier
-            .heightIn(max = 210.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
-        shape = RoundedCornerShape(10.dp),
-        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+    var containerModifier = modifier
+        .background(
+            color = Color(note.color),
+            shape = RoundedCornerShape(10.dp)
+        )
+        .heightIn(max = 210.dp)
+        .combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick
+        )
+
+    if (isSelected)
+        containerModifier = modifier.then(
+            Modifier
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .background(
+                    color = Color(note.color),
+                    shape = RoundedCornerShape(10.dp)
+                )
+        )
+
+    Box(
+        modifier = containerModifier
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(
-                text = note.title,
-                style = MaterialTheme.typography.titleMedium
-            )
+            if (note.title.isNotBlank())
+                Text(
+                    text = note.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
             Spacer(modifier = Modifier.height(4.dp))
             if (note.content.isNotBlank())
                 Text(
                     text = note.content,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
                     lineHeight = 1.2.em,
                     overflow = TextOverflow.Ellipsis
                 )
