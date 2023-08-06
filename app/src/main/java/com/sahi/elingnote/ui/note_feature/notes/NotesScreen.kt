@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -69,7 +68,6 @@ fun NotesScreen(
     onClickItem: (Note) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     var enterSelectMode by rememberSaveable {
         mutableStateOf(false)
     }
@@ -169,17 +167,12 @@ fun NoteCard(
         )
 
     if (isSelected)
-        containerModifier = modifier.then(
-            Modifier
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .background(
-                    color = Color(note.color),
-                    shape = RoundedCornerShape(10.dp)
-                )
+        containerModifier = containerModifier.then(
+            Modifier.border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(10.dp)
+            )
         )
 
     Box(

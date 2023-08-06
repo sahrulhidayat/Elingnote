@@ -59,7 +59,7 @@ val md_theme_dark_inversePrimary = Color(0xFF00696D)
 val md_theme_dark_surfaceTint = Color(0xFF4CD9DF)
 
 // Note & checklist colors
-val HoneyDew = Color(0xffeaf2e3)
+val White = Color.White
 val LightRed = Color(0xffff8585)
 val SandyBrown = Color(0xfffab061)
 val Celadon = Color(0xff93d9a3)

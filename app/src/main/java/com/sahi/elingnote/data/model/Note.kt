@@ -5,12 +5,12 @@ import androidx.room.PrimaryKey
 import com.sahi.elingnote.ui.theme.AmaranthPink
 import com.sahi.elingnote.ui.theme.Celadon
 import com.sahi.elingnote.ui.theme.Celeste
-import com.sahi.elingnote.ui.theme.HoneyDew
 import com.sahi.elingnote.ui.theme.LightRed
 import com.sahi.elingnote.ui.theme.Mindaro
 import com.sahi.elingnote.ui.theme.PaleAzure
 import com.sahi.elingnote.ui.theme.RosyBrown
 import com.sahi.elingnote.ui.theme.SandyBrown
+import com.sahi.elingnote.ui.theme.White
 import com.sahi.elingnote.ui.theme.Wisteria
 
 @Entity
@@ -25,7 +25,7 @@ data class Note(
 ) {
     companion object {
         val noteColors = listOf(
-            HoneyDew,
+            White,
             LightRed,
             SandyBrown,
             Celadon,

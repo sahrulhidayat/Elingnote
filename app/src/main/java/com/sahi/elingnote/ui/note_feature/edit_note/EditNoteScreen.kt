@@ -100,12 +100,12 @@ fun EditNoteScreen(
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BackHandler(true) {
+    BackHandler(enabled = true) {
         onEvent(EditNoteEvent.SaveNote)
     }
     val focusManager = LocalFocusManager.current
-    val noteColorAnimatable = remember { Animatable(Color(noteColor)) }
 
+    val noteColorAnimatable = remember { Animatable(Color(noteColor)) }
     val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.Hidden,
         skipHiddenState = false
@@ -133,7 +133,7 @@ fun EditNoteScreen(
                                 .size(44.dp)
                                 .clip(CircleShape)
                                 .background(color)
-                                .border(2.dp, Color.White, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                                 .clickable {
                                     scope.launch {
                                         noteColorAnimatable.animateTo(
@@ -159,8 +159,8 @@ fun EditNoteScreen(
                 .background(noteColorAnimatable.value)
         ) {
             LazyColumn(
-                modifier = modifier
-                    .padding(padding)
+                modifier = modifier,
+                contentPadding = padding
             ) {
                 item {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -212,10 +212,7 @@ fun EditNoteScreen(
                     IconButton(
                         onClick = {
                             scope.launch {
-                                if (!sheetState.isVisible)
-                                    sheetState.expand()
-                                else
-                                    sheetState.hide()
+                                sheetState.expand()
                             }
                         }
                     ) {
@@ -227,7 +224,7 @@ fun EditNoteScreen(
                                     color = noteColorAnimatable.value,
                                     shape = CircleShape
                                 )
-                                .border(2.dp, Color.Black, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
