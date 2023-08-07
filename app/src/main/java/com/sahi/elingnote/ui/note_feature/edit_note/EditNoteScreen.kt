@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,20 +25,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
@@ -106,21 +106,106 @@ fun EditNoteScreen(
     val focusManager = LocalFocusManager.current
 
     val noteColorAnimatable = remember { Animatable(Color(noteColor)) }
-    val sheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        skipHiddenState = false
-    )
-    val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = sheetState
-    )
     val scope = rememberCoroutineScope()
+    var showColorSheet by remember { mutableStateOf(false) }
+    val noteColorSheet = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            Box(modifier = Modifier.fillMaxWidth()) {
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .height(48.dp),
+                actions = {
+                    IconButton(
+                        onClick = {
+                            showColorSheet = true
+                        }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(4.dp)
+                                .background(
+                                    color = noteColorAnimatable.value,
+                                    shape = CircleShape
+                                )
+                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = {
+                            onEvent(EditNoteEvent.SaveNote)
+                        }
+                    ) {
+                        Icon(Icons.Outlined.Save, contentDescription = "Save note")
+                    }
+                },
+                contentPadding = PaddingValues(4.dp),
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = modifier
+                .padding(padding)
+                .fillMaxSize()
+                .background(noteColorAnimatable.value),
+        ) {
+            item {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    TransparentHintTextField(
+                        text = titleState.text,
+                        hint = titleState.hint,
+                        onValueChange = {
+                            onEvent(EditNoteEvent.EnteredTitle(it))
+                        },
+                        onFocusChange = {
+                            onEvent(EditNoteEvent.ChangeTitleFocus(it))
+                        },
+                        isHintVisible = titleState.isHintVisible,
+                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                            color = Color.Black
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions {
+                            focusManager.moveFocus(
+                                FocusDirection.Next
+                            )
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TransparentHintTextField(
+                        text = contentState.text,
+                        hint = contentState.hint,
+                        onValueChange = {
+                            onEvent(EditNoteEvent.EnteredContent(it))
+                        },
+                        onFocusChange = {
+                            onEvent(EditNoteEvent.ChangeContentFocus(it))
+                        },
+                        isHintVisible = contentState.isHintVisible,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = Color.Black,
+                            lineHeight = 1.2.em,
+                        ),
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                }
+            }
+        }
+        if (showColorSheet) {
+            ModalBottomSheet(
+                sheetState = noteColorSheet,
+                shape = CutCornerShape(0.dp),
+                containerColor = noteColorAnimatable.value,
+                onDismissRequest = {
+                    showColorSheet = false
+                }
+            ) {
                 LazyRow(
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    modifier = Modifier.padding(bottom = 56.dp)
                 ) {
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
@@ -145,99 +230,10 @@ fun EditNoteScreen(
                         )
                     }
                     item {
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                     }
                 }
             }
-        },
-        sheetShape = CutCornerShape(0.dp),
-        sheetPeekHeight = 0.dp,
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(noteColorAnimatable.value)
-        ) {
-            LazyColumn(
-                modifier = modifier,
-                contentPadding = padding
-            ) {
-                item {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        TransparentHintTextField(
-                            text = titleState.text,
-                            hint = titleState.hint,
-                            onValueChange = {
-                                onEvent(EditNoteEvent.EnteredTitle(it))
-                            },
-                            onFocusChange = {
-                                onEvent(EditNoteEvent.ChangeTitleFocus(it))
-                            },
-                            isHintVisible = titleState.isHintVisible,
-                            textStyle = MaterialTheme.typography.titleLarge.copy(
-                                color = Color.Black
-                            ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                            keyboardActions = KeyboardActions {
-                                focusManager.moveFocus(
-                                    FocusDirection.Next
-                                )
-                            },
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        TransparentHintTextField(
-                            text = contentState.text,
-                            hint = contentState.hint,
-                            onValueChange = {
-                                onEvent(EditNoteEvent.EnteredContent(it))
-                            },
-                            onFocusChange = {
-                                onEvent(EditNoteEvent.ChangeContentFocus(it))
-                            },
-                            isHintVisible = contentState.isHintVisible,
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(
-                                color = Color.Black,
-                                lineHeight = 1.2.em,
-                            ),
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-                }
-            }
-            BottomAppBar(
-                modifier = Modifier
-                    .height(48.dp)
-                    .align(Alignment.BottomCenter),
-                actions = {
-                    IconButton(
-                        onClick = {
-                            scope.launch {
-                                sheetState.expand()
-                            }
-                        }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(4.dp)
-                                .background(
-                                    color = noteColorAnimatable.value,
-                                    shape = CircleShape
-                                )
-                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        onClick = {
-                            onEvent(EditNoteEvent.SaveNote)
-                        }
-                    ) {
-                        Icon(Icons.Outlined.Save, contentDescription = "Save note")
-                    }
-                },
-                contentPadding = PaddingValues(4.dp)
-            )
         }
     }
 }

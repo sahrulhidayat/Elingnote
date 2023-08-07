@@ -87,7 +87,7 @@ fun NotesScreen(
         },
         topBar = {
             ElingNoteTopAppBar(
-                title = "Your Notes",
+                title = "My Notes",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(

@@ -23,9 +23,9 @@ class EditNoteViewModel(
     private val noteRepository: NoteRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    var noteTitle = mutableStateOf(EditNoteState(hint = "Enter note title"))
+    var noteTitle = mutableStateOf(EditNoteState(hint = "Note title"))
         private set
-    var noteContent = mutableStateOf(EditNoteState(hint = "Type some content"))
+    var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
         private set
     private var noteColor = mutableIntStateOf(Note.noteColors[0].toArgb())
 
