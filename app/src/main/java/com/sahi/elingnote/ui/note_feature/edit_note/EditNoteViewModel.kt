@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 data class EditNoteState(
@@ -29,8 +28,8 @@ class EditNoteViewModel(
         private set
     private var noteColor = mutableIntStateOf(Note.noteColors[0].toArgb())
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    var eventFlow = MutableSharedFlow<UiEvent>()
+        private set
 
     private var currentNoteId: Int? = null
 
@@ -99,7 +98,7 @@ class EditNoteViewModel(
                                 color = noteColor.intValue
                             )
                         )
-                    _eventFlow.emit(UiEvent.SaveNote)
+                    eventFlow.emit(UiEvent.SaveNote)
                 }
             }
 

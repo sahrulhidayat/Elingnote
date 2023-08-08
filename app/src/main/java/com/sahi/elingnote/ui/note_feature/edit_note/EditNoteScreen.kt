@@ -112,7 +112,7 @@ fun EditNoteScreen(
     val noteColorAnimatable = remember { Animatable(Color(noteColor)) }
     val scope = rememberCoroutineScope()
     var showColorSheet by remember { mutableStateOf(false) }
-    val noteColorSheet = rememberModalBottomSheetState(
+    val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
@@ -210,7 +210,7 @@ fun EditNoteScreen(
         }
         if (showColorSheet) {
             ModalBottomSheet(
-                sheetState = noteColorSheet,
+                sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
                 containerColor = noteColorAnimatable.value,
                 onDismissRequest = {
