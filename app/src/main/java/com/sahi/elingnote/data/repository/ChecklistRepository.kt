@@ -11,6 +11,7 @@ interface ChecklistRepository {
     suspend fun getChecklistWithItems(id: Int): ChecklistWithItems
     suspend fun addChecklist(checklist: Checklist): Long
     suspend fun deleteTrashChecklists()
+    suspend fun deleteChecklist(checklist: Checklist)
     suspend fun addChecklistItem(item: ChecklistItem): Long
     suspend fun updateChecklistItem(item: ChecklistItem)
     suspend fun deleteChecklistItem(item: ChecklistItem)
@@ -30,6 +31,9 @@ class ChecklistRepositoryImpl(
     }
     override suspend fun deleteTrashChecklists() {
         return checklistDao.deleteTrashChecklists()
+    }
+    override suspend fun deleteChecklist(checklist: Checklist) {
+        return checklistDao.deleteChecklist(checklist)
     }
     override suspend fun addChecklistItem(item: ChecklistItem): Long {
         return checklistDao.addChecklistItem(item)

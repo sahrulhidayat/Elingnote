@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -51,12 +52,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.EditItemChecklist
 import com.sahi.elingnote.ui.components.TransparentHintTextField
-import com.sahi.elingnote.ui.note_feature.edit_note.EditNoteEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -118,6 +119,15 @@ fun EditChecklistScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    LaunchedEffect(checklistColorAnimatable.value) {
+        systemUiController.setStatusBarColor(
+            color = checklistColorAnimatable.value,
+            darkIcons = useDarkIcons
+        )
+    }
 
     Scaffold(
         bottomBar = {

@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -27,8 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.blue
-import androidx.core.graphics.toColor
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
@@ -92,6 +93,16 @@ fun ChecklistsScreen(
         } else {
             Collections.replaceAll(selectedIndexes, true, false)
         }
+    }
+
+    val topBarColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = topBarColor,
+            darkIcons = useDarkIcons
+        )
     }
 
     Scaffold(
@@ -194,10 +205,13 @@ fun ChecklistCard(
         modifier = containerModifier
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = checklistWithItems.checklist.title,
-                style = MaterialTheme.typography.titleMedium,
-            )
+            val title = checklistWithItems.checklist.title
+            if (title.isNotBlank()) {
+                Text(
+                    text = checklistWithItems.checklist.title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             if (checklistWithItems.checklistItems.isNotEmpty()) {
                 ChecklistItems(
@@ -213,9 +227,7 @@ fun ChecklistCard(
                         )
                     }
                 }
-
                 val overflowItems: Int = checklistWithItems.checklistItems.size - itemCount
-
                 if (overflowItems > 0) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -238,7 +250,6 @@ fun ChecklistItems(
         modifier = modifier,
         content = content
     ) { measurables, constraints ->
-
         val placeables = measurables.map { it.measure(constraints) }
 
         data class Item(val placeable: Placeable, val yPosition: Int)

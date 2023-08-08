@@ -45,30 +45,31 @@ class EditChecklistViewModel(
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
             if (checklistId != -1) {
                 viewModelScope.launch {
-                    checklistRepository.getChecklistWithItems(checklistId).also {
-                        currentChecklistId = checklistId
-                        checklistTitle.value = checklistTitle.value.copy(
-                            title = it.checklist.title,
-                            isHintVisible = false
-                        )
-
-                        it.checklistItems.forEach { item ->
-                            items.add(
-                                ChecklistItemState(
-                                    itemId = item.itemId ?: 0,
-                                    label = item.label,
-                                    checked = item.checked,
-                                    checklistId = item.checklistId
-                                )
+                    checklistRepository.getChecklistWithItems(checklistId)
+                        .also { checklistWithItems ->
+                            currentChecklistId = checklistId
+                            checklistTitle.value = checklistTitle.value.copy(
+                                title = checklistWithItems.checklist.title,
+                                isHintVisible = false
                             )
+                            checklistWithItems.checklistItems.forEach { item ->
+                                items.add(
+                                    ChecklistItemState(
+                                        itemId = item.itemId ?: 0,
+                                        label = item.label,
+                                        checked = item.checked,
+                                        checklistId = item.checklistId
+                                    )
+                                )
+                            }
+                            checklistColor.intValue = checklistWithItems.checklist.color
                         }
-                    }
                 }
             } else {
                 viewModelScope.launch {
                     checklistRepository.addChecklist(
                         Checklist(
-                            title = checklistTitle.value.title.ifBlank { "<New checklist>" },
+                            title = checklistTitle.value.title,
                             timestamp = System.currentTimeMillis(),
                             color = checklistColor.intValue
                         )
@@ -97,17 +98,28 @@ class EditChecklistViewModel(
 
             is EditChecklistEvent.SaveChecklist -> {
                 viewModelScope.launch {
-                    checklistRepository.addChecklist(
-                        Checklist(
-                            id = currentChecklistId,
-                            title = checklistTitle.value.title.ifBlank { "<New checklist>" },
-                            timestamp = System.currentTimeMillis(),
-                            color = checklistColor.intValue
+                    if (checklistTitle.value.title.isNotBlank()) {
+                        checklistRepository.addChecklist(
+                            Checklist(
+                                id = currentChecklistId,
+                                title = checklistTitle.value.title,
+                                timestamp = System.currentTimeMillis(),
+                                color = checklistColor.intValue
+                            )
                         )
-                    )
-
-                    itemsFlow.collectLatest { items ->
-                        if (items.isNotEmpty()) {
+                    }
+                    if (checklistTitle.value.title.isBlank() && items.isEmpty()) {
+                        checklistRepository.deleteChecklist(
+                            Checklist(
+                                id = currentChecklistId,
+                                title = checklistTitle.value.title,
+                                timestamp = System.currentTimeMillis(),
+                                color = checklistColor.intValue
+                            )
+                        )
+                        eventFlow.emit(UiEvent.SaveChecklist)
+                    } else {
+                        itemsFlow.collectLatest { items ->
                             items.map {
                                 ChecklistItem(
                                     itemId = it.itemId,
@@ -118,8 +130,8 @@ class EditChecklistViewModel(
                             }.forEach {
                                 checklistRepository.updateChecklistItem(it)
                             }
+                            eventFlow.emit(UiEvent.SaveChecklist)
                         }
-                        eventFlow.emit(UiEvent.SaveChecklist)
                     }
                 }
             }

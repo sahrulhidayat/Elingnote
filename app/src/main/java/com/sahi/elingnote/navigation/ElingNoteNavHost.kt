@@ -35,7 +35,7 @@ fun ElingNoteNavHost(
         checklistsScreen(
             onClickItem = { checklist ->
                 navController.navigate(
-                    "$editChecklistNavigationRoute?checklistId=${checklist.id}&${checklist.color}"
+                    "$editChecklistNavigationRoute?checklistId=${checklist.id}&checklistColor=${checklist.color}"
                 )
             },
         )

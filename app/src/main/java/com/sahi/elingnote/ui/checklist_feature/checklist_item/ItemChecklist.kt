@@ -59,7 +59,7 @@ fun ItemChecklist(
                         if (state.checked)
                             MaterialTheme.colorScheme.primary
                         else
-                            MaterialTheme.colorScheme.surfaceVariant
+                            Color.White
                     )
                     .size(18.dp),
                 contentAlignment = Alignment.Center
