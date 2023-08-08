@@ -78,6 +78,7 @@ dependencies {
 
     // Visual
     implementation "com.airbnb.android:lottie-compose:6.1.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.6-rc"
 
     // Testing dependencies
     testImplementation 'junit:junit:4.13.2'

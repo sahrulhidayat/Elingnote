@@ -2,9 +2,12 @@ package com.sahi.elingnote.ui.note_feature.edit_note
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -49,6 +52,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
@@ -111,6 +115,15 @@ fun EditNoteScreen(
     val noteColorSheet = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    LaunchedEffect(noteColorAnimatable.value) {
+        systemUiController.setStatusBarColor(
+            color = noteColorAnimatable.value,
+            darkIcons = useDarkIcons
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -222,7 +235,11 @@ fun EditNoteScreen(
                                 .clickable {
                                     scope.launch {
                                         noteColorAnimatable.animateTo(
-                                            targetValue = Color(buttonColor)
+                                            targetValue = Color(buttonColor),
+                                            animationSpec = tween(
+                                                durationMillis = 300,
+                                                easing = FastOutLinearInEasing
+                                            )
                                         )
                                     }
                                     onEvent(EditNoteEvent.ChangeColor(buttonColor))
