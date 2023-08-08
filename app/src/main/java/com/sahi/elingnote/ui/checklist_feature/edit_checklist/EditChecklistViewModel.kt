@@ -1,9 +1,10 @@
 package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,8 +15,6 @@ import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -29,19 +28,16 @@ class EditChecklistViewModel(
     private val checklistRepository: ChecklistRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    private val _checklistTitle = mutableStateOf(
-        EditChecklistState(hint = "Enter checklist title")
-    )
-    val checklistTitle: State<EditChecklistState> = _checklistTitle
+    var checklistTitle = mutableStateOf(EditChecklistState(hint = "Checklist title"))
+        private set
 
     private val items = mutableStateListOf<ChecklistItemState>()
+    var itemsFlow = MutableStateFlow(items)
+        private set
+    private var checklistColor = mutableIntStateOf(Checklist.checklistColors[0].toArgb())
 
-    private val _itemsFlow = MutableStateFlow(items)
-    val itemsFlow: StateFlow<List<ChecklistItemState>> = _itemsFlow
-
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    var eventFlow = MutableSharedFlow<UiEvent>()
+        private set
 
     private var currentChecklistId: Int? = null
 
@@ -51,7 +47,7 @@ class EditChecklistViewModel(
                 viewModelScope.launch {
                     checklistRepository.getChecklistWithItems(checklistId).also {
                         currentChecklistId = checklistId
-                        _checklistTitle.value = checklistTitle.value.copy(
+                        checklistTitle.value = checklistTitle.value.copy(
                             title = it.checklist.title,
                             isHintVisible = false
                         )
@@ -74,6 +70,7 @@ class EditChecklistViewModel(
                         Checklist(
                             title = checklistTitle.value.title.ifBlank { "<New checklist>" },
                             timestamp = System.currentTimeMillis(),
+                            color = checklistColor.intValue
                         )
                     ).also { checklistId ->
                         currentChecklistId = checklistId.toInt()
@@ -86,13 +83,13 @@ class EditChecklistViewModel(
     fun onEvent(event: EditChecklistEvent) {
         when (event) {
             is EditChecklistEvent.EnteredTitle -> {
-                _checklistTitle.value = checklistTitle.value.copy(
+                checklistTitle.value = checklistTitle.value.copy(
                     title = event.value
                 )
             }
 
             is EditChecklistEvent.ChangeTitleFocus -> {
-                _checklistTitle.value = checklistTitle.value.copy(
+                checklistTitle.value = checklistTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             checklistTitle.value.title.isBlank()
                 )
@@ -105,6 +102,7 @@ class EditChecklistViewModel(
                             id = currentChecklistId,
                             title = checklistTitle.value.title.ifBlank { "<New checklist>" },
                             timestamp = System.currentTimeMillis(),
+                            color = checklistColor.intValue
                         )
                     )
 
@@ -121,9 +119,13 @@ class EditChecklistViewModel(
                                 checklistRepository.updateChecklistItem(it)
                             }
                         }
-                        _eventFlow.emit(UiEvent.SaveChecklist)
+                        eventFlow.emit(UiEvent.SaveChecklist)
                     }
                 }
+            }
+
+            is EditChecklistEvent.ChangeColor -> {
+                checklistColor.intValue = event.color
             }
         }
     }
@@ -197,5 +199,6 @@ sealed class UiEvent {
 sealed class EditChecklistEvent {
     data class EnteredTitle(val value: String) : EditChecklistEvent()
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
+    data class ChangeColor(val color: Int) : EditChecklistEvent()
     object SaveChecklist : EditChecklistEvent()
 }
