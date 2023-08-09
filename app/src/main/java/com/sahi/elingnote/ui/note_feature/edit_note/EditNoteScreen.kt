@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -117,11 +116,10 @@ fun EditNoteScreen(
     )
 
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = !isSystemInDarkTheme()
     LaunchedEffect(noteColorAnimatable.value) {
         systemUiController.setStatusBarColor(
             color = noteColorAnimatable.value,
-            darkIcons = useDarkIcons
+            darkIcons = true
         )
     }
 
@@ -144,7 +142,7 @@ fun EditNoteScreen(
                                     color = noteColorAnimatable.value,
                                     shape = CircleShape
                                 )
-                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -231,7 +229,7 @@ fun EditNoteScreen(
                                 .size(44.dp)
                                 .clip(CircleShape)
                                 .background(color)
-                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                                 .clickable {
                                     scope.launch {
                                         noteColorAnimatable.animateTo(

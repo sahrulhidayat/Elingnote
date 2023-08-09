@@ -1,9 +1,8 @@
 package com.sahi.elingnote.ui.note_feature.notes
 
 import android.os.Build
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -17,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -167,28 +167,23 @@ fun NoteCard(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {
-    var containerModifier = modifier
-        .background(
-            color = Color(note.color),
-            shape = RoundedCornerShape(10.dp)
-        )
-        .heightIn(max = 210.dp)
-        .combinedClickable(
-            onClick = onClick,
-            onLongClick = onLongClick
-        )
-
-    if (isSelected)
-        containerModifier = containerModifier.then(
-            Modifier.border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(10.dp)
-            )
-        )
-
-    Box(
-        modifier = containerModifier
+    val isWhiteBackground = Color(note.color) == Color.White
+    Card(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .heightIn(max = 210.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        elevation = CardDefaults.cardElevation(0.dp),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(note.color)),
+        border = when {
+            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
+            isWhiteBackground -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            else -> null
+        }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)

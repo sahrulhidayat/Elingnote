@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +30,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -121,11 +121,10 @@ fun EditChecklistScreen(
     )
 
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = !isSystemInDarkTheme()
     LaunchedEffect(checklistColorAnimatable.value) {
         systemUiController.setStatusBarColor(
             color = checklistColorAnimatable.value,
-            darkIcons = useDarkIcons
+            darkIcons = true
         )
     }
 
@@ -147,7 +146,7 @@ fun EditChecklistScreen(
                                     color = checklistColorAnimatable.value,
                                     shape = CircleShape
                                 )
-                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -179,9 +178,7 @@ fun EditChecklistScreen(
                             onEvent(EditChecklistEvent.ChangeTitleFocus(it))
                         },
                         isHintVisible = titleState.isHintVisible,
-                        textStyle = MaterialTheme.typography.titleLarge.copy(
-                            color = MaterialTheme.colorScheme.onBackground
-                        ),
+                        textStyle = MaterialTheme.typography.titleLarge,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
                     )
@@ -199,6 +196,7 @@ fun EditChecklistScreen(
                         || itemsState.isEmpty()
                     ) {
                         IconButton(
+                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Black),
                             onClick = {
                                 itemEvent(ChecklistItemEvent.AddItem)
                             }
@@ -233,7 +231,7 @@ fun EditChecklistScreen(
                                 .size(44.dp)
                                 .clip(CircleShape)
                                 .background(color)
-                                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                                 .clickable {
                                     scope.launch {
                                         checklistColorAnimatable.animateTo(

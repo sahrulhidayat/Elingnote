@@ -1,9 +1,8 @@
 package com.sahi.elingnote.ui.checklist_feature.checklists
 
 import android.os.Build
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -25,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
@@ -181,35 +181,33 @@ fun ChecklistCard(
 ) {
     var itemCount by remember { mutableIntStateOf(0) }
     val checklistColor = checklistWithItems.checklist.color
-    var containerModifier = modifier
-        .background(
-            color = Color(checklistColor),
-            shape = RoundedCornerShape(10.dp)
-        )
-        .heightIn(max = 210.dp)
-        .combinedClickable(
-            onClick = onClick,
-            onLongClick = onLongClick
-        )
+    val isWhiteBackground = Color(checklistColor) == Color.White
 
-    if (isSelected)
-        containerModifier = containerModifier.then(
-            Modifier.border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(10.dp)
-            )
-        )
-
-    Box(
-        modifier = containerModifier
+    Card(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .heightIn(max = 210.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        elevation = CardDefaults.cardElevation(0.dp),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(checklistColor)),
+        border = when {
+            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
+            isWhiteBackground -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            else -> null
+        }
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             val title = checklistWithItems.checklist.title
             if (title.isNotBlank()) {
                 Text(
                     text = checklistWithItems.checklist.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = Color.Black
+                    )
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -232,7 +230,9 @@ fun ChecklistCard(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "+ $overflowItems items",
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.outline
+                        )
                     )
                 }
             }
