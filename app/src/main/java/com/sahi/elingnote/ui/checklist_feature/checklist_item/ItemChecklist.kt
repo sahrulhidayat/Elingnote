@@ -121,7 +121,7 @@ fun EditItemChecklist(
         )
         Box(
             modifier = Modifier
-                .padding(top = 14.dp)
+                .padding(top = 11.dp)
                 .weight(1f)
         ) {
             TransparentHintTextField(

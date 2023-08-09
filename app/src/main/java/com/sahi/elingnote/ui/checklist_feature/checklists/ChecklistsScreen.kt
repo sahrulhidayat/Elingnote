@@ -186,7 +186,6 @@ fun ChecklistCard(
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
-            .heightIn(max = 210.dp)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
@@ -196,11 +195,19 @@ fun ChecklistCard(
         colors = CardDefaults.cardColors(containerColor = Color(checklistColor)),
         border = when {
             isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
-            isWhiteBackground -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            isWhiteBackground -> BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
             else -> null
         }
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .heightIn(max = 200.dp)
+        ) {
             val title = checklistWithItems.checklist.title
             if (title.isNotBlank()) {
                 Text(

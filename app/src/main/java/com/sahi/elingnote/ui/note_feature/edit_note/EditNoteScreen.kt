@@ -186,7 +186,7 @@ fun EditNoteScreen(
                             )
                         },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     TransparentHintTextField(
                         text = contentState.text,
                         hint = contentState.hint,
