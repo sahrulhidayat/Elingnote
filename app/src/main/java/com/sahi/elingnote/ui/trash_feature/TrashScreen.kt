@@ -83,7 +83,7 @@ fun TrashScreen(
     if (showDeleteDialog) {
         AlertDialog(
             title = { Text(text = "Confirm delete") },
-            text = { Text(text = "Are you sure want to delete all items in trash?") },
+            text = { Text(text = "Are you sure want to delete all items in the trash?") },
             confirmButton = {
                 TextButton(onClick = {
                     onEvent(TrashEvent.DeleteAll)

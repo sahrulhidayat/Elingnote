@@ -232,16 +232,17 @@ fun ChecklistCard(
                         )
                     }
                 }
-                val overflowItems: Int = checklistWithItems.checklistItems.size - itemCount
-                if (overflowItems > 0) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "+ $overflowItems items",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            color = MaterialTheme.colorScheme.outline
-                        )
+            }
+        }
+        val overflowItems = checklistWithItems.checklistItems.size - itemCount
+        if (overflowItems > 0) {
+            Box(modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)) {
+                Text(
+                    text = "+ $overflowItems items",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                }
+                )
             }
         }
     }
