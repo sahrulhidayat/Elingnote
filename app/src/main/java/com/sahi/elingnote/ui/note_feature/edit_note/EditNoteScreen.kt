@@ -176,7 +176,7 @@ fun EditNoteScreen(
                             onEvent(EditNoteEvent.ChangeTitleFocus(it))
                         },
                         isHintVisible = titleState.isHintVisible,
-                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                        textStyle = MaterialTheme.typography.titleMedium.copy(
                             color = Color.Black
                         ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -186,7 +186,7 @@ fun EditNoteScreen(
                             )
                         },
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     TransparentHintTextField(
                         text = contentState.text,
                         hint = contentState.hint,
@@ -197,7 +197,7 @@ fun EditNoteScreen(
                             onEvent(EditNoteEvent.ChangeContentFocus(it))
                         },
                         isHintVisible = contentState.isHintVisible,
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(
                             color = Color.Black,
                             lineHeight = 1.2.em,
                         ),

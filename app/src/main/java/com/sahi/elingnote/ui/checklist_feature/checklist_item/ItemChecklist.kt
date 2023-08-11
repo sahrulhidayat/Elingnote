@@ -121,7 +121,7 @@ fun EditItemChecklist(
         )
         Box(
             modifier = Modifier
-                .padding(top = 14.dp)
+                .padding(top = 11.dp)
                 .weight(1f)
         ) {
             TransparentHintTextField(
@@ -129,11 +129,11 @@ fun EditItemChecklist(
                 hint = state.hint,
                 textStyle =
                 if (state.checked)
-                    MaterialTheme.typography.bodyLarge.copy(
+                    MaterialTheme.typography.bodyMedium.copy(
                         textDecoration = TextDecoration.LineThrough
                     )
                 else
-                    MaterialTheme.typography.bodyLarge.copy(
+                    MaterialTheme.typography.bodyMedium.copy(
                         textDecoration = TextDecoration.None
                     ),
                 isHintVisible = state.isHintVisible,

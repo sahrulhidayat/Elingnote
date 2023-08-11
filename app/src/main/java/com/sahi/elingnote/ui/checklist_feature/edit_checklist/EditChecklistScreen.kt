@@ -178,7 +178,7 @@ fun EditChecklistScreen(
                             onEvent(EditChecklistEvent.ChangeTitleFocus(it))
                         },
                         isHintVisible = titleState.isHintVisible,
-                        textStyle = MaterialTheme.typography.titleLarge,
+                        textStyle = MaterialTheme.typography.titleMedium,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
                     )

@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
@@ -171,7 +170,6 @@ fun NoteCard(
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
-            .heightIn(max = 210.dp)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
@@ -181,12 +179,18 @@ fun NoteCard(
         colors = CardDefaults.cardColors(containerColor = Color(note.color)),
         border = when {
             isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
-            isWhiteBackground -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            isWhiteBackground -> BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
             else -> null
         }
     ) {
         Column(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
+                .padding(8.dp)
+                .heightIn(max = 200.dp)
         ) {
             if (note.title.isNotBlank())
                 Text(
@@ -200,7 +204,6 @@ fun NoteCard(
                     text = note.content,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Black,
-                    lineHeight = 1.2.em,
                     overflow = TextOverflow.Ellipsis
                 )
         }
