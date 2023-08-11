@@ -133,7 +133,7 @@ fun EditItemChecklist(
                         textDecoration = TextDecoration.LineThrough
                     )
                 else
-                    MaterialTheme.typography.bodyLarge.copy(
+                    MaterialTheme.typography.bodyMedium.copy(
                         textDecoration = TextDecoration.None
                     ),
                 isHintVisible = state.isHintVisible,

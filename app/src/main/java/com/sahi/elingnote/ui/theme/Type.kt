@@ -25,9 +25,9 @@ val Typography = Typography(
     bodyMedium = TextStyle(
         fontFamily = nunitoSansFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.3.sp
+        fontSize = 18.sp,
+        lineHeight = 18.sp,
+        letterSpacing = 0.2.sp
     ),
     titleLarge = TextStyle(
         fontFamily = nunitoSansFamily,
