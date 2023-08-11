@@ -1,4 +1,4 @@
-package com.sahi.elingnote.ui.checklist_feature.checklist_item
+package com.sahi.elingnote.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -32,15 +32,52 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sahi.elingnote.ui.components.TransparentHintTextField
+import com.sahi.elingnote.ui.checklist_feature.edit_checklist.ChecklistItemEvent
+import com.sahi.elingnote.ui.checklist_feature.edit_checklist.ChecklistItemState
 
 @Composable
-fun ItemChecklist(
+fun ChecklistItems(
+    modifier: Modifier = Modifier,
+    onPlacementComplete: (Int) -> Unit,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+        val placeables = measurables.map { it.measure(constraints) }
+
+        data class Item(val placeable: Placeable, val yPosition: Int)
+
+        val items = mutableListOf<Item>()
+        var yPosition = 0
+        for (placeable in placeables) {
+            if (yPosition + placeable.height > constraints.maxHeight) break
+            items.add(Item(placeable, yPosition))
+            yPosition += placeable.height
+        }
+
+        layout(
+            width = items.maxOf { it.placeable.width },
+            height = items.last().let { it.yPosition + it.placeable.height },
+        ) {
+            items.forEach {
+                it.placeable.place(0, it.yPosition)
+            }
+            onPlacementComplete(items.count())
+        }
+    }
+}
+
+@Composable
+fun ChecklistItem(
     modifier: Modifier = Modifier,
     state: ChecklistItemState,
 ) {
@@ -93,7 +130,7 @@ fun ItemChecklist(
 }
 
 @Composable
-fun EditItemChecklist(
+fun EditChecklistItem(
     modifier: Modifier = Modifier,
     index: Int,
     state: ChecklistItemState,

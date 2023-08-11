@@ -13,6 +13,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,11 +22,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ElingNoteTopAppBar(
     modifier: Modifier = Modifier,
-    title: String,
+    title: String = "",
     actions: @Composable RowScope.() -> Unit = {},
-    enterSelectMode: Boolean,
-    selectedIndexes: SnapshotStateList<Boolean>,
-    onResetSelect: () -> Unit,
+    enterSelectMode: Boolean = false,
+    selectedIndexes: SnapshotStateList<Boolean> = mutableStateListOf(),
+    onResetSelect: () -> Unit = {},
 ) {
 
     BackHandler(enabled = enterSelectMode) {

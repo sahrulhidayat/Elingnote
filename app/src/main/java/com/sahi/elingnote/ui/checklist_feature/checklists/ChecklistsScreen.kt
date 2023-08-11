@@ -1,39 +1,38 @@
 package com.sahi.elingnote.ui.checklist_feature.checklists
 
 import android.os.Build
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Checklist
-import com.sahi.elingnote.data.model.ChecklistWithItems
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
+import com.sahi.elingnote.ui.components.ChecklistCard
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
 import kotlinx.coroutines.flow.collectLatest
@@ -166,118 +165,6 @@ fun ChecklistsScreen(
         val items = checklistsState.checklists.filter { !it.checklist.isTrash }
         if (items.isEmpty()) {
             EmptyStateAnimation(modifier = Modifier.fillMaxSize())
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ChecklistCard(
-    checklistWithItems: ChecklistWithItems,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    onLongClick: (() -> Unit)? = null,
-) {
-    var itemCount by remember { mutableIntStateOf(0) }
-    val checklistColor = checklistWithItems.checklist.color
-    val isWhiteBackground = Color(checklistColor) == Color.White
-
-    Card(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
-        elevation = CardDefaults.cardElevation(0.dp),
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(checklistColor)),
-        border = when {
-            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
-            isWhiteBackground -> BorderStroke(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            else -> null
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-                .heightIn(max = 200.dp)
-        ) {
-            val title = checklistWithItems.checklist.title
-            if (title.isNotBlank()) {
-                Text(
-                    text = checklistWithItems.checklist.title,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = Color.Black
-                    )
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            if (checklistWithItems.checklistItems.isNotEmpty()) {
-                ChecklistItems(
-                    onPlacementComplete = { itemCount = it }
-                ) {
-                    checklistWithItems.checklistItems.forEach { item ->
-                        ItemChecklist(
-                            state = ChecklistItemState(
-                                checklistId = item.checklistId,
-                                label = item.label,
-                                checked = item.checked
-                            )
-                        )
-                    }
-                }
-            }
-        }
-        val overflowItems = checklistWithItems.checklistItems.size - itemCount
-        if (overflowItems > 0) {
-            Box(modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)) {
-                Text(
-                    text = "+ $overflowItems items",
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ChecklistItems(
-    modifier: Modifier = Modifier,
-    onPlacementComplete: (Int) -> Unit,
-    content: @Composable () -> Unit
-) {
-    Layout(
-        modifier = modifier,
-        content = content
-    ) { measurables, constraints ->
-        val placeables = measurables.map { it.measure(constraints) }
-
-        data class Item(val placeable: Placeable, val yPosition: Int)
-
-        val items = mutableListOf<Item>()
-        var yPosition = 0
-        for (placeable in placeables) {
-            if (yPosition + placeable.height > constraints.maxHeight) break
-            items.add(Item(placeable, yPosition))
-            yPosition += placeable.height
-        }
-
-        layout(
-            width = items.maxOf { it.placeable.width },
-            height = items.last().let { it.yPosition + it.placeable.height },
-        ) {
-            items.forEach {
-                it.placeable.place(0, it.yPosition)
-            }
-            onPlacementComplete(items.count())
         }
     }
 }

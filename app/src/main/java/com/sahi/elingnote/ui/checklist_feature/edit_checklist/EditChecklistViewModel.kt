@@ -11,8 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistItem
 import com.sahi.elingnote.data.repository.ChecklistRepository
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -22,6 +20,16 @@ data class EditChecklistState(
     val title: String = "",
     val hint: String = "",
     val isHintVisible: Boolean = true,
+)
+
+data class ChecklistItemState(
+    val itemId: Int = 0,
+    val checklistId: Int = 0,
+    var label: String = "",
+    var checked: Boolean = false,
+    val hint: String = "New item",
+    val isHintVisible: Boolean = true,
+    val isFocused: Boolean = false
 )
 
 class EditChecklistViewModel(
@@ -213,4 +221,12 @@ sealed class EditChecklistEvent {
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
     data class ChangeColor(val color: Int) : EditChecklistEvent()
     object SaveChecklist : EditChecklistEvent()
+}
+
+sealed class ChecklistItemEvent {
+    data class EnteredLabel(val index: Int, val label: String) : ChecklistItemEvent()
+    data class ChangeLabelFocus(val index: Int, val focusState: FocusState) : ChecklistItemEvent()
+    data class ChangeChecked(val index: Int, val checked: Boolean) : ChecklistItemEvent()
+    data class DeleteItem(val index: Int) : ChecklistItemEvent()
+    object AddItem : ChecklistItemEvent()
 }

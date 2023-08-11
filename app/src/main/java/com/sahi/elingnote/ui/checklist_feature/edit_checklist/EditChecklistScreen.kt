@@ -54,9 +54,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemEvent
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
-import com.sahi.elingnote.ui.checklist_feature.checklist_item.EditItemChecklist
+import com.sahi.elingnote.ui.components.EditChecklistItem
 import com.sahi.elingnote.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -113,7 +111,7 @@ fun EditChecklistScreen(
     }
     val focusManager = LocalFocusManager.current
 
-    val checklistColorAnimatable = remember { Animatable(Color(checklistColor))}
+    val checklistColorAnimatable = remember { Animatable(Color(checklistColor)) }
     val scope = rememberCoroutineScope()
     var showColorSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
@@ -186,7 +184,7 @@ fun EditChecklistScreen(
             }
             itemsIndexed(itemsState) { index, item ->
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    EditItemChecklist(state = item, index = index, itemEvent = itemEvent)
+                    EditChecklistItem(state = item, index = index, itemEvent = itemEvent)
                 }
             }
             item {
