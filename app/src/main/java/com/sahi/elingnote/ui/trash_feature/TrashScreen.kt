@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -82,7 +83,7 @@ fun TrashScreen(
     if (showDeleteDialog) {
         AlertDialog(
             title = { Text(text = "Confirm delete") },
-            text = { Text(text = "Delete all notes and checklists in trash?") },
+            text = { Text(text = "Are you sure want to delete all items in trash?") },
             confirmButton = {
                 TextButton(onClick = {
                     onEvent(TrashEvent.DeleteAll)
@@ -117,9 +118,9 @@ fun TrashScreen(
                         )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }

@@ -1,15 +1,15 @@
 package com.sahi.elingnote.ui.note_feature.edit_note
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 data class EditNoteState(
@@ -22,19 +22,14 @@ class EditNoteViewModel(
     private val noteRepository: NoteRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    var noteTitle = mutableStateOf(EditNoteState(hint = "Note title"))
+        private set
+    var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
+        private set
+    private var noteColor = mutableIntStateOf(Note.noteColors[0].toArgb())
 
-    private val _noteTitle = mutableStateOf(
-        EditNoteState(hint = "Enter note title")
-    )
-    val noteTitle: State<EditNoteState> = _noteTitle
-
-    private val _noteContent = mutableStateOf(
-        EditNoteState(hint = "Type some content")
-    )
-    val noteContent: State<EditNoteState> = _noteContent
-
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    var eventFlow = MutableSharedFlow<UiEvent>()
+        private set
 
     private var currentNoteId: Int? = null
 
@@ -44,14 +39,15 @@ class EditNoteViewModel(
                 viewModelScope.launch {
                     noteRepository.getNoteById(noteId)?.also { note ->
                         currentNoteId = note.id
-                        _noteTitle.value = noteTitle.value.copy(
+                        noteTitle.value = noteTitle.value.copy(
                             text = note.title,
                             isHintVisible = note.title.isBlank()
                         )
-                        _noteContent.value = noteContent.value.copy(
+                        noteContent.value = noteContent.value.copy(
                             text = note.content,
                             isHintVisible = note.content.isBlank()
                         )
+                        noteColor.intValue = note.color
                     }
                 }
             }
@@ -61,44 +57,51 @@ class EditNoteViewModel(
     fun onEvent(event: EditNoteEvent) {
         when (event) {
             is EditNoteEvent.EnteredTitle -> {
-                _noteTitle.value = noteTitle.value.copy(
+                noteTitle.value = noteTitle.value.copy(
                     text = event.value
                 )
             }
 
             is EditNoteEvent.ChangeTitleFocus -> {
-                _noteTitle.value = noteTitle.value.copy(
+                noteTitle.value = noteTitle.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteTitle.value.text.isBlank()
                 )
             }
 
             is EditNoteEvent.EnteredContent -> {
-                _noteContent.value = noteContent.value.copy(
+                noteContent.value = noteContent.value.copy(
                     text = event.value
                 )
             }
 
             is EditNoteEvent.ChangeContentFocus -> {
-                _noteContent.value = noteContent.value.copy(
+                noteContent.value = noteContent.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
                             noteContent.value.text.isBlank()
                 )
             }
 
+            is EditNoteEvent.ChangeColor -> {
+                noteColor.intValue = event.color
+            }
+
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
-                    noteRepository.addNote(
-                        Note(
-                            id = currentNoteId,
-                            title = noteTitle.value.text.ifBlank { "<New note>" },
-                            content = noteContent.value.text.ifBlank { "" },
-                            timestamp = System.currentTimeMillis(),
+                    if (noteTitle.value.text.isNotBlank() || noteContent.value.text.isNotBlank())
+                        noteRepository.addNote(
+                            Note(
+                                id = currentNoteId,
+                                title = noteTitle.value.text,
+                                content = noteContent.value.text,
+                                timestamp = System.currentTimeMillis(),
+                                color = noteColor.intValue
+                            )
                         )
-                    )
-                    _eventFlow.emit(UiEvent.SaveNote)
+                    eventFlow.emit(UiEvent.SaveNote)
                 }
             }
+
         }
     }
 }
@@ -113,5 +116,6 @@ sealed class EditNoteEvent {
     data class ChangeTitleFocus(val focusState: FocusState) : EditNoteEvent()
     data class EnteredContent(val value: String) : EditNoteEvent()
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
+    data class ChangeColor(val color: Int) : EditNoteEvent()
     object SaveNote : EditNoteEvent()
 }

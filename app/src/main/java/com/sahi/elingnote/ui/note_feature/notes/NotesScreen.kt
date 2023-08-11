@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,9 +17,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.ElingNoteTopAppBar
 import com.sahi.elingnote.ui.components.EmptyStateAnimation
@@ -28,7 +31,7 @@ import java.util.Collections
 
 @Composable
 fun NotesRoute(
-    onClickItem: (Int?) -> Unit,
+    onClickItem: (Note) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NotesViewModel = koinViewModel(),
 ) {
@@ -64,10 +67,9 @@ fun NotesScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (NotesEvent) -> Unit,
-    onClickItem: (Int?) -> Unit,
+    onClickItem: (Note) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     var enterSelectMode by rememberSaveable {
         mutableStateOf(false)
     }
@@ -81,13 +83,23 @@ fun NotesScreen(
         }
     }
 
+    val topBarColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = topBarColor,
+            darkIcons = useDarkIcons
+        )
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
         },
         topBar = {
             ElingNoteTopAppBar(
-                title = "Your Notes",
+                title = "My Notes",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
@@ -129,7 +141,7 @@ fun NotesScreen(
                             if (enterSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
-                                onClickItem(note.id)
+                                onClickItem(note)
                         },
                         onLongClick = {
                             enterSelectMode = true
@@ -155,29 +167,39 @@ fun NoteCard(
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {
+    val isWhiteBackground = Color(note.color) == Color.White
     Card(
         modifier = modifier
-            .heightIn(max = 210.dp)
             .clip(RoundedCornerShape(10.dp))
+            .heightIn(max = 210.dp)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
+        elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(10.dp),
-        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+        colors = CardDefaults.cardColors(containerColor = Color(note.color)),
+        border = when {
+            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
+            isWhiteBackground -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            else -> null
+        }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(
-                text = note.title,
-                style = MaterialTheme.typography.titleMedium
-            )
+            if (note.title.isNotBlank())
+                Text(
+                    text = note.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
             Spacer(modifier = Modifier.height(4.dp))
             if (note.content.isNotBlank())
                 Text(
                     text = note.content,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
                     lineHeight = 1.2.em,
                     overflow = TextOverflow.Ellipsis
                 )

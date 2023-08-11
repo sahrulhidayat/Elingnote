@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -23,9 +25,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.elingnote.data.model.Checklist
 import com.sahi.elingnote.data.model.ChecklistWithItems
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ChecklistItemState
 import com.sahi.elingnote.ui.checklist_feature.checklist_item.ItemChecklist
@@ -37,7 +42,7 @@ import java.util.Collections
 
 @Composable
 fun ChecklistsRoute(
-    onClickItem: (Int?) -> Unit,
+    onClickItem: (Checklist) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChecklistsViewModel = koinViewModel(),
 ) {
@@ -73,7 +78,7 @@ fun ChecklistsScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
-    onClickItem: (checklistId: Int?) -> Unit,
+    onClickItem: (Checklist) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -90,13 +95,23 @@ fun ChecklistsScreen(
         }
     }
 
+    val topBarColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = topBarColor,
+            darkIcons = useDarkIcons
+        )
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
         },
         topBar = {
             ElingNoteTopAppBar(
-                title = "Your Checklists",
+                title = "My Checklists",
                 actions = {
                     if (enterSelectMode) {
                         IconButton(
@@ -138,7 +153,7 @@ fun ChecklistsScreen(
                             if (enterSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
-                                onClickItem(checklistWithItems.checklist.id)
+                                onClickItem(checklistWithItems.checklist)
                         },
                         onLongClick = {
                             enterSelectMode = true
@@ -165,22 +180,36 @@ fun ChecklistCard(
     onLongClick: (() -> Unit)? = null,
 ) {
     var itemCount by remember { mutableIntStateOf(0) }
+    val checklistColor = checklistWithItems.checklist.color
+    val isWhiteBackground = Color(checklistColor) == Color.White
+
     Card(
         modifier = modifier
-            .heightIn(max = 210.dp)
             .clip(RoundedCornerShape(10.dp))
+            .heightIn(max = 210.dp)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
+        elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(10.dp),
-        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+        colors = CardDefaults.cardColors(containerColor = Color(checklistColor)),
+        border = when {
+            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
+            isWhiteBackground -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            else -> null
+        }
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = checklistWithItems.checklist.title,
-                style = MaterialTheme.typography.titleMedium,
-            )
+            val title = checklistWithItems.checklist.title
+            if (title.isNotBlank()) {
+                Text(
+                    text = checklistWithItems.checklist.title,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = Color.Black
+                    )
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             if (checklistWithItems.checklistItems.isNotEmpty()) {
                 ChecklistItems(
@@ -196,14 +225,14 @@ fun ChecklistCard(
                         )
                     }
                 }
-
                 val overflowItems: Int = checklistWithItems.checklistItems.size - itemCount
-
                 if (overflowItems > 0) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "+ $overflowItems items",
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.outline
+                        )
                     )
                 }
             }
@@ -221,7 +250,6 @@ fun ChecklistItems(
         modifier = modifier,
         content = content
     ) { measurables, constraints ->
-
         val placeables = measurables.map { it.measure(constraints) }
 
         data class Item(val placeable: Placeable, val yPosition: Int)

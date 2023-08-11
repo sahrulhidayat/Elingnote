@@ -9,6 +9,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = lightColorScheme(
@@ -87,13 +88,16 @@ fun ElingNoteTheme(
         else -> LightColorScheme
     }
     val view = LocalView.current
+    val window = (view.context as Activity).window
     if (!view.isInEditMode) {
         val currentWindow = (view.context as? Activity)?.window
             ?: throw Exception("Not in an activity - unable to get Window reference")
 
         SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.surfaceColorAtElevation(3.dp).toArgb()
+            window.navigationBarColor = colorScheme.surfaceColorAtElevation(3.dp).toArgb()
+            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

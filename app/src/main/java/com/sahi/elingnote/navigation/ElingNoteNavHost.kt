@@ -25,17 +25,17 @@ fun ElingNoteNavHost(
         modifier = modifier,
     ) {
         notesScreen(
-            onClickItem = { noteId ->
+            onClickItem = { note ->
                 navController.navigate(
-                    "$editNoteNavigationRoute?noteId=${noteId}"
+                    "$editNoteNavigationRoute?noteId=${note.id}&noteColor=${note.color}"
                 )
             },
         )
         editNoteScreen(onSaveNote = { navController.navigateUp() })
         checklistsScreen(
-            onClickItem = { checklistId ->
+            onClickItem = { checklist ->
                 navController.navigate(
-                    "$editChecklistNavigationRoute?checklistId=${checklistId}"
+                    "$editChecklistNavigationRoute?checklistId=${checklist.id}&checklistColor=${checklist.color}"
                 )
             },
         )

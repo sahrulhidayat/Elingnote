@@ -57,3 +57,15 @@ val md_theme_dark_inverseOnSurface = Color(0xFF001F25)
 val md_theme_dark_inverseSurface = Color(0xFFA6EEFF)
 val md_theme_dark_inversePrimary = Color(0xFF00696D)
 val md_theme_dark_surfaceTint = Color(0xFF4CD9DF)
+
+// Note & checklist colors
+val White = Color.White
+val LightRed = Color(0xffff8585)
+val SandyBrown = Color(0xfffab061)
+val Celadon = Color(0xff93d9a3)
+val Celeste = Color(0xffa5f1e9)
+val AmaranthPink = Color(0xffe497af)
+val PaleAzure = Color(0xff7fd3f7)
+val Mindaro = Color(0xffdff37c)
+val Wisteria = Color(0xffc1a9f8)
+val RosyBrown = Color(0xffb89d9d)
