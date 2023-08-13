@@ -12,8 +12,14 @@ fun NavController.navigateToChecklists(navOptions: NavOptions? = null) {
     this.navigate(checklistsNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.checklistsScreen(onClickItem: (Checklist) -> Unit) {
+fun NavGraphBuilder.checklistsScreen(
+    onClickItem: (Checklist) -> Unit,
+    onClickFab: () -> Unit
+) {
     composable(route = checklistsNavigationRoute) {
-        ChecklistsRoute(onClickItem)
+        ChecklistsRoute(
+            onClickItem = onClickItem,
+            onClickFab = onClickFab
+        )
     }
 }
