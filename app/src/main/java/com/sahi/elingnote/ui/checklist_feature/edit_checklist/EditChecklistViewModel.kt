@@ -105,26 +105,18 @@ class EditChecklistViewModel(
             }
 
             is EditChecklistEvent.SaveChecklist -> {
+                val checklist = Checklist(
+                    id = currentChecklistId,
+                    title = checklistTitle.value.title,
+                    timestamp = System.currentTimeMillis(),
+                    color = checklistColor.intValue
+                )
                 viewModelScope.launch {
                     if (checklistTitle.value.title.isNotBlank()) {
-                        checklistRepository.addChecklist(
-                            Checklist(
-                                id = currentChecklistId,
-                                title = checklistTitle.value.title,
-                                timestamp = System.currentTimeMillis(),
-                                color = checklistColor.intValue
-                            )
-                        )
+                        checklistRepository.addChecklist(checklist)
                     }
                     if (checklistTitle.value.title.isBlank() && items.isEmpty()) {
-                        checklistRepository.deleteChecklist(
-                            Checklist(
-                                id = currentChecklistId,
-                                title = checklistTitle.value.title,
-                                timestamp = System.currentTimeMillis(),
-                                color = checklistColor.intValue
-                            )
-                        )
+                        checklistRepository.deleteChecklist(checklist)
                         eventFlow.emit(UiEvent.SaveChecklist)
                     } else {
                         itemsFlow.collectLatest { items ->
