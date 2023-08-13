@@ -86,12 +86,12 @@ fun NotesScreen(
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var enterSelectMode by rememberSaveable {
+    var isSelectMode by rememberSaveable {
         mutableStateOf(false)
     }
 
     fun resetSelected() {
-        enterSelectMode = false
+        isSelectMode = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             selectedIndexes.replaceAll { false }
         } else {
@@ -130,7 +130,7 @@ fun NotesScreen(
             ElingNoteTopAppBar(
                 title = "My Notes",
                 actions = {
-                    if (enterSelectMode) {
+                    if (isSelectMode) {
                         IconButton(
                             onClick = {
                                 selectedIndexes.withIndex().forEach { item ->
@@ -146,7 +146,7 @@ fun NotesScreen(
                         }
                     }
                 },
-                enterSelectMode = enterSelectMode,
+                isSelectMode = isSelectMode,
                 selectedIndexes = selectedIndexes,
                 onResetSelect = { resetSelected() }
             )
@@ -167,13 +167,13 @@ fun NotesScreen(
                             .fillMaxWidth()
                             .padding(vertical = 4.dp, horizontal = 8.dp),
                         onClick = {
-                            if (enterSelectMode)
+                            if (isSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
                                 onClickItem(note)
                         },
                         onLongClick = {
-                            enterSelectMode = true
+                            isSelectMode = true
                             selectedIndexes[index] = !selectedIndexes[index]
                         }
                     )

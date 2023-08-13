@@ -24,12 +24,12 @@ fun ElingNoteTopAppBar(
     modifier: Modifier = Modifier,
     title: String = "",
     actions: @Composable RowScope.() -> Unit = {},
-    enterSelectMode: Boolean = false,
+    isSelectMode: Boolean = false,
     selectedIndexes: SnapshotStateList<Boolean> = mutableStateListOf(),
     onResetSelect: () -> Unit = {},
 ) {
 
-    BackHandler(enabled = enterSelectMode) {
+    BackHandler(enabled = isSelectMode) {
         onResetSelect()
     }
 
@@ -40,7 +40,7 @@ fun ElingNoteTopAppBar(
     TopAppBar(
         modifier = modifier,
         navigationIcon = {
-            if (enterSelectMode)
+            if (isSelectMode)
                 IconButton(
                     onClick = onResetSelect
                 ) {
@@ -54,7 +54,7 @@ fun ElingNoteTopAppBar(
         actions = actions,
         title = {
             val selected = selectedIndexes.filter { value -> value }
-            if (enterSelectMode)
+            if (isSelectMode)
                 Text(text = "${selected.size} Selected")
             else
                 Text(title)

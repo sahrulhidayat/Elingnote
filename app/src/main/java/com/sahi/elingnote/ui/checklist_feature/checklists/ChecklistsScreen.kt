@@ -87,12 +87,12 @@ fun ChecklistsScreen(
     modifier: Modifier = Modifier
 ) {
 
-    var enterSelectMode by rememberSaveable {
+    var isSelectMode by rememberSaveable {
         mutableStateOf(false)
     }
 
     fun resetSelected() {
-        enterSelectMode = false
+        isSelectMode = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             selectedIndexes.replaceAll { false }
         } else {
@@ -131,7 +131,7 @@ fun ChecklistsScreen(
             ElingNoteTopAppBar(
                 title = "My Checklists",
                 actions = {
-                    if (enterSelectMode) {
+                    if (isSelectMode) {
                         IconButton(
                             onClick = {
                                 selectedIndexes.withIndex().forEach { item ->
@@ -147,7 +147,7 @@ fun ChecklistsScreen(
                         }
                     }
                 },
-                enterSelectMode = enterSelectMode,
+                isSelectMode = isSelectMode,
                 selectedIndexes = selectedIndexes,
                 onResetSelect = { resetSelected() }
             )
@@ -168,13 +168,13 @@ fun ChecklistsScreen(
                             .fillMaxWidth()
                             .padding(vertical = 4.dp, horizontal = 8.dp),
                         onClick = {
-                            if (enterSelectMode)
+                            if (isSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
                                 onClickItem(checklistWithItems.checklist)
                         },
                         onLongClick = {
-                            enterSelectMode = true
+                            isSelectMode = true
                             selectedIndexes[index] = !selectedIndexes[index]
                         }
                     )
