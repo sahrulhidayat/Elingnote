@@ -29,7 +29,7 @@ fun EmptyStateAnimation(modifier: Modifier = Modifier) {
         LottieAnimation(
             modifier = Modifier.size(500.dp),
             composition = composition,
-            iterations = LottieConstants.IterateForever
+            restartOnPlay = true
         )
     }
 }

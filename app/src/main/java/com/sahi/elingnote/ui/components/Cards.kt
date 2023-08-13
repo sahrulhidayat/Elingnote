@@ -94,7 +94,8 @@ fun NoteCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Restore,
-                        contentDescription = "Restore from trash"
+                        contentDescription = "Restore from trash",
+                        tint = Color.Black
                     )
                 }
             }
@@ -176,7 +177,8 @@ fun ChecklistCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Restore,
-                        contentDescription = "Restore from trash"
+                        contentDescription = "Restore from trash",
+                        tint = Color.Black
                     )
                 }
             }
@@ -187,7 +189,7 @@ fun ChecklistCard(
                 Text(
                     text = "+ $overflowItems items",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = Color.Black
                     )
                 )
             }
