@@ -18,8 +18,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,9 +59,20 @@ fun NotesRoute(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(
-                        message = event.message
+                    val snackBar = snackBarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.actionLabel,
+                        duration = SnackbarDuration.Short
                     )
+                    when (snackBar) {
+                        SnackbarResult.ActionPerformed -> {
+                            viewModel.onEvent(NotesEvent.RestoreNotes)
+                        }
+
+                        SnackbarResult.Dismissed -> {
+                            viewModel.recentlyDeletedNotes.clear()
+                        }
+                    }
                 }
             }
         }

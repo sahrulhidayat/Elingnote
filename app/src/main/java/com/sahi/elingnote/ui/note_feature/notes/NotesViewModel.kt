@@ -8,8 +8,6 @@ import com.sahi.elingnote.data.repository.NoteRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,16 +19,15 @@ data class NotesState(
 class NotesViewModel(
     private val noteRepository: NoteRepository
 ) : ViewModel() {
-
-    private val _state = MutableStateFlow(NotesState())
-    val state = _state.asStateFlow()
-
+    var state = MutableStateFlow(NotesState())
+        private set
     val selectedIndexes = mutableStateListOf(false)
 
-    private var getNotesJob: Job? = null
+    var recentlyDeletedNotes = mutableListOf<Note>()
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private var getNotesJob: Job? = null
+    var eventFlow = MutableSharedFlow<UiEvent>()
+        private set
 
     init {
         getNotes()
@@ -40,10 +37,26 @@ class NotesViewModel(
         when (event) {
             is NotesEvent.DeleteNote -> {
                 viewModelScope.launch {
+                    recentlyDeletedNotes.add(event.note)
                     noteRepository.addNote(event.note.copy(isTrash = true))
-                    _eventFlow.emit(
+                    eventFlow.emit(
                         UiEvent.ShowSnackBar(
-                            message = "Notes are moved to the trash"
+                            message = "Notes are moved to the trash",
+                            actionLabel = "Undo"
+                        )
+                    )
+                }
+            }
+
+            NotesEvent.RestoreNotes -> {
+                viewModelScope.launch {
+                    recentlyDeletedNotes.forEach { note ->
+                        noteRepository.addNote(note)
+                    }
+                    recentlyDeletedNotes.clear()
+                    eventFlow.emit(
+                        UiEvent.ShowSnackBar(
+                            message = "Notes restored"
                         )
                     )
                 }
@@ -60,7 +73,7 @@ class NotesViewModel(
                     selectedIndexes.add(false)
                 }
 
-                _state.value = state.value.copy(
+                state.value = state.value.copy(
                     notes = notes
                 )
             }
@@ -69,9 +82,10 @@ class NotesViewModel(
 }
 
 sealed class UiEvent {
-    data class ShowSnackBar(val message: String) : UiEvent()
+    data class ShowSnackBar(val message: String, val actionLabel: String? = null) : UiEvent()
 }
 
 sealed class NotesEvent {
     data class DeleteNote(val note: Note) : NotesEvent()
+    object RestoreNotes : NotesEvent()
 }
