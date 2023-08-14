@@ -24,11 +24,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -141,14 +138,6 @@ fun EditNoteScreen(
                                 )
                                 .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                         )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        onClick = {
-                            onEvent(EditNoteEvent.SaveNote)
-                        }
-                    ) {
-                        Icon(Icons.Outlined.Save, contentDescription = "Save note")
                     }
                 },
                 contentPadding = PaddingValues(4.dp),

@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -142,10 +141,6 @@ fun EditChecklistScreen(
                                 )
                                 .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                         )
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { onEvent(EditChecklistEvent.SaveChecklist) }) {
-                        Icon(Icons.Outlined.Save, contentDescription = "Save checklist")
                     }
                 },
                 contentPadding = PaddingValues(4.dp)
