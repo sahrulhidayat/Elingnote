@@ -1,5 +1,6 @@
 package com.sahi.elingnote.ui.note_feature.edit_note
 
+import android.widget.Toast
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
@@ -32,7 +33,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,7 @@ fun EditNoteRoute(
     modifier: Modifier = Modifier,
     viewModel: EditNoteViewModel = koinViewModel(),
 ) {
-    val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
@@ -74,13 +75,9 @@ fun EditNoteRoute(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(
-                        message = event.message
-                    )
+                is UiEvent.SaveNote -> {
+                    Toast.makeText(context, "Note saved", Toast.LENGTH_SHORT).show()
                 }
-
-                is UiEvent.SaveNote -> { }
             }
         }
     }

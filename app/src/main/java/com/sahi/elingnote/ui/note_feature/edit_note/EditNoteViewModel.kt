@@ -88,7 +88,7 @@ class EditNoteViewModel(
 
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
-                    if (noteTitle.value.text.isNotBlank() || noteContent.value.text.isNotBlank())
+                    if (noteTitle.value.text.isNotBlank() || noteContent.value.text.isNotBlank()) {
                         noteRepository.addNote(
                             Note(
                                 id = currentNoteId,
@@ -98,7 +98,8 @@ class EditNoteViewModel(
                                 color = noteColor.intValue
                             )
                         )
-                    eventFlow.emit(UiEvent.SaveNote)
+                        eventFlow.emit(UiEvent.SaveNote)
+                    }
                 }
             }
 
@@ -107,7 +108,6 @@ class EditNoteViewModel(
 }
 
 sealed class UiEvent {
-    data class ShowSnackBar(val message: String) : UiEvent()
     object SaveNote : UiEvent()
 }
 

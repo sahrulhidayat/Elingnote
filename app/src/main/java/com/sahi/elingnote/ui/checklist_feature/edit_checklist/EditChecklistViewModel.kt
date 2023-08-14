@@ -117,7 +117,6 @@ class EditChecklistViewModel(
                     }
                     if (checklistTitle.value.title.isBlank() && items.isEmpty()) {
                         checklistRepository.deleteChecklist(checklist)
-                        eventFlow.emit(UiEvent.SaveChecklist)
                     } else {
                         itemsFlow.collectLatest { items ->
                             items.map {
@@ -204,7 +203,6 @@ class EditChecklistViewModel(
 }
 
 sealed class UiEvent {
-    data class ShowSnackBar(val message: String) : UiEvent()
     object SaveChecklist : UiEvent()
 }
 
