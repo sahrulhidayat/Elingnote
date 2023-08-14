@@ -1,6 +1,5 @@
 package com.sahi.elingnote.ui.checklist_feature.edit_checklist
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
@@ -52,7 +51,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.EditChecklistItem
@@ -63,7 +62,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditChecklistRoute(
-    onSaveChecklist: () -> Unit,
     checklistColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditChecklistViewModel = koinViewModel(),
@@ -72,8 +70,8 @@ fun EditChecklistRoute(
     val titleState by viewModel.checklistTitle
     val itemsState by viewModel.itemsFlow.collectAsState()
 
-    LifecycleResumeEffect(Unit) {
-        onPauseOrDispose {
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
             viewModel.onEvent(EditChecklistEvent.SaveChecklist)
         }
     }
@@ -86,7 +84,7 @@ fun EditChecklistRoute(
                     )
                 }
 
-                is UiEvent.SaveChecklist -> onSaveChecklist()
+                is UiEvent.SaveChecklist -> { }
             }
         }
     }
@@ -111,9 +109,6 @@ fun EditChecklistScreen(
     itemEvent: (ChecklistItemEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BackHandler(enabled = true) {
-        onEvent(EditChecklistEvent.SaveChecklist)
-    }
     val focusManager = LocalFocusManager.current
 
     val checklistColorAnimatable = remember { Animatable(Color(checklistColor)) }

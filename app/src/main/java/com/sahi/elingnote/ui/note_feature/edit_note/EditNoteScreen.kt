@@ -1,6 +1,5 @@
 package com.sahi.elingnote.ui.note_feature.edit_note
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
@@ -51,7 +50,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.TransparentHintTextField
@@ -61,15 +60,14 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditNoteRoute(
-    onSaveNote: () -> Unit,
     noteColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditNoteViewModel = koinViewModel(),
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LifecycleResumeEffect(Unit) {
-        onPauseOrDispose {
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
             viewModel.onEvent(EditNoteEvent.SaveNote)
         }
     }
@@ -82,7 +80,7 @@ fun EditNoteRoute(
                     )
                 }
 
-                is UiEvent.SaveNote -> onSaveNote()
+                is UiEvent.SaveNote -> { }
             }
         }
     }
@@ -109,9 +107,6 @@ fun EditNoteScreen(
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BackHandler(enabled = true) {
-        onEvent(EditNoteEvent.SaveNote)
-    }
     val focusManager = LocalFocusManager.current
 
     val noteColorAnimatable = remember { Animatable(Color(noteColor)) }

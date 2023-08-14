@@ -13,7 +13,7 @@ fun NavController.navigateToEditChecklist(navOptions: NavOptions? = null) {
     this.navigate(editChecklistNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.editChecklistScreen(onSaveChecklist: () -> Unit) {
+fun NavGraphBuilder.editChecklistScreen() {
     composable(
         route = "$editChecklistNavigationRoute?checklistId={checklistId}&checklistColor={checklistColor}",
         arguments = listOf(
@@ -28,6 +28,6 @@ fun NavGraphBuilder.editChecklistScreen(onSaveChecklist: () -> Unit) {
         )
     ) {
         val color = it.arguments?.getInt("checklistColor") ?: -1
-        EditChecklistRoute(onSaveChecklist, color)
+        EditChecklistRoute(color)
     }
 }

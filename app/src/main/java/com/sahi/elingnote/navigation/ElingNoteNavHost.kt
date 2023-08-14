@@ -36,7 +36,7 @@ fun ElingNoteNavHost(
                 navController.navigateToEditNote()
             }
         )
-        editNoteScreen(onSaveNote = { navController.navigateUp() })
+        editNoteScreen()
         checklistsScreen(
             onClickItem = { checklist ->
                 navController.navigate(
@@ -47,7 +47,7 @@ fun ElingNoteNavHost(
                 navController.navigateToEditChecklist()
             }
         )
-        editChecklistScreen(onSaveChecklist = { navController.navigateUp() })
+        editChecklistScreen()
         trashScreen()
     }
 }
