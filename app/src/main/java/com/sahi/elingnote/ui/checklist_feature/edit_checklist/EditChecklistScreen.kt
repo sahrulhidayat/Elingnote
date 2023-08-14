@@ -121,8 +121,7 @@ fun EditChecklistScreen(
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(checklistColorAnimatable.value) {
         systemUiController.setStatusBarColor(
-            color = checklistColorAnimatable.value,
-            darkIcons = true
+            color = checklistColorAnimatable.value
         )
     }
 

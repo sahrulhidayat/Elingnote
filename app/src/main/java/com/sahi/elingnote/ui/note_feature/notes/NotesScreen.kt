@@ -114,11 +114,9 @@ fun NotesScreen(
 
     val topBarColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = !isSystemInDarkTheme()
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = topBarColor,
-            darkIcons = useDarkIcons
+            color = topBarColor
         )
     }
 

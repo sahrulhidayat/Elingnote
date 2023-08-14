@@ -118,8 +118,7 @@ fun EditNoteScreen(
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(noteColorAnimatable.value) {
         systemUiController.setStatusBarColor(
-            color = noteColorAnimatable.value,
-            darkIcons = true
+            color = noteColorAnimatable.value
         )
     }
 

@@ -102,8 +102,8 @@ fun ElingNoteTheme(
         SideEffect {
             window.statusBarColor = colorScheme.surfaceColorAtElevation(3.dp).toArgb()
             window.navigationBarColor = colorScheme.surfaceColorAtElevation(3.dp).toArgb()
-            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = darkTheme
-            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightNavigationBars = darkTheme
+            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars = !darkTheme
+            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 
