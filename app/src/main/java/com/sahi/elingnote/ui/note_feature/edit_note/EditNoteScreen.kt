@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.elingnote.data.model.Note
 import com.sahi.elingnote.ui.components.TransparentHintTextField
@@ -67,6 +68,11 @@ fun EditNoteRoute(
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
+    LifecycleResumeEffect(Unit) {
+        onPauseOrDispose {
+            viewModel.onEvent(EditNoteEvent.SaveNote)
+        }
+    }
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
