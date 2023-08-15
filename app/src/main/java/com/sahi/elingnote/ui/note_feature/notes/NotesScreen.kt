@@ -143,12 +143,13 @@ fun NotesScreen(
                     if (isSelectMode) {
                         IconButton(
                             onClick = {
-                                selectedIndexes.withIndex().forEach { item ->
-                                    if (item.value) {
-                                        val selected = notesState.notes[item.index]
-                                        onEvent(NotesEvent.DeleteNote(selected))
+                                val notes = mutableListOf<Note>()
+                                selectedIndexes.forEachIndexed { index, item ->
+                                    if (item) {
+                                        notes.add(notesState.notes[index])
                                     }
                                 }
+                                onEvent(NotesEvent.DeleteNotes(notes))
                                 resetSelected()
                             }
                         ) {

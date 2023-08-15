@@ -35,10 +35,13 @@ class NotesViewModel(
 
     fun onEvent(event: NotesEvent) {
         when (event) {
-            is NotesEvent.DeleteNote -> {
+            is NotesEvent.DeleteNotes -> {
                 viewModelScope.launch {
-                    recentlyDeletedNotes.add(event.note)
-                    noteRepository.addNote(event.note.copy(isTrash = true))
+                    recentlyDeletedNotes.clear()
+                    event.notes.forEach { note ->
+                        recentlyDeletedNotes.add(note)
+                        noteRepository.addNote(note.copy(isTrash = true))
+                    }
                     eventFlow.emit(
                         UiEvent.ShowSnackBar(
                             message = "Notes are moved to the trash",
@@ -86,6 +89,6 @@ sealed class UiEvent {
 }
 
 sealed class NotesEvent {
-    data class DeleteNote(val note: Note) : NotesEvent()
+    data class DeleteNotes(val notes: List<Note>) : NotesEvent()
     object RestoreNotes : NotesEvent()
 }

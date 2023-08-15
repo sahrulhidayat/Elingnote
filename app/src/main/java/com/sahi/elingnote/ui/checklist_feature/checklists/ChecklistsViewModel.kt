@@ -36,12 +36,15 @@ class ChecklistsViewModel(
 
     fun onEvent(event: ChecklistsEvent) {
         when (event) {
-            is ChecklistsEvent.DeleteChecklist -> {
+            is ChecklistsEvent.DeleteChecklists -> {
                 viewModelScope.launch {
-                    recentlyDeletedChecklists.add(event.checklistWithItems.checklist)
-                    checklistRepository.addChecklist(
-                        event.checklistWithItems.checklist.copy(isTrash = true)
-                    )
+                    recentlyDeletedChecklists.clear()
+                    event.checklists.forEach { checklist ->
+                        recentlyDeletedChecklists.add(checklist)
+                        checklistRepository.addChecklist(
+                            checklist.copy(isTrash = true)
+                        )
+                    }
                     eventFlow.emit(
                         UiEvent.ShowSnackBar(
                             message = "Checklists are moved to the trash",
@@ -89,6 +92,6 @@ sealed class UiEvent {
 }
 
 sealed class ChecklistsEvent {
-    data class DeleteChecklist(val checklistWithItems: ChecklistWithItems) : ChecklistsEvent()
-    object RestoreChecklist: ChecklistsEvent()
+    data class DeleteChecklists(val checklists: List<Checklist>) : ChecklistsEvent()
+    object RestoreChecklist : ChecklistsEvent()
 }

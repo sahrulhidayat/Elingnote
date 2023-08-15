@@ -144,12 +144,13 @@ fun ChecklistsScreen(
                     if (isSelectMode) {
                         IconButton(
                             onClick = {
-                                selectedIndexes.withIndex().forEach { item ->
-                                    if (item.value) {
-                                        val selected = checklistsState.checklists[item.index]
-                                        onEvent(ChecklistsEvent.DeleteChecklist(selected))
+                                val checklists = mutableListOf<Checklist>()
+                                selectedIndexes.forEachIndexed { index, item ->
+                                    if (item) {
+                                        checklists.add(checklistsState.checklists[index].checklist)
                                     }
                                 }
+                                onEvent(ChecklistsEvent.DeleteChecklists(checklists))
                                 resetSelected()
                             }
                         ) {
