@@ -112,24 +112,26 @@ class EditChecklistViewModel(
                     color = checklistColor.intValue
                 )
                 viewModelScope.launch {
-                    if (checklistTitle.value.title.isNotBlank()) {
-                        checklistRepository.addChecklist(checklist)
-                    }
-                    if (checklistTitle.value.title.isBlank() && items.isEmpty()) {
-                        checklistRepository.deleteChecklist(checklist)
-                    } else {
-                        itemsFlow.collectLatest { items ->
-                            items.map {
-                                ChecklistItem(
-                                    itemId = it.itemId,
-                                    checklistId = it.checklistId,
-                                    label = it.label,
-                                    checked = it.checked
-                                )
-                            }.forEach {
-                                checklistRepository.updateChecklistItem(it)
+                    when {
+                        checklistTitle.value.title.isNotBlank() || items.isNotEmpty() -> {
+                            checklistRepository.addChecklist(checklist)
+                            itemsFlow.collectLatest { items ->
+                                items.map {
+                                    ChecklistItem(
+                                        itemId = it.itemId,
+                                        checklistId = it.checklistId,
+                                        label = it.label,
+                                        checked = it.checked
+                                    )
+                                }.forEach {
+                                    checklistRepository.updateChecklistItem(it)
+                                }
+                                eventFlow.emit(UiEvent.ShowToast(message = "Checklist saved"))
                             }
-                            eventFlow.emit(UiEvent.SaveChecklist)
+                        }
+
+                        checklistTitle.value.title.isBlank() && items.isEmpty() -> {
+                            checklistRepository.deleteChecklist(checklist)
                         }
                     }
                 }
@@ -203,7 +205,7 @@ class EditChecklistViewModel(
 }
 
 sealed class UiEvent {
-    object SaveChecklist : UiEvent()
+    data class ShowToast(val message:String) : UiEvent()
 }
 
 sealed class EditChecklistEvent {

@@ -78,8 +78,8 @@ fun EditChecklistRoute(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.SaveChecklist -> {
-                    Toast.makeText(context, "Checklist saved", Toast.LENGTH_SHORT).show()
+                is UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }

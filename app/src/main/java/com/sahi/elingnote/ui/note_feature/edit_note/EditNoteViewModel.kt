@@ -98,7 +98,7 @@ class EditNoteViewModel(
                                 color = noteColor.intValue
                             )
                         )
-                        eventFlow.emit(UiEvent.SaveNote)
+                        eventFlow.emit(UiEvent.ShowToast(message = "Note saved"))
                     }
                 }
             }
@@ -108,7 +108,7 @@ class EditNoteViewModel(
 }
 
 sealed class UiEvent {
-    object SaveNote : UiEvent()
+    data class ShowToast(val message: String) : UiEvent()
 }
 
 sealed class EditNoteEvent {

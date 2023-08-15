@@ -72,8 +72,8 @@ fun EditNoteRoute(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.SaveNote -> {
-                    Toast.makeText(context, "Note saved", Toast.LENGTH_SHORT).show()
+                is UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
