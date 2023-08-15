@@ -3,9 +3,7 @@ This is a lightweight Note App built with Jetpack Compose. You can create note/c
 change color, and move it to trash before deleting it.
 
 ## Screenshots
-![ScreenShot](/screenshots/screenshot_1.jpg)
-![ScreenShot](/screenshots/screenshot_2.jpg)
-![ScreenShot](/screenshots/screenshot_3.jpg)
+| ![ScreenShot](/screenshots/screenshot_1.jpg) | ![ScreenShot](/screenshots/screenshot_2.jpg) | ![ScreenShot](/screenshots/screenshot_3.jpg) |
 
 ## Features
 - Note Screen
