@@ -6,9 +6,7 @@ You can create note/checklist, update it, change colors, and move them to trash 
 ![ScreenShot](/preview/screenshot_1.png)
 
 ## Screen record
-<video width="320" controls>
-  <source src="/preview/movie.mp4" type="video/mp4">
-</video>
+https://github.com/sahrulhidayat/Elingnote/assets/83418069/4982472e-0d46-4ee1-8473-ed838bf30aa9
 
 ## Features
 - Note Screen
