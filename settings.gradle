@@ -14,3 +14,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Eling Note"
 include ':app'
+include ':feature:note'
+include ':feature:checklist'
+include ':feature:trash'
+include ':core:database'
+include ':core:ui'

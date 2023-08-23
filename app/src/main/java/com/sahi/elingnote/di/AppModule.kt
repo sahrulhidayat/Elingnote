@@ -1,16 +1,16 @@
 package com.sahi.elingnote.di
 
 import androidx.room.Room
-import com.sahi.elingnote.data.repository.ChecklistRepository
-import com.sahi.elingnote.data.repository.ChecklistRepositoryImpl
-import com.sahi.elingnote.data.repository.NoteRepository
-import com.sahi.elingnote.data.repository.NoteRepositoryImpl
-import com.sahi.elingnote.data.source.ElingNoteDatabase
-import com.sahi.elingnote.ui.checklist_feature.checklists.ChecklistsViewModel
-import com.sahi.elingnote.ui.checklist_feature.edit_checklist.EditChecklistViewModel
-import com.sahi.elingnote.ui.note_feature.edit_note.EditNoteViewModel
-import com.sahi.elingnote.ui.note_feature.notes.NotesViewModel
-import com.sahi.elingnote.ui.trash_feature.TrashViewModel
+import com.sahi.core.database.repository.ChecklistRepository
+import com.sahi.core.database.repository.ChecklistRepositoryImpl
+import com.sahi.core.database.repository.NoteRepository
+import com.sahi.core.database.repository.NoteRepositoryImpl
+import com.sahi.core.database.ElingNoteDatabase
+import com.sahi.feature.checklist.checklists.ChecklistsViewModel
+import com.sahi.feature.checklist.edit_checklist.EditChecklistViewModel
+import com.sahi.feature.note.edit_note.EditNoteViewModel
+import com.sahi.feature.note.notes.NotesViewModel
+import com.sahi.feature.trash.TrashViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.bind
@@ -21,20 +21,20 @@ val appModule = module {
     single {
         Room.databaseBuilder(
             androidApplication(),
-            ElingNoteDatabase::class.java,
-            ElingNoteDatabase.DATABASE_NAME
+            com.sahi.core.database.ElingNoteDatabase::class.java,
+            com.sahi.core.database.ElingNoteDatabase.DATABASE_NAME
         ).build()
     }
     single {
-        val database = get<ElingNoteDatabase>()
+        val database = get<com.sahi.core.database.ElingNoteDatabase>()
         database.noteDao
     }
     single {
-        val database = get<ElingNoteDatabase>()
+        val database = get<com.sahi.core.database.ElingNoteDatabase>()
         database.checklistDao
     }
-    singleOf(::NoteRepositoryImpl) { bind<NoteRepository>() }
-    singleOf(::ChecklistRepositoryImpl) { bind<ChecklistRepository>() }
+    singleOf(::NoteRepositoryImpl) { bind<com.sahi.core.database.repository.NoteRepository>() }
+    singleOf(::ChecklistRepositoryImpl) { bind<com.sahi.core.database.repository.ChecklistRepository>() }
     viewModelOf(::NotesViewModel)
     viewModelOf(::EditNoteViewModel)
     viewModelOf(::ChecklistsViewModel)

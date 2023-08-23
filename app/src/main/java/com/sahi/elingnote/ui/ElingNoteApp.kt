@@ -14,8 +14,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.sahi.elingnote.navigation.ElingNoteNavHost
 import com.sahi.elingnote.navigation.TopLevelDestination
-import com.sahi.elingnote.ui.components.ElingNoteNavigationBar
-import com.sahi.elingnote.ui.components.ElingNoteNavigationBarItem
+import com.sahi.core.ui.components.ElingNoteNavigationBar
+import com.sahi.core.ui.components.ElingNoteNavigationBarItem
 
 @Composable
 fun ElingNoteApp(
@@ -54,7 +54,7 @@ fun ElingNoteBottomBar(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    ElingNoteNavigationBar(modifier = modifier) {
+    com.sahi.core.ui.components.ElingNoteNavigationBar(modifier = modifier) {
         destinations.forEach { destination ->
             val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
             ElingNoteNavigationBarItem(
