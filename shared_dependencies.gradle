@@ -30,6 +30,6 @@ dependencies {
 
     //Koin tests
     testImplementation "io.insert-koin:koin-test-junit4:$koinVersion"
-    testImplementation "io.insert-koin:koin-android-test:$koinVersion"
+    testImplementation "io.insert-koin:koin-android-test:3.4.3"
 
 }
