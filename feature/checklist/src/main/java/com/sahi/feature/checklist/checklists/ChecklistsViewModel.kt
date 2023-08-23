@@ -3,9 +3,9 @@ package com.sahi.feature.checklist.checklists
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.model.Checklist
-import com.sahi.core.database.model.ChecklistWithItems
 import com.sahi.core.database.repository.ChecklistRepository
+import com.sahi.core.model.Entity.Checklist
+import com.sahi.core.model.Entity.ChecklistWithItems
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,17 +14,17 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 data class ChecklistsState(
-    val checklists: List<com.sahi.core.database.model.ChecklistWithItems> = emptyList(),
+    val checklists: List<ChecklistWithItems> = emptyList(),
 )
 
 class ChecklistsViewModel(
-    private val checklistRepository: com.sahi.core.database.repository.ChecklistRepository
+    private val checklistRepository: ChecklistRepository
 ) : ViewModel() {
     var checklistsState = MutableStateFlow(ChecklistsState())
         private set
     val selectedIndexes = mutableStateListOf(false)
 
-    var recentlyDeletedChecklists = mutableListOf<com.sahi.core.database.model.Checklist>()
+    var recentlyDeletedChecklists = mutableListOf<Checklist>()
 
     private var getChecklistsJob: Job? = null
     var eventFlow = MutableSharedFlow<UiEvent>()
@@ -92,6 +92,6 @@ sealed class UiEvent {
 }
 
 sealed class ChecklistsEvent {
-    data class DeleteChecklists(val checklists: List<com.sahi.core.database.model.Checklist>) : ChecklistsEvent()
-    object RestoreChecklist : ChecklistsEvent()
+    data class DeleteChecklists(val checklists: List<Checklist>) : ChecklistsEvent()
+    data object RestoreChecklist : ChecklistsEvent()
 }

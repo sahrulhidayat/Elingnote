@@ -35,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.sahi.core.database.model.Checklist
+import com.sahi.core.model.Entity.Checklist
 import com.sahi.core.ui.components.ChecklistCard
 import com.sahi.core.ui.components.ElingNoteTopAppBar
 import com.sahi.core.ui.components.EmptyStateAnimation
@@ -45,7 +45,7 @@ import java.util.Collections
 
 @Composable
 fun ChecklistsRoute(
-    onClickItem: (com.sahi.core.database.model.Checklist) -> Unit,
+    onClickItem: (Checklist) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChecklistsViewModel = koinViewModel(),
@@ -94,7 +94,7 @@ fun ChecklistsScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
-    onClickItem: (com.sahi.core.database.model.Checklist) -> Unit,
+    onClickItem: (Checklist) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -138,14 +138,14 @@ fun ChecklistsScreen(
             )
         },
         topBar = {
-            com.sahi.core.ui.components.ElingNoteTopAppBar(
+            ElingNoteTopAppBar(
                 title = "My Checklists",
                 actions = {
                     if (isSelectMode) {
                         IconButton(
                             onClick = {
                                 val checklists =
-                                    mutableListOf<com.sahi.core.database.model.Checklist>()
+                                    mutableListOf<Checklist>()
                                 selectedIndexes.forEachIndexed { index, item ->
                                     if (item) {
                                         checklists.add(checklistsState.checklists[index].checklist)
@@ -173,7 +173,7 @@ fun ChecklistsScreen(
             }
             itemsIndexed(checklistsState.checklists) { index, checklistWithItems ->
                 if (!checklistWithItems.checklist.isTrash) {
-                    com.sahi.core.ui.components.ChecklistCard(
+                    ChecklistCard(
                         checklistWithItems = checklistWithItems,
                         isSelected = selectedIndexes[index],
                         modifier = Modifier
@@ -195,7 +195,7 @@ fun ChecklistsScreen(
         }
         val items = checklistsState.checklists.filter { !it.checklist.isTrash }
         if (items.isEmpty()) {
-            com.sahi.core.ui.components.EmptyStateAnimation(modifier = Modifier.fillMaxSize())
+            EmptyStateAnimation(modifier = Modifier.fillMaxSize())
         }
     }
 }

@@ -28,86 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sahi.core.database.model.ChecklistWithItems
-import com.sahi.core.database.model.Note
-import com.sahi.elingnote.ui.checklist_feature.edit_checklist.ChecklistItemState
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun NoteCard(
-    modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
-    note: com.sahi.core.database.model.Note,
-    onClick: () -> Unit = { },
-    onLongClick: (() -> Unit)? = null,
-    onRestore: () -> Unit = { }
-) {
-    val isWhiteBackground = Color(note.color) == Color.White
-    Card(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
-        elevation = CardDefaults.cardElevation(0.dp),
-        shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(note.color)),
-        border = when {
-            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
-            isWhiteBackground -> BorderStroke(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            else -> null
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(8.dp)
-                .heightIn(max = 200.dp)
-        ) {
-            Column {
-                if (note.title.isNotBlank())
-                    Text(
-                        text = note.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
-                Spacer(modifier = Modifier.height(4.dp))
-                if (note.content.isNotBlank())
-                    Text(
-                        text = note.content,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black,
-                        overflow = TextOverflow.Ellipsis
-                    )
-            }
-            if (note.isTrash) {
-                Spacer(modifier = Modifier.fillMaxWidth())
-                IconButton(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = onRestore
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Restore,
-                        contentDescription = "Restore from trash",
-                        tint = Color.Black
-                    )
-                }
-            }
-        }
-    }
-}
+import com.sahi.core.model.Entity.ChecklistWithItems
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChecklistCard(
     modifier: Modifier = Modifier,
-    checklistWithItems: com.sahi.core.database.model.ChecklistWithItems,
+    checklistWithItems: ChecklistWithItems,
     isSelected: Boolean = false,
     onClick: () -> Unit = { },
     onLongClick: (() -> Unit)? = null,
@@ -159,11 +87,8 @@ fun ChecklistCard(
                     ) {
                         checklistWithItems.checklistItems.forEach { item ->
                             ChecklistItem(
-                                state = ChecklistItemState(
-                                    checklistId = item.checklistId,
-                                    label = item.label,
-                                    checked = item.checked
-                                )
+                                checked = item.checked,
+                                label = item.label
                             )
                         }
                     }

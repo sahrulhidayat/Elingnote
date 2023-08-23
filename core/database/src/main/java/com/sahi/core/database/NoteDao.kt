@@ -1,7 +1,9 @@
 package com.sahi.core.database
 
-import androidx.room.*
-import com.sahi.elingnote.data.model.Note
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
+import com.sahi.core.model.Entity.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao

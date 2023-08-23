@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.sahi.elingnote.R
+import com.sahi.core.ui.R
 
 val nunitoSansFamily = FontFamily(
     Font(R.font.nunitosans_condensed_regular, FontWeight.Normal),

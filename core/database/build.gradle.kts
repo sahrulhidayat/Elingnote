@@ -36,6 +36,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:model"))
+
     // Room
     val roomVersion = "2.5.2"
     implementation("androidx.room:room-ktx:$roomVersion")

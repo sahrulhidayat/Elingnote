@@ -54,7 +54,7 @@ fun ElingNoteBottomBar(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier,
 ) {
-    com.sahi.core.ui.components.ElingNoteNavigationBar(modifier = modifier) {
+    ElingNoteNavigationBar(modifier = modifier) {
         destinations.forEach { destination ->
             val selected = currentDestination.isTopLevelDestinationInHierarchy(destination)
             ElingNoteNavigationBarItem(

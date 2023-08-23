@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.sahi.core.database.model.Checklist
 
 const val checklistsNavigationRoute = "checklists_route"
 
@@ -13,7 +12,7 @@ fun NavController.navigateToChecklists(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.checklistsScreen(
-    onClickItem: (com.sahi.core.database.model.Checklist) -> Unit,
+    onClickItem: (com.sahi.core.model.Entity.Checklist) -> Unit,
     onClickFab: () -> Unit
 ) {
     composable(route = checklistsNavigationRoute) {

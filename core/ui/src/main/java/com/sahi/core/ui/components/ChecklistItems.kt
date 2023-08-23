@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
@@ -39,8 +40,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sahi.elingnote.ui.checklist_feature.edit_checklist.ChecklistItemEvent
-import com.sahi.elingnote.ui.checklist_feature.edit_checklist.ChecklistItemState
 
 @Composable
 fun ChecklistItems(
@@ -79,7 +78,8 @@ fun ChecklistItems(
 @Composable
 fun ChecklistItem(
     modifier: Modifier = Modifier,
-    state: ChecklistItemState,
+    checked: Boolean = false,
+    label: String = "",
 ) {
     Row(
         modifier = modifier.padding(vertical = 4.dp),
@@ -89,12 +89,12 @@ fun ChecklistItem(
             modifier = Modifier,
             elevation = CardDefaults.cardElevation(0.dp),
             shape = RoundedCornerShape(2.dp),
-            colors = if (state.checked) {
+            colors = if (checked) {
                 CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
             } else {
                 CardDefaults.cardColors(containerColor = Color.Transparent)
             },
-            border = if (state.checked) {
+            border = if (checked) {
                 BorderStroke(1.3.dp, color = MaterialTheme.colorScheme.primary)
             } else {
                 BorderStroke(1.3.dp, color = Color.Black)
@@ -105,7 +105,7 @@ fun ChecklistItem(
                     .size(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                if (state.checked)
+                if (checked)
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
@@ -116,11 +116,11 @@ fun ChecklistItem(
         Spacer(modifier = Modifier.width(8.dp))
         Box(modifier = modifier) {
             Text(
-                text = state.label,
+                text = label,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = Color.Black
                 ),
-                textDecoration = if (state.checked) TextDecoration.LineThrough else TextDecoration.None,
+                textDecoration = if (checked) TextDecoration.LineThrough else TextDecoration.None,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth()
@@ -132,15 +132,22 @@ fun ChecklistItem(
 @Composable
 fun EditChecklistItem(
     modifier: Modifier = Modifier,
-    index: Int,
-    state: ChecklistItemState,
-    itemEvent: (ChecklistItemEvent) -> Unit
+    checked: Boolean = false,
+    isHintVisible: Boolean = true,
+    isFocused: Boolean = false,
+    label: String = "",
+    hint: String = "",
+    onCheckedChange: ((Boolean) -> Unit)?,
+    onValueChange: (String) -> Unit,
+    onFocusChange: (FocusState) -> Unit,
+    onAdd: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
     SideEffect {
-        if (state.isFocused)
+        if (isFocused)
             focusRequester.requestFocus()
     }
 
@@ -148,13 +155,11 @@ fun EditChecklistItem(
         modifier = modifier,
     ) {
         Checkbox(
-            checked = state.checked,
+            checked = checked,
             colors = CheckboxDefaults.colors(
                 uncheckedColor = Color.Black
             ),
-            onCheckedChange = {
-                itemEvent(ChecklistItemEvent.ChangeChecked(index, it))
-            }
+            onCheckedChange = onCheckedChange
         )
         Box(
             modifier = Modifier
@@ -162,10 +167,10 @@ fun EditChecklistItem(
                 .weight(1f)
         ) {
             TransparentHintTextField(
-                text = state.label,
-                hint = state.hint,
+                text = label,
+                hint = hint,
                 textStyle =
-                if (state.checked)
+                if (checked)
                     MaterialTheme.typography.bodyMedium.copy(
                         textDecoration = TextDecoration.LineThrough
                     )
@@ -173,25 +178,21 @@ fun EditChecklistItem(
                     MaterialTheme.typography.bodyMedium.copy(
                         textDecoration = TextDecoration.None
                     ),
-                isHintVisible = state.isHintVisible,
-                onValueChange = {
-                    itemEvent(ChecklistItemEvent.EnteredLabel(index, it))
-                },
-                onFocusChange = {
-                    itemEvent(ChecklistItemEvent.ChangeLabelFocus(index, it))
-                },
+                isHintVisible = isHintVisible,
+                onValueChange = onValueChange,
+                onFocusChange = onFocusChange,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions { itemEvent(ChecklistItemEvent.AddItem) },
+                keyboardActions = KeyboardActions { onAdd() },
                 modifier = modifier
                     .focusRequester(focusRequester)
             )
         }
-        if (state.isFocused) {
+        if (isFocused) {
             IconButton(
                 colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Black),
                 onClick = {
                     focusManager.moveFocus(FocusDirection.Up)
-                    itemEvent(ChecklistItemEvent.DeleteItem(index))
+                    onDelete()
                 },
             ) {
                 Icon(

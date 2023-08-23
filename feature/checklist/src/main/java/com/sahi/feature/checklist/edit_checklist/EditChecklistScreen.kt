@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
@@ -46,16 +45,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.sahi.core.database.model.Note
+import com.sahi.core.ui.theme.noteColors
 import com.sahi.core.ui.components.EditChecklistItem
-import com.sahi.core.ui.components.TransparentHintTextField
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -175,10 +172,31 @@ fun EditChecklistScreen(
             }
             itemsIndexed(itemsState) { index, item ->
                 Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    com.sahi.core.ui.components.EditChecklistItem(
-                        state = item,
-                        index = index,
-                        itemEvent = itemEvent
+                    EditChecklistItem(
+                        checked = item.checked,
+                        isHintVisible = item.isHintVisible,
+                        isFocused = item.isFocused,
+                        label = item.label,
+                        hint = item.hint,
+                        onCheckedChange = {
+                            itemEvent(
+                                ChecklistItemEvent.ChangeChecked(
+                                    index,
+                                    it
+                                )
+                            )
+                        },
+                        onValueChange = { itemEvent(ChecklistItemEvent.EnteredLabel(index, it)) },
+                        onFocusChange = {
+                            itemEvent(
+                                ChecklistItemEvent.ChangeLabelFocus(
+                                    index,
+                                    it
+                                )
+                            )
+                        },
+                        onAdd = { itemEvent(ChecklistItemEvent.AddItem) },
+                        onDelete = { itemEvent(ChecklistItemEvent.DeleteItem(index)) }
                     )
                 }
             }
@@ -216,26 +234,25 @@ fun EditChecklistScreen(
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    items(com.sahi.core.database.model.Note.noteColors) { color ->
-                        val buttonColor = color.toArgb()
+                    items(noteColors.size) { color ->
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
                                 .clip(CircleShape)
-                                .background(color)
+                                .background(Color(color))
                                 .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                                 .clickable {
                                     scope.launch {
                                         checklistColorAnimatable.animateTo(
-                                            targetValue = Color(buttonColor),
+                                            targetValue = Color(color),
                                             animationSpec = tween(
                                                 durationMillis = 300,
                                                 easing = FastOutLinearInEasing
                                             )
                                         )
                                     }
-                                    onEvent(EditChecklistEvent.ChangeColor(buttonColor))
+                                    onEvent(EditChecklistEvent.ChangeColor(color))
                                 }
                         )
                     }

@@ -19,7 +19,7 @@ import com.sahi.feature.trash.trashScreen
 fun ElingNoteNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = com.sahi.feature.note.notes.notesNavigationRoute,
+    startDestination: String = notesNavigationRoute,
 ) {
     NavHost(
         navController = navController,
@@ -29,7 +29,7 @@ fun ElingNoteNavHost(
         notesScreen(
             onClickItem = { note ->
                 navController.navigate(
-                    "${com.sahi.feature.note.edit_note.editNoteNavigationRoute}?noteId=${note.id}&noteColor=${note.color}"
+                    "$editNoteNavigationRoute?noteId=${note.id}&noteColor=${note.color}"
                 )
             },
             onClickFab = {
@@ -40,7 +40,7 @@ fun ElingNoteNavHost(
         checklistsScreen(
             onClickItem = { checklist ->
                 navController.navigate(
-                    "${com.sahi.feature.checklist.edit_checklist.editChecklistNavigationRoute}?checklistId=${checklist.id}&checklistColor=${checklist.color}"
+                    "$editChecklistNavigationRoute?checklistId=${checklist.id}&checklistColor=${checklist.color}"
                 )
             },
             onClickFab = {

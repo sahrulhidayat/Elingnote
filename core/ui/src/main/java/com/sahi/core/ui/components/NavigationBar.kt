@@ -42,11 +42,11 @@ fun RowScope.ElingNoteNavigationBarItem(
         label = label,
         alwaysShowLabel = alwaysShowLabel,
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = com.sahi.core.ui.components.ElingNoteNavigationDefaults.navigationSelectedItemColor(),
-            unselectedIconColor = com.sahi.core.ui.components.ElingNoteNavigationDefaults.navigationContentColor(),
-            selectedTextColor = com.sahi.core.ui.components.ElingNoteNavigationDefaults.navigationSelectedItemColor(),
-            unselectedTextColor = com.sahi.core.ui.components.ElingNoteNavigationDefaults.navigationContentColor(),
-            indicatorColor = com.sahi.core.ui.components.ElingNoteNavigationDefaults.navigationIndicatorColor()
+            selectedIconColor = ElingNoteNavigationDefaults.navigationSelectedItemColor(),
+            unselectedIconColor = ElingNoteNavigationDefaults.navigationContentColor(),
+            selectedTextColor = ElingNoteNavigationDefaults.navigationSelectedItemColor(),
+            unselectedTextColor = ElingNoteNavigationDefaults.navigationContentColor(),
+            indicatorColor = ElingNoteNavigationDefaults.navigationIndicatorColor()
         )
     )
 }

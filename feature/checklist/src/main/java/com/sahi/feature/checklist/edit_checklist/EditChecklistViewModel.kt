@@ -8,9 +8,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.model.Checklist
-import com.sahi.core.database.model.ChecklistItem
-import com.sahi.core.database.repository.ChecklistRepository
+import com.sahi.core.ui.theme.checklistColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +40,7 @@ class EditChecklistViewModel(
     private val items = mutableStateListOf<ChecklistItemState>()
     var itemsFlow = MutableStateFlow(items)
         private set
-    private var checklistColor = mutableIntStateOf(com.sahi.core.database.model.Checklist.checklistColors[0].toArgb())
+    private var checklistColor = mutableIntStateOf(checklistColors[0].toArgb())
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
@@ -76,7 +74,7 @@ class EditChecklistViewModel(
             } else {
                 viewModelScope.launch {
                     checklistRepository.addChecklist(
-                        com.sahi.core.database.model.Checklist(
+                        com.sahi.core.model.Entity.Checklist(
                             title = checklistTitle.value.title,
                             timestamp = System.currentTimeMillis(),
                             color = checklistColor.intValue
@@ -105,7 +103,7 @@ class EditChecklistViewModel(
             }
 
             is EditChecklistEvent.SaveChecklist -> {
-                val checklist = com.sahi.core.database.model.Checklist(
+                val checklist = com.sahi.core.model.Entity.Checklist(
                     id = currentChecklistId,
                     title = checklistTitle.value.title,
                     timestamp = System.currentTimeMillis(),
@@ -117,7 +115,7 @@ class EditChecklistViewModel(
                             checklistRepository.addChecklist(checklist)
                             itemsFlow.collectLatest { items ->
                                 items.map {
-                                    com.sahi.core.database.model.ChecklistItem(
+                                    com.sahi.core.model.Entity.ChecklistItem(
                                         itemId = it.itemId,
                                         checklistId = it.checklistId,
                                         label = it.label,
@@ -166,7 +164,7 @@ class EditChecklistViewModel(
                 items.removeAt(event.index).also {
                     viewModelScope.launch {
                         checklistRepository.deleteChecklistItem(
-                            com.sahi.core.database.model.ChecklistItem(
+                            com.sahi.core.model.Entity.ChecklistItem(
                                 itemId = it.itemId,
                                 checklistId = it.checklistId,
                                 label = it.label,
@@ -181,7 +179,7 @@ class EditChecklistViewModel(
             is ChecklistItemEvent.AddItem -> {
                 viewModelScope.launch {
                     checklistRepository.addChecklistItem(
-                        com.sahi.core.database.model.ChecklistItem(
+                        com.sahi.core.model.Entity.ChecklistItem(
                             checklistId = currentChecklistId ?: 0,
                             label = "",
                             checked = false
@@ -212,7 +210,7 @@ sealed class EditChecklistEvent {
     data class EnteredTitle(val value: String) : EditChecklistEvent()
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
     data class ChangeColor(val color: Int) : EditChecklistEvent()
-    object SaveChecklist : EditChecklistEvent()
+    data object SaveChecklist : EditChecklistEvent()
 }
 
 sealed class ChecklistItemEvent {
@@ -220,5 +218,5 @@ sealed class ChecklistItemEvent {
     data class ChangeLabelFocus(val index: Int, val focusState: FocusState) : ChecklistItemEvent()
     data class ChangeChecked(val index: Int, val checked: Boolean) : ChecklistItemEvent()
     data class DeleteItem(val index: Int) : ChecklistItemEvent()
-    object AddItem : ChecklistItemEvent()
+    data object AddItem : ChecklistItemEvent()
 }

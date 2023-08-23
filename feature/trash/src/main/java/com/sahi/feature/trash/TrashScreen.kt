@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.AlertDialog
@@ -30,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.ui.components.ChecklistCard
-import com.sahi.core.ui.components.ElingNoteTopAppBar
 import com.sahi.core.ui.components.NoteCard
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -143,7 +143,7 @@ fun TrashScreen(
                 }
             }
             items(state.trashNotes) { note ->
-                com.sahi.core.ui.components.NoteCard(
+                NoteCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp, horizontal = 8.dp),
@@ -183,7 +183,7 @@ fun TrashScreen(
                 }
             }
             items(state.trashChecklist) { checklistWithItems ->
-                com.sahi.core.ui.components.ChecklistCard(
+                ChecklistCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp, horizontal = 8.dp),

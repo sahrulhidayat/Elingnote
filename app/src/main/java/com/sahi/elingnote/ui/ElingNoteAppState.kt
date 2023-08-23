@@ -37,9 +37,9 @@ class ElingNoteAppState(
 
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
-            com.sahi.feature.note.notes.notesNavigationRoute -> NOTE
-            com.sahi.feature.checklist.checklists.checklistsNavigationRoute -> CHECKLIST
-            com.sahi.feature.trash.trashNavigationRoute -> TRASH
+            notesNavigationRoute -> NOTE
+            checklistsNavigationRoute -> CHECKLIST
+            trashNavigationRoute -> TRASH
             else -> null
         }
 

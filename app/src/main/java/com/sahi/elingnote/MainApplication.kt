@@ -1,7 +1,10 @@
 package com.sahi.elingnote
 
 import android.app.Application
-import com.sahi.elingnote.di.appModule
+import com.sahi.core.database.di.databaseModule
+import com.sahi.feature.checklist.di.checklistModule
+import com.sahi.feature.note.di.noteModule
+import com.sahi.feature.trash.di.trashModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -12,7 +15,14 @@ class MainApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@MainApplication)
-            modules(appModule)
+            modules(
+                listOf(
+                    databaseModule,
+                    noteModule,
+                    checklistModule,
+                    trashModule
+                )
+            )
         }
     }
 }

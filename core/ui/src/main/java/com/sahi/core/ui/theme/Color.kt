@@ -69,3 +69,29 @@ val PaleAzure = Color(0xff7fd3f7)
 val Mindaro = Color(0xffdff37c)
 val Wisteria = Color(0xffc1a9f8)
 val RosyBrown = Color(0xffb89d9d)
+
+val checklistColors = listOf(
+    White,
+    LightRed,
+    SandyBrown,
+    Celadon,
+    Celeste,
+    AmaranthPink,
+    PaleAzure,
+    Mindaro,
+    Wisteria,
+    RosyBrown
+)
+
+val noteColors = listOf(
+    White,
+    LightRed,
+    SandyBrown,
+    Celadon,
+    Celeste,
+    AmaranthPink,
+    PaleAzure,
+    Mindaro,
+    Wisteria,
+    RosyBrown
+)

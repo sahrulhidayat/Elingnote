@@ -2,9 +2,9 @@ package com.sahi.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.sahi.elingnote.data.model.Checklist
-import com.sahi.elingnote.data.model.ChecklistItem
-import com.sahi.elingnote.data.model.Note
+import com.sahi.core.model.Entity.Checklist
+import com.sahi.core.model.Entity.ChecklistItem
+import com.sahi.core.model.Entity.Note
 
 @Database(
     entities = [

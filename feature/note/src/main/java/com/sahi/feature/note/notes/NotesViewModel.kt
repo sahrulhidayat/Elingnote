@@ -3,8 +3,8 @@ package com.sahi.feature.note.notes
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.elingnote.data.model.Note
-import com.sahi.elingnote.data.repository.NoteRepository
+import com.sahi.core.database.repository.NoteRepository
+import com.sahi.core.model.Entity.Note
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,5 +90,5 @@ sealed class UiEvent {
 
 sealed class NotesEvent {
     data class DeleteNotes(val notes: List<Note>) : NotesEvent()
-    object RestoreNotes : NotesEvent()
+    data object RestoreNotes : NotesEvent()
 }

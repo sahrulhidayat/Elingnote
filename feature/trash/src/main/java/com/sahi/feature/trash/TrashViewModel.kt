@@ -2,11 +2,11 @@ package com.sahi.feature.trash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.model.Checklist
-import com.sahi.core.database.model.ChecklistWithItems
-import com.sahi.core.database.model.Note
 import com.sahi.core.database.repository.ChecklistRepository
 import com.sahi.core.database.repository.NoteRepository
+import com.sahi.core.model.Entity.Checklist
+import com.sahi.core.model.Entity.ChecklistWithItems
+import com.sahi.core.model.Entity.Note
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,13 +16,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class TrashState(
-    val trashNotes: List<com.sahi.core.database.model.Note> = emptyList(),
-    val trashChecklist: List<com.sahi.core.database.model.ChecklistWithItems> = emptyList()
+    val trashNotes: List<Note> = emptyList(),
+    val trashChecklist: List<ChecklistWithItems> = emptyList()
 )
 
 class TrashViewModel(
-    private val noteRepository: com.sahi.core.database.repository.NoteRepository,
-    private val checklistRepository: com.sahi.core.database.repository.ChecklistRepository
+    private val noteRepository: NoteRepository,
+    private val checklistRepository: ChecklistRepository
 ) : ViewModel() {
     var state = MutableStateFlow(TrashState())
         private set
@@ -101,7 +101,7 @@ sealed class UiEvent {
 }
 
 sealed class TrashEvent {
-    data class RestoreNote(val note: com.sahi.core.database.model.Note) : TrashEvent()
-    data class RestoreChecklist(val checklist: com.sahi.core.database.model.Checklist) : TrashEvent()
-    object DeleteAll : TrashEvent()
+    data class RestoreNote(val note: Note) : TrashEvent()
+    data class RestoreChecklist(val checklist: Checklist) : TrashEvent()
+    data object DeleteAll : TrashEvent()
 }
