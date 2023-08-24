@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -205,25 +207,25 @@ fun EditNoteScreen(
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    items(noteColors.size) { color ->
+                    items(noteColors) { color ->
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
                                 .clip(CircleShape)
-                                .background(Color(color))
+                                .background(color)
                                 .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                                 .clickable {
                                     scope.launch {
                                         noteColorAnimatable.animateTo(
-                                            targetValue = Color(color),
+                                            targetValue = Color(color.toArgb()),
                                             animationSpec = tween(
                                                 durationMillis = 300,
                                                 easing = FastOutLinearInEasing
                                             )
                                         )
                                     }
-                                    onEvent(EditNoteEvent.ChangeColor(color))
+                                    onEvent(EditNoteEvent.ChangeColor(color.toArgb()))
                                 }
                         )
                     }

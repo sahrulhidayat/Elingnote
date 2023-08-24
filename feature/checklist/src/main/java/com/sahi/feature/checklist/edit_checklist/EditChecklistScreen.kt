@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
@@ -45,14 +46,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.sahi.core.ui.theme.noteColors
 import com.sahi.core.ui.components.EditChecklistItem
+import com.sahi.core.ui.theme.noteColors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -234,25 +236,25 @@ fun EditChecklistScreen(
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    items(noteColors.size) { color ->
+                    items(noteColors) { color ->
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
                                 .clip(CircleShape)
-                                .background(Color(color))
+                                .background(color)
                                 .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
                                 .clickable {
                                     scope.launch {
                                         checklistColorAnimatable.animateTo(
-                                            targetValue = Color(color),
+                                            targetValue = color,
                                             animationSpec = tween(
                                                 durationMillis = 300,
                                                 easing = FastOutLinearInEasing
                                             )
                                         )
                                     }
-                                    onEvent(EditChecklistEvent.ChangeColor(color))
+                                    onEvent(EditChecklistEvent.ChangeColor(color.toArgb()))
                                 }
                         )
                     }
