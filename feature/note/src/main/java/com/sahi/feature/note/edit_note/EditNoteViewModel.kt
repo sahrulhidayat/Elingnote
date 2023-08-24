@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.database.repository.NoteRepository
 import com.sahi.core.model.Entity.Note
-import com.sahi.core.ui.theme.noteColors
+import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
@@ -27,7 +27,7 @@ class EditNoteViewModel(
         private set
     var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
         private set
-    private var noteColor = mutableIntStateOf(noteColors[0].toArgb())
+    private var noteColor = mutableIntStateOf(itemColors[0].toArgb())
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set

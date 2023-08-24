@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.ui.theme.checklistColors
+import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -40,7 +40,7 @@ class EditChecklistViewModel(
     private val items = mutableStateListOf<ChecklistItemState>()
     var itemsFlow = MutableStateFlow(items)
         private set
-    private var checklistColor = mutableIntStateOf(checklistColors[0].toArgb())
+    private var checklistColor = mutableIntStateOf(itemColors[0].toArgb())
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set

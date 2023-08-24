@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.core.ui.components.TransparentHintTextField
-import com.sahi.core.ui.theme.noteColors
+import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -207,7 +207,7 @@ fun EditNoteScreen(
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    items(noteColors) { color ->
+                    items(itemColors) { color ->
                         Spacer(modifier = Modifier.width(4.dp))
                         Box(
                             modifier = Modifier
