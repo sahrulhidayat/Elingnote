@@ -14,8 +14,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.sahi.elingnote.navigation.ElingNoteNavHost
 import com.sahi.elingnote.navigation.TopLevelDestination
-import com.sahi.elingnote.ui.components.ElingNoteNavigationBar
-import com.sahi.elingnote.ui.components.ElingNoteNavigationBarItem
+import com.sahi.core.ui.components.ElingNoteNavigationBar
+import com.sahi.core.ui.components.ElingNoteNavigationBarItem
 
 @Composable
 fun ElingNoteApp(

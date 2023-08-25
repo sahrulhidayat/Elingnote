@@ -12,12 +12,12 @@ import com.sahi.elingnote.navigation.TopLevelDestination
 import com.sahi.elingnote.navigation.TopLevelDestination.CHECKLIST
 import com.sahi.elingnote.navigation.TopLevelDestination.NOTE
 import com.sahi.elingnote.navigation.TopLevelDestination.TRASH
-import com.sahi.elingnote.ui.checklist_feature.checklists.checklistsNavigationRoute
-import com.sahi.elingnote.ui.checklist_feature.checklists.navigateToChecklists
-import com.sahi.elingnote.ui.note_feature.notes.navigateToNotes
-import com.sahi.elingnote.ui.note_feature.notes.notesNavigationRoute
-import com.sahi.elingnote.ui.trash_feature.navigateToTrashScreen
-import com.sahi.elingnote.ui.trash_feature.trashNavigationRoute
+import com.sahi.feature.checklist.checklists.checklistsNavigationRoute
+import com.sahi.feature.checklist.checklists.navigateToChecklists
+import com.sahi.feature.note.notes.navigateToNotes
+import com.sahi.feature.note.notes.notesNavigationRoute
+import com.sahi.feature.trash.navigateToTrashScreen
+import com.sahi.feature.trash.trashNavigationRoute
 
 @Composable
 fun rememberElingNoteAppState(
