@@ -3,10 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-apply from: '../shared_dependencies.gradle'
+apply("../shared_dependencies.gradle")
 
 android {
-    namespace = 'com.sahi.elingnote'
+    namespace = "com.sahi.elingnote"
     compileSdk = 34
 
     defaultConfig {
@@ -24,16 +24,16 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled = true
-            shrinkResources = true
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )
         }
         debug {
-            debuggable = true
-            minifyEnabled = false
+            isDebuggable = true
+            isMinifyEnabled = false
         }
     }
     compileOptions {
