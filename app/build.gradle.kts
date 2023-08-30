@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:database"))
     implementation(project(":core:ui"))
+    implementation(project(":core:notifications"))
     implementation(project(":feature:note"))
     implementation(project(":feature:checklist"))
     implementation(project(":feature:trash"))
