@@ -24,12 +24,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NotificationAdd
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.core.ui.components.SetAlarmDialog
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
@@ -110,6 +116,8 @@ fun EditNoteScreen(
         skipPartiallyExpanded = true
     )
 
+    val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
+
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(noteColorAnimatable.value) {
         systemUiController.setStatusBarColor(
@@ -118,6 +126,16 @@ fun EditNoteScreen(
     }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {  },
+                actions = {
+                    IconButton(onClick = { showSetAlarmDialog.value = true }) {
+                        Icon(Icons.Default.NotificationAdd, contentDescription = "Add reminder")
+                    }
+                }
+            )
+        },
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier
@@ -144,6 +162,12 @@ fun EditNoteScreen(
             )
         }
     ) { padding ->
+        SetAlarmDialog(
+            title = titleState.text,
+            content = contentState.text,
+            showDialog = showSetAlarmDialog,
+            onSetAlarm = {  }
+        )
         LazyColumn(
             modifier = modifier
                 .padding(padding)
