@@ -21,6 +21,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -37,4 +38,5 @@ android {
 
 dependencies {
     implementation(project(":core:model"))
+    implementation(project(":core:notifications"))
 }
