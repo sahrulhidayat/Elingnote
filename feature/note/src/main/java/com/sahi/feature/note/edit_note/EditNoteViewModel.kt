@@ -104,6 +104,11 @@ class EditNoteViewModel(
                 }
             }
 
+            EditNoteEvent.SetAlarm -> {
+                viewModelScope.launch {
+                    eventFlow.emit(UiEvent.ShowToast(message = "Alarm has been set"))
+                }
+            }
         }
     }
 }
@@ -119,4 +124,5 @@ sealed class EditNoteEvent {
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
+    data object SetAlarm : EditNoteEvent()
 }

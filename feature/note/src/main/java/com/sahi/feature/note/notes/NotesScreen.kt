@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.core.model.Entity.Note
 import com.sahi.core.ui.components.ElingNoteTopAppBar
 import com.sahi.core.ui.components.EmptyStateAnimation
 import com.sahi.core.ui.components.NoteCard
@@ -44,7 +45,7 @@ import java.util.Collections
 
 @Composable
 fun NotesRoute(
-    onClickItem: (com.sahi.core.model.Entity.Note) -> Unit,
+    onClickItem: (Note) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NotesViewModel = koinViewModel(),
@@ -93,7 +94,7 @@ fun NotesScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (NotesEvent) -> Unit,
-    onClickItem: (com.sahi.core.model.Entity.Note) -> Unit,
+    onClickItem: (Note) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -142,7 +143,7 @@ fun NotesScreen(
                     if (isSelectMode) {
                         IconButton(
                             onClick = {
-                                val notes = mutableListOf<com.sahi.core.model.Entity.Note>()
+                                val notes = mutableListOf<Note>()
                                 selectedIndexes.forEachIndexed { index, item ->
                                     if (item) {
                                         notes.add(notesState.notes[index])

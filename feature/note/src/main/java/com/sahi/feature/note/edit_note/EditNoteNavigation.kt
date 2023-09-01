@@ -13,7 +13,7 @@ fun NavController.navigateToEditNote(navOptions: NavOptions? = null) {
     this.navigate(editNoteNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.editNoteScreen() {
+fun NavGraphBuilder.editNoteScreen(onBack: () -> Unit) {
     composable(
         route = "$editNoteNavigationRoute?noteId={noteId}&noteColor={noteColor}",
         arguments = listOf(
@@ -28,6 +28,6 @@ fun NavGraphBuilder.editNoteScreen() {
         )
     ) {
         val color = it.arguments?.getInt("noteColor") ?: -1
-        EditNoteRoute(color)
+        EditNoteRoute(noteColor = color, onBack = onBack)
     }
 }

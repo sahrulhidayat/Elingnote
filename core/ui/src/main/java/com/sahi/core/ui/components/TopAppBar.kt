@@ -37,6 +37,8 @@ fun ElingNoteTopAppBar(
         onResetSelect()
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     TopAppBar(
         modifier = modifier,
         navigationIcon = {
@@ -63,6 +65,7 @@ fun ElingNoteTopAppBar(
             containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp),
             titleContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.onSurface
-        )
+        ),
+        scrollBehavior = scrollBehavior
     )
 }

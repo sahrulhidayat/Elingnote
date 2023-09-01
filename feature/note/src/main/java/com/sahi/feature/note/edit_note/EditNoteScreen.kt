@@ -24,16 +24,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NotificationAdd
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.SetAlarmDialog
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
@@ -67,6 +64,7 @@ fun EditNoteRoute(
     noteColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditNoteViewModel = koinViewModel(),
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -93,7 +91,8 @@ fun EditNoteRoute(
         contentState = contentState,
         noteColor = noteColor,
         onEvent = viewModel::onEvent,
-        modifier = modifier
+        modifier = modifier,
+        onBack = onBack
     )
 
 }
@@ -106,6 +105,7 @@ fun EditNoteScreen(
     noteColor: Int,
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
+    onBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -127,13 +127,10 @@ fun EditNoteScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {  },
-                actions = {
-                    IconButton(onClick = { showSetAlarmDialog.value = true }) {
-                        Icon(Icons.Default.NotificationAdd, contentDescription = "Add reminder")
-                    }
-                }
+            EditModeTopAppBar(
+                showSetAlarmDialog = showSetAlarmDialog,
+                backgroundColor = noteColorAnimatable.value,
+                onBack = onBack
             )
         },
         bottomBar = {
@@ -166,7 +163,7 @@ fun EditNoteScreen(
             title = titleState.text,
             content = contentState.text,
             showDialog = showSetAlarmDialog,
-            onSetAlarm = {  }
+            onSetAlarm = { onEvent(EditNoteEvent.SetAlarm) }
         )
         LazyColumn(
             modifier = modifier
