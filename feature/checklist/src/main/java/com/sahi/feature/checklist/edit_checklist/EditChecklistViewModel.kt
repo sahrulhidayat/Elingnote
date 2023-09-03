@@ -126,7 +126,6 @@ class EditChecklistViewModel(
                             }.forEach {
                                 checklistRepository.updateChecklistItem(it)
                             }
-                            eventFlow.emit(UiEvent.ShowToast(message = "Checklist saved"))
                         }
 
                         checklistTitle.value.title.isBlank() && items.isEmpty() -> {

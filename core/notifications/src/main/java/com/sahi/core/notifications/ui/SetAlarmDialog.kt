@@ -81,12 +81,12 @@ fun SetAlarmDialog(
         initialDisplayedMonthMillis = null
     )
 
-    val currentTimePlusAnHour = LocalTime.now().plusHours(1)
+    val currentTime = LocalTime.now()
     val showTimePicker = rememberSaveable { mutableStateOf(false) }
     val timePickerState = rememberTimePickerState(
         is24Hour = true,
-        initialHour = currentTimePlusAnHour.hour,
-        initialMinute = currentTimePlusAnHour.minute
+        initialHour = currentTime.hour,
+        initialMinute = currentTime.minute
     )
 
     val selectedDate =

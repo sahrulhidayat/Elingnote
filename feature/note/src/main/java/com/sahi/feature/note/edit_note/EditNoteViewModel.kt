@@ -34,15 +34,6 @@ class EditNoteViewModel(
 
     private var currentNoteId: Int? = null
 
-    private var initialNote = Note(
-        id = 0,
-        title = "",
-        content = "",
-        timestamp = 0L,
-        color = 0,
-        isTrash = false
-    )
-
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
             if (noteId != -1) {
@@ -58,15 +49,6 @@ class EditNoteViewModel(
                             isHintVisible = note.content.isBlank()
                         )
                         noteColor.intValue = note.color
-
-                        initialNote = Note(
-                            id = note.id,
-                            title = note.title,
-                            content = note.content,
-                            timestamp = note.timestamp,
-                            color = note.color,
-                            isTrash = note.isTrash
-                        )
                     }
                 }
             }
@@ -105,16 +87,15 @@ class EditNoteViewModel(
 
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
-                    val finalNote = Note(
+                    val note = Note(
                         id = currentNoteId,
                         title = noteTitle.value.text,
                         content = noteContent.value.text,
                         timestamp = System.currentTimeMillis(),
                         color = noteColor.intValue
                     )
-                    if (initialNote.title != finalNote.title || initialNote.content != finalNote.content) {
-                        noteRepository.addNote(finalNote)
-                        eventFlow.emit(UiEvent.ShowToast(message = "Note saved"))
+                    if (note.title.isNotBlank() || note.content.isNotBlank()) {
+                        noteRepository.addNote(note)
                     }
                 }
             }
