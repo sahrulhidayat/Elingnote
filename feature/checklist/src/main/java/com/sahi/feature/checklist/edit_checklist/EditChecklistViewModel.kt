@@ -8,10 +8,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sahi.core.database.repository.ChecklistRepository
+import com.sahi.core.model.Entity.Checklist
+import com.sahi.core.model.Entity.ChecklistItem
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 data class EditChecklistState(
@@ -31,7 +33,7 @@ data class ChecklistItemState(
 )
 
 class EditChecklistViewModel(
-    private val checklistRepository: com.sahi.core.database.repository.ChecklistRepository,
+    private val checklistRepository: ChecklistRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var checklistTitle = mutableStateOf(EditChecklistState(hint = "Checklist title"))
@@ -74,7 +76,7 @@ class EditChecklistViewModel(
             } else {
                 viewModelScope.launch {
                     checklistRepository.addChecklist(
-                        com.sahi.core.model.Entity.Checklist(
+                        Checklist(
                             title = checklistTitle.value.title,
                             timestamp = System.currentTimeMillis(),
                             color = checklistColor.intValue
@@ -103,33 +105,32 @@ class EditChecklistViewModel(
             }
 
             is EditChecklistEvent.SaveChecklist -> {
-                val checklist = com.sahi.core.model.Entity.Checklist(
+                val finalChecklist = Checklist(
                     id = currentChecklistId,
                     title = checklistTitle.value.title,
                     timestamp = System.currentTimeMillis(),
                     color = checklistColor.intValue
                 )
+
                 viewModelScope.launch {
                     when {
                         checklistTitle.value.title.isNotBlank() || items.isNotEmpty() -> {
-                            checklistRepository.addChecklist(checklist)
-                            itemsFlow.collectLatest { items ->
-                                items.map {
-                                    com.sahi.core.model.Entity.ChecklistItem(
-                                        itemId = it.itemId,
-                                        checklistId = it.checklistId,
-                                        label = it.label,
-                                        checked = it.checked
-                                    )
-                                }.forEach {
-                                    checklistRepository.updateChecklistItem(it)
-                                }
-                                eventFlow.emit(UiEvent.ShowToast(message = "Checklist saved"))
+                            checklistRepository.addChecklist(finalChecklist)
+                            items.map {
+                                ChecklistItem(
+                                    itemId = it.itemId,
+                                    checklistId = it.checklistId,
+                                    label = it.label,
+                                    checked = it.checked
+                                )
+                            }.forEach {
+                                checklistRepository.updateChecklistItem(it)
                             }
+                            eventFlow.emit(UiEvent.ShowToast(message = "Checklist saved"))
                         }
 
                         checklistTitle.value.title.isBlank() && items.isEmpty() -> {
-                            checklistRepository.deleteChecklist(checklist)
+                            checklistRepository.deleteChecklist(finalChecklist)
                         }
                     }
                 }
@@ -137,6 +138,12 @@ class EditChecklistViewModel(
 
             is EditChecklistEvent.ChangeColor -> {
                 checklistColor.intValue = event.color
+            }
+
+            is EditChecklistEvent.SetAlarm -> {
+                viewModelScope.launch {
+                    eventFlow.emit(UiEvent.ShowToast(message = "Alarm has been set"))
+                }
             }
         }
     }
@@ -164,7 +171,7 @@ class EditChecklistViewModel(
                 items.removeAt(event.index).also {
                     viewModelScope.launch {
                         checklistRepository.deleteChecklistItem(
-                            com.sahi.core.model.Entity.ChecklistItem(
+                            ChecklistItem(
                                 itemId = it.itemId,
                                 checklistId = it.checklistId,
                                 label = it.label,
@@ -179,7 +186,7 @@ class EditChecklistViewModel(
             is ChecklistItemEvent.AddItem -> {
                 viewModelScope.launch {
                     checklistRepository.addChecklistItem(
-                        com.sahi.core.model.Entity.ChecklistItem(
+                        ChecklistItem(
                             checklistId = currentChecklistId ?: 0,
                             label = "",
                             checked = false
@@ -203,7 +210,7 @@ class EditChecklistViewModel(
 }
 
 sealed class UiEvent {
-    data class ShowToast(val message:String) : UiEvent()
+    data class ShowToast(val message: String) : UiEvent()
 }
 
 sealed class EditChecklistEvent {
@@ -211,6 +218,7 @@ sealed class EditChecklistEvent {
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
     data class ChangeColor(val color: Int) : EditChecklistEvent()
     data object SaveChecklist : EditChecklistEvent()
+    data object SetAlarm : EditChecklistEvent()
 }
 
 sealed class ChecklistItemEvent {

@@ -47,7 +47,7 @@ fun ElingNoteNavHost(
                 navController.navigateToEditChecklist()
             }
         )
-        editChecklistScreen()
+        editChecklistScreen(onBack = { navController.popBackStack() })
         trashScreen()
     }
 }

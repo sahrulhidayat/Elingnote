@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -29,10 +30,10 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +42,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
@@ -51,9 +54,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
+import com.sahi.core.ui.components.EditModeTopAppBar
+import com.sahi.core.ui.components.LifecycleObserver
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -64,16 +69,17 @@ fun EditChecklistRoute(
     checklistColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditChecklistViewModel = koinViewModel(),
+    onBack: () -> Unit
 ) {
     val titleState by viewModel.checklistTitle
     val itemsState by viewModel.itemsFlow.collectAsState()
     val context = LocalContext.current
 
-    LifecycleStartEffect(Unit) {
-        onStopOrDispose {
-            viewModel.onEvent(EditChecklistEvent.SaveChecklist)
-        }
-    }
+    LifecycleObserver(
+        onStart = { },
+        onStop = { viewModel.onEvent(EditChecklistEvent.SaveChecklist) }
+    )
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -90,7 +96,8 @@ fun EditChecklistRoute(
         checklistColor = checklistColor,
         onEvent = viewModel::onEvent,
         itemEvent = viewModel::itemEvent,
-        modifier = modifier
+        modifier = modifier,
+        onBack = onBack
     )
 }
 
@@ -103,6 +110,7 @@ fun EditChecklistScreen(
     onEvent: (EditChecklistEvent) -> Unit,
     itemEvent: (ChecklistItemEvent) -> Unit,
     modifier: Modifier = Modifier,
+    onBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -113,6 +121,8 @@ fun EditChecklistScreen(
         skipPartiallyExpanded = true
     )
 
+    val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
+
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(checklistColorAnimatable.value) {
         systemUiController.setStatusBarColor(
@@ -121,6 +131,13 @@ fun EditChecklistScreen(
     }
 
     Scaffold(
+        topBar = {
+            EditModeTopAppBar(
+                showSetAlarmDialog = showSetAlarmDialog,
+                backgroundColor = checklistColorAnimatable.value,
+                onBack = onBack
+            )
+        },
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.height(48.dp),
@@ -173,7 +190,7 @@ fun EditChecklistScreen(
                 }
             }
             itemsIndexed(itemsState) { index, item ->
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Box(modifier = Modifier.padding(end = 16.dp)) {
                     EditChecklistItem(
                         checked = item.checked,
                         isHintVisible = item.isHintVisible,
@@ -203,24 +220,38 @@ fun EditChecklistScreen(
                 }
             }
             item {
-                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clickable {
+                            itemEvent(ChecklistItemEvent.AddItem)
+                        }
+                    ,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     if (
                         itemsState.lastOrNull()?.label?.isNotEmpty() == true
                         || itemsState.isEmpty()
                     ) {
-                        IconButton(
-                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Black),
-                            onClick = {
-                                itemEvent(ChecklistItemEvent.AddItem)
-                            }
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add checklist item")
-                        }
+                        Icon(Icons.Default.Add, contentDescription = "Add checklist item")
+                        Text(
+                            text = "New item",
+                            modifier = Modifier.padding(8.dp)
+                        )
                     }
-                    Spacer(modifier = Modifier.height(40.dp))
                 }
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
+
+        val itemLabels = itemsState.map { it.label }
+        val labelsString: String = itemLabels.joinToString("\n")
+        SetAlarmDialog(
+            title = titleState.title,
+            content = labelsString,
+            showDialog = showSetAlarmDialog,
+            onSetAlarm = { onEvent(EditChecklistEvent.SetAlarm) }
+        )
         if (showColorSheet) {
             ModalBottomSheet(
                 sheetState = sheetState,
