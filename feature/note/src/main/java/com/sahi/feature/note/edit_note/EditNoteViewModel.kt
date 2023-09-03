@@ -112,10 +112,8 @@ class EditNoteViewModel(
                         timestamp = System.currentTimeMillis(),
                         color = noteColor.intValue
                     )
-                    if (finalNote.title.isNotBlank() || finalNote.content.isNotBlank()) {
-                        noteRepository.addNote(finalNote)
-                    }
                     if (initialNote.title != finalNote.title || initialNote.content != finalNote.content) {
+                        noteRepository.addNote(finalNote)
                         eventFlow.emit(UiEvent.ShowToast(message = "Note saved"))
                     }
                 }

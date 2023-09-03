@@ -49,10 +49,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
-import com.sahi.core.ui.components.SetAlarmDialog
+import com.sahi.core.ui.components.LifecycleObserver
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
@@ -68,11 +68,11 @@ fun EditNoteRoute(
 ) {
     val context = LocalContext.current
 
-    LifecycleStartEffect(Unit) {
-        onStopOrDispose {
-            viewModel.onEvent(EditNoteEvent.SaveNote)
-        }
-    }
+    LifecycleObserver(
+        onStart = { },
+        onStop = { viewModel.onEvent(EditNoteEvent.SaveNote) }
+    )
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -159,12 +159,6 @@ fun EditNoteScreen(
             )
         }
     ) { padding ->
-        SetAlarmDialog(
-            title = titleState.text,
-            content = contentState.text,
-            showDialog = showSetAlarmDialog,
-            onSetAlarm = { onEvent(EditNoteEvent.SetAlarm) }
-        )
         LazyColumn(
             modifier = modifier
                 .padding(padding)
@@ -213,6 +207,12 @@ fun EditNoteScreen(
                 }
             }
         }
+        SetAlarmDialog(
+            title = titleState.text,
+            content = contentState.text,
+            showDialog = showSetAlarmDialog,
+            onSetAlarm = { onEvent(EditNoteEvent.SetAlarm) }
+        )
         if (showColorSheet) {
             ModalBottomSheet(
                 sheetState = sheetState,
