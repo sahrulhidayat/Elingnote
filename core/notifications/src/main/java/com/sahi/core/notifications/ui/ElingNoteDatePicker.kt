@@ -1,4 +1,4 @@
-package com.sahi.core.ui.components
+package com.sahi.core.notifications.ui
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog

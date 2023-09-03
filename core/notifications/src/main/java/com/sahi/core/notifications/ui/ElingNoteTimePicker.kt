@@ -1,4 +1,4 @@
-package com.sahi.core.ui.components
+package com.sahi.core.notifications.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

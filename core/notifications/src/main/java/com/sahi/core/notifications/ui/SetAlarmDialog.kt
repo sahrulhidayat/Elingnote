@@ -1,4 +1,4 @@
-package com.sahi.core.ui.components
+package com.sahi.core.notifications.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
