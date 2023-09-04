@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -24,6 +25,7 @@ fun ElingNoteTopAppBar(
     modifier: Modifier = Modifier,
     title: String = "",
     actions: @Composable RowScope.() -> Unit = {},
+    scrollBehavior: TopAppBarScrollBehavior,
     isSelectMode: Boolean = false,
     selectedIndexes: SnapshotStateList<Boolean> = mutableStateListOf(),
     onResetSelect: () -> Unit = {},
@@ -36,8 +38,6 @@ fun ElingNoteTopAppBar(
     if (!selectedIndexes.contains(true)) {
         onResetSelect()
     }
-
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     TopAppBar(
         modifier = modifier,
