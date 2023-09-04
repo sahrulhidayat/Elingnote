@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,19 +38,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sahi.core.notifications.ui.SetAlarmDialog
+import com.sahi.core.ui.components.EditModeTopAppBar
+import com.sahi.core.ui.components.LifecycleObserver
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
@@ -61,14 +66,15 @@ fun EditNoteRoute(
     noteColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditNoteViewModel = koinViewModel(),
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
 
-    LifecycleStartEffect(Unit) {
-        onStopOrDispose {
-            viewModel.onEvent(EditNoteEvent.SaveNote)
-        }
-    }
+    LifecycleObserver(
+        onStart = { },
+        onStop = { viewModel.onEvent(EditNoteEvent.SaveNote) }
+    )
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -87,7 +93,8 @@ fun EditNoteRoute(
         contentState = contentState,
         noteColor = noteColor,
         onEvent = viewModel::onEvent,
-        modifier = modifier
+        modifier = modifier,
+        onBack = onBack
     )
 
 }
@@ -100,6 +107,7 @@ fun EditNoteScreen(
     noteColor: Int,
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
+    onBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -110,6 +118,9 @@ fun EditNoteScreen(
         skipPartiallyExpanded = true
     )
 
+    val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(noteColorAnimatable.value) {
         systemUiController.setStatusBarColor(
@@ -118,6 +129,22 @@ fun EditNoteScreen(
     }
 
     Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            EditModeTopAppBar(
+                showSetAlarmDialog = showSetAlarmDialog,
+                scrollBehavior = scrollBehavior,
+                colors = if (noteColorAnimatable.value != Color.White) {
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = noteColorAnimatable.value,
+                    )
+                } else {
+                    TopAppBarDefaults.topAppBarColors()
+                },
+                onBack = onBack
+            )
+        },
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier
@@ -192,6 +219,12 @@ fun EditNoteScreen(
                 }
             }
         }
+        SetAlarmDialog(
+            title = titleState.text,
+            content = contentState.text,
+            showDialog = showSetAlarmDialog,
+            onSetAlarm = { onEvent(EditNoteEvent.SetAlarm) }
+        )
         if (showColorSheet) {
             ModalBottomSheet(
                 sheetState = sheetState,

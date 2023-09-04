@@ -65,8 +65,7 @@ class EditNoteViewModel(
 
             is EditNoteEvent.ChangeTitleFocus -> {
                 noteTitle.value = noteTitle.value.copy(
-                    isHintVisible = !event.focusState.isFocused &&
-                            noteTitle.value.text.isBlank()
+                    isHintVisible = !event.focusState.isFocused && noteTitle.value.text.isBlank()
                 )
             }
 
@@ -78,8 +77,7 @@ class EditNoteViewModel(
 
             is EditNoteEvent.ChangeContentFocus -> {
                 noteContent.value = noteContent.value.copy(
-                    isHintVisible = !event.focusState.isFocused &&
-                            noteContent.value.text.isBlank()
+                    isHintVisible = !event.focusState.isFocused && noteContent.value.text.isBlank()
                 )
             }
 
@@ -89,21 +87,24 @@ class EditNoteViewModel(
 
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
-                    if (noteTitle.value.text.isNotBlank() || noteContent.value.text.isNotBlank()) {
-                        noteRepository.addNote(
-                            Note(
-                                id = currentNoteId,
-                                title = noteTitle.value.text,
-                                content = noteContent.value.text,
-                                timestamp = System.currentTimeMillis(),
-                                color = noteColor.intValue
-                            )
-                        )
-                        eventFlow.emit(UiEvent.ShowToast(message = "Note saved"))
+                    val note = Note(
+                        id = currentNoteId,
+                        title = noteTitle.value.text,
+                        content = noteContent.value.text,
+                        timestamp = System.currentTimeMillis(),
+                        color = noteColor.intValue
+                    )
+                    if (note.title.isNotBlank() || note.content.isNotBlank()) {
+                        noteRepository.addNote(note)
                     }
                 }
             }
 
+            is EditNoteEvent.SetAlarm -> {
+                viewModelScope.launch {
+                    eventFlow.emit(UiEvent.ShowToast(message = "Alarm has been set"))
+                }
+            }
         }
     }
 }
@@ -119,4 +120,5 @@ sealed class EditNoteEvent {
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
+    data object SetAlarm : EditNoteEvent()
 }

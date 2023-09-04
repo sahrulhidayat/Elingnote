@@ -54,7 +54,7 @@ class ChecklistsViewModel(
                 }
             }
 
-            ChecklistsEvent.RestoreChecklist -> {
+            is ChecklistsEvent.RestoreChecklist -> {
                 viewModelScope.launch {
                     recentlyDeletedChecklists.forEach { checklist ->
                         checklistRepository.addChecklist(checklist)
