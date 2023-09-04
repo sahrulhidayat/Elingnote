@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -122,6 +124,7 @@ fun EditChecklistScreen(
     )
 
     val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     val systemUiController = rememberSystemUiController()
     LaunchedEffect(checklistColorAnimatable.value) {
@@ -131,10 +134,18 @@ fun EditChecklistScreen(
     }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
-                backgroundColor = checklistColorAnimatable.value,
+                scrollBehavior = scrollBehavior,
+                colors = if (checklistColorAnimatable.value != Color.White) {
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = checklistColorAnimatable.value,
+                    )
+                } else {
+                    TopAppBarDefaults.topAppBarColors()
+                },
                 onBack = onBack
             )
         },

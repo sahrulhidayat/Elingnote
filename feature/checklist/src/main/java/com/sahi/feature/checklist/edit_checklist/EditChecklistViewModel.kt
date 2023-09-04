@@ -58,7 +58,7 @@ class EditChecklistViewModel(
                             currentChecklistId = checklistId
                             checklistTitle.value = checklistTitle.value.copy(
                                 title = checklistWithItems.checklist.title,
-                                isHintVisible = false
+                                isHintVisible = checklistWithItems.checklist.title.isBlank()
                             )
                             checklistWithItems.checklistItems.forEach { item ->
                                 items.add(

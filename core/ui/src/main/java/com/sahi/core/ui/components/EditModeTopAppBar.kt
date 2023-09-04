@@ -6,37 +6,29 @@ import androidx.compose.material.icons.filled.NotificationAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditModeTopAppBar(
     showSetAlarmDialog: MutableState<Boolean>,
-    backgroundColor: Color,
+    scrollBehavior: TopAppBarScrollBehavior,
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     onBack: () -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     TopAppBar(
         title = {  },
-        colors = TopAppBarColors(
-            containerColor = backgroundColor,
-            scrolledContainerColor = backgroundColor,
-            navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
-            titleContentColor = MaterialTheme.colorScheme.onBackground,
-            actionIconContentColor = MaterialTheme.colorScheme.onBackground
-        ),
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
         },
+        colors = colors,
         actions = {
             IconButton(onClick = { showSetAlarmDialog.value = true }) {
                 Icon(Icons.Default.NotificationAdd, contentDescription = "Add reminder")
