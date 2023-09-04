@@ -1,21 +1,26 @@
 package com.sahi.elingnote.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.sahi.elingnote.navigation.ElingNoteNavHost
-import com.sahi.elingnote.navigation.TopLevelDestination
 import com.sahi.core.ui.components.ElingNoteNavigationBar
 import com.sahi.core.ui.components.ElingNoteNavigationBarItem
+import com.sahi.elingnote.navigation.ElingNoteNavHost
+import com.sahi.elingnote.navigation.TopLevelDestination
 
 @Composable
 fun ElingNoteApp(
@@ -23,6 +28,8 @@ fun ElingNoteApp(
 ) {
     val destination = appState.currentTopLevelDestination
     Scaffold(
+        containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (destination != null) {
                 BottomAppBar(
@@ -41,6 +48,12 @@ fun ElingNoteApp(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .consumeWindowInsets(padding)
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(
+                        WindowInsetsSides.Horizontal,
+                    ),
+                ),
         ) {
             ElingNoteNavHost(navController = appState.navController)
         }
@@ -67,8 +80,7 @@ fun ElingNoteBottomBar(
                         destination.unselectedIcon
                     }
                     Icon(imageVector = icon, contentDescription = null)
-                },
-                label = { Text(text = stringResource(destination.iconTextId)) }
+                }
             )
         }
     }

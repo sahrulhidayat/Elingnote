@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -51,7 +52,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
@@ -121,16 +121,8 @@ fun EditNoteScreen(
     val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(noteColorAnimatable.value) {
-        systemUiController.setStatusBarColor(
-            color = noteColorAnimatable.value
-        )
-    }
-
     Scaffold(
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
@@ -147,8 +139,7 @@ fun EditNoteScreen(
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier
-                    .height(48.dp),
+                modifier = Modifier,
                 actions = {
                     IconButton(
                         onClick = {
@@ -227,21 +218,23 @@ fun EditNoteScreen(
         )
         if (showColorSheet) {
             ModalBottomSheet(
+                modifier = Modifier.consumeWindowInsets(padding),
                 sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
-                containerColor = noteColorAnimatable.value,
+                scrimColor = Color.Transparent,
+                dragHandle = {},
                 onDismissRequest = {
                     showColorSheet = false
                 }
             ) {
                 LazyRow(
-                    modifier = Modifier.padding(bottom = 56.dp)
+                    modifier = Modifier.padding(vertical = 16.dp)
                 ) {
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                     items(itemColors) { color ->
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Box(
                             modifier = Modifier
                                 .size(44.dp)

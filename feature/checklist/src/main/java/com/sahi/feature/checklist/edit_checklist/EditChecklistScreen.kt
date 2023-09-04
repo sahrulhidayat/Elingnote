@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,7 +57,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
 import com.sahi.core.ui.components.EditModeTopAppBar
@@ -126,13 +126,6 @@ fun EditChecklistScreen(
     val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(checklistColorAnimatable.value) {
-        systemUiController.setStatusBarColor(
-            color = checklistColorAnimatable.value
-        )
-    }
-
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -151,7 +144,7 @@ fun EditChecklistScreen(
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier.height(48.dp),
+                modifier = Modifier,
                 actions = {
                     IconButton(
                         onClick = {
@@ -265,21 +258,23 @@ fun EditChecklistScreen(
         )
         if (showColorSheet) {
             ModalBottomSheet(
+                modifier = Modifier.consumeWindowInsets(padding),
                 sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
-                containerColor = checklistColorAnimatable.value,
+                scrimColor = Color.Transparent,
+                dragHandle = {},
                 onDismissRequest = {
                     showColorSheet = false
                 }
             ) {
                 LazyRow(
-                    modifier = Modifier.padding(bottom = 56.dp)
+                    modifier = Modifier.padding(vertical = 16.dp)
                 ) {
                     item {
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                     items(itemColors) { color ->
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
