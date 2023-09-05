@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -33,6 +33,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -123,16 +124,20 @@ fun EditNoteScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = noteColorAnimatable.value,
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
                 scrollBehavior = scrollBehavior,
                 colors = if (noteColorAnimatable.value != Color.White) {
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = noteColorAnimatable.value,
+                        containerColor = Color.Transparent,
                     )
                 } else {
-                    TopAppBarDefaults.topAppBarColors()
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.White,
+                        scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                    )
                 },
                 onBack = onBack
             )
@@ -165,8 +170,7 @@ fun EditNoteScreen(
         LazyColumn(
             modifier = modifier
                 .padding(padding)
-                .fillMaxSize()
-                .background(noteColorAnimatable.value),
+                .fillMaxSize(),
         ) {
             item {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -208,6 +212,7 @@ fun EditNoteScreen(
                         modifier = Modifier.fillMaxHeight()
                     )
                 }
+                Spacer(modifier = Modifier.height(250.dp))
             }
         }
         SetAlarmDialog(
@@ -218,45 +223,47 @@ fun EditNoteScreen(
         )
         if (showColorSheet) {
             ModalBottomSheet(
-                modifier = Modifier.consumeWindowInsets(padding),
                 sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
                 scrimColor = Color.Transparent,
+                windowInsets = WindowInsets(0, 0, 0, 0),
                 dragHandle = {},
                 onDismissRequest = {
                     showColorSheet = false
                 }
             ) {
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 16.dp)
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    items(itemColors) { color ->
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(color)
-                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
-                                .clickable {
-                                    scope.launch {
-                                        noteColorAnimatable.animateTo(
-                                            targetValue = Color(color.toArgb()),
-                                            animationSpec = tween(
-                                                durationMillis = 300,
-                                                easing = FastOutLinearInEasing
+                Box(modifier = Modifier.padding(bottom = 50.dp)) {
+                    LazyRow(
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    ) {
+                        item {
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                        items(itemColors) { color ->
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .clip(CircleShape)
+                                    .background(color)
+                                    .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
+                                    .clickable {
+                                        scope.launch {
+                                            noteColorAnimatable.animateTo(
+                                                targetValue = Color(color.toArgb()),
+                                                animationSpec = tween(
+                                                    durationMillis = 300,
+                                                    easing = FastOutLinearInEasing
+                                                )
                                             )
-                                        )
+                                        }
+                                        onEvent(EditNoteEvent.ChangeColor(color.toArgb()))
                                     }
-                                    onEvent(EditNoteEvent.ChangeColor(color.toArgb()))
-                                }
-                        )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.width(8.dp))
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
                     }
                 }
             }

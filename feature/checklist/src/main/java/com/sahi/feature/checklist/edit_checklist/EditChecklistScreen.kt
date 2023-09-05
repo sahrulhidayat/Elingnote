@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -37,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,6 +63,7 @@ import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
+import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -128,23 +131,26 @@ fun EditChecklistScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = checklistColorAnimatable.value,
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
                 scrollBehavior = scrollBehavior,
                 colors = if (checklistColorAnimatable.value != Color.White) {
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = checklistColorAnimatable.value,
+                        containerColor = Color.Transparent,
                     )
                 } else {
-                    TopAppBarDefaults.topAppBarColors()
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.White,
+                        scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
+                    )
                 },
                 onBack = onBack
             )
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier,
                 actions = {
                     IconButton(
                         onClick = {
@@ -167,61 +173,59 @@ fun EditChecklistScreen(
             )
         }
     ) { padding ->
+        val listState = rememberLazyListState()
+        if (listState.isScrollInProgress) focusManager.clearFocus()
         LazyColumn(
+            state = listState,
             modifier = modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(checklistColorAnimatable.value)
         ) {
             item {
-                Box(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    com.sahi.core.ui.components.TransparentHintTextField(
-                        text = titleState.title,
-                        hint = titleState.hint,
-                        onValueChange = {
-                            onEvent(EditChecklistEvent.EnteredTitle(it))
-                        },
-                        onFocusChange = {
-                            onEvent(EditChecklistEvent.ChangeTitleFocus(it))
-                        },
-                        isHintVisible = titleState.isHintVisible,
-                        textStyle = MaterialTheme.typography.titleMedium,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                        keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
-                    )
-                }
+                TransparentHintTextField(
+                    modifier = Modifier.padding(16.dp),
+                    text = titleState.title,
+                    hint = titleState.hint,
+                    onValueChange = {
+                        onEvent(EditChecklistEvent.EnteredTitle(it))
+                    },
+                    onFocusChange = {
+                        onEvent(EditChecklistEvent.ChangeTitleFocus(it))
+                    },
+                    isHintVisible = titleState.isHintVisible,
+                    textStyle = MaterialTheme.typography.titleMedium,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
+                )
             }
             itemsIndexed(itemsState) { index, item ->
-                Box(modifier = Modifier.padding(end = 16.dp)) {
-                    EditChecklistItem(
-                        checked = item.checked,
-                        isHintVisible = item.isHintVisible,
-                        isFocused = item.isFocused,
-                        label = item.label,
-                        hint = item.hint,
-                        onCheckedChange = {
-                            itemEvent(
-                                ChecklistItemEvent.ChangeChecked(
-                                    index,
-                                    it
-                                )
+                EditChecklistItem(
+                    modifier = Modifier.padding(end = 16.dp),
+                    checked = item.checked,
+                    isHintVisible = item.isHintVisible,
+                    isFocused = item.isFocused,
+                    label = item.label,
+                    hint = item.hint,
+                    onCheckedChange = {
+                        itemEvent(
+                            ChecklistItemEvent.ChangeChecked(
+                                index,
+                                it
                             )
-                        },
-                        onValueChange = { itemEvent(ChecklistItemEvent.EnteredLabel(index, it)) },
-                        onFocusChange = {
-                            itemEvent(
-                                ChecklistItemEvent.ChangeLabelFocus(
-                                    index,
-                                    it
-                                )
+                        )
+                    },
+                    onValueChange = { itemEvent(ChecklistItemEvent.EnteredLabel(index, it)) },
+                    onFocusChange = {
+                        itemEvent(
+                            ChecklistItemEvent.ChangeLabelFocus(
+                                index,
+                                it
                             )
-                        },
-                        onAdd = { itemEvent(ChecklistItemEvent.AddItem) },
-                        onDelete = { itemEvent(ChecklistItemEvent.DeleteItem(index)) }
-                    )
-                }
+                        )
+                    },
+                    onAdd = { itemEvent(ChecklistItemEvent.AddItem) },
+                    onDelete = { itemEvent(ChecklistItemEvent.DeleteItem(index)) }
+                )
             }
             item {
                 Row(
@@ -229,8 +233,7 @@ fun EditChecklistScreen(
                         .padding(horizontal = 16.dp)
                         .clickable {
                             itemEvent(ChecklistItemEvent.AddItem)
-                        }
-                    ,
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (
@@ -244,7 +247,7 @@ fun EditChecklistScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(250.dp))
             }
         }
 
@@ -258,45 +261,51 @@ fun EditChecklistScreen(
         )
         if (showColorSheet) {
             ModalBottomSheet(
-                modifier = Modifier.consumeWindowInsets(padding),
                 sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
                 scrimColor = Color.Transparent,
+                windowInsets = WindowInsets(0, 0, 0, 0),
                 dragHandle = {},
                 onDismissRequest = {
                     showColorSheet = false
                 }
             ) {
-                LazyRow(
-                    modifier = Modifier.padding(vertical = 16.dp)
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    items(itemColors) { color ->
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(color)
-                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
-                                .clickable {
-                                    scope.launch {
-                                        checklistColorAnimatable.animateTo(
-                                            targetValue = color,
-                                            animationSpec = tween(
-                                                durationMillis = 300,
-                                                easing = FastOutLinearInEasing
+                Box(modifier = Modifier.padding(bottom = 50.dp)) {
+                    LazyRow(
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    ) {
+                        item {
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
+                        items(itemColors) { color ->
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .clip(CircleShape)
+                                    .background(color)
+                                    .border(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.onBackground,
+                                        CircleShape
+                                    )
+                                    .clickable {
+                                        scope.launch {
+                                            checklistColorAnimatable.animateTo(
+                                                targetValue = color,
+                                                animationSpec = tween(
+                                                    durationMillis = 300,
+                                                    easing = FastOutLinearInEasing
+                                                )
                                             )
-                                        )
+                                        }
+                                        onEvent(EditChecklistEvent.ChangeColor(color.toArgb()))
                                     }
-                                    onEvent(EditChecklistEvent.ChangeColor(color.toArgb()))
-                                }
-                        )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.width(8.dp))
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.width(8.dp))
+                        }
                     }
                 }
             }
