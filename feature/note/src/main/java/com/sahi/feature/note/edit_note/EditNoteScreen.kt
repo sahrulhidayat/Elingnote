@@ -25,8 +25,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FormatColorFill
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -151,16 +154,7 @@ fun EditNoteScreen(
                             showColorSheet = true
                         }
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(4.dp)
-                                .background(
-                                    color = noteColorAnimatable.value,
-                                    shape = CircleShape
-                                )
-                                .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
-                        )
+                        Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
                     }
                 },
                 contentPadding = PaddingValues(4.dp),
@@ -246,7 +240,11 @@ fun EditNoteScreen(
                                     .size(44.dp)
                                     .clip(CircleShape)
                                     .background(color)
-                                    .border(2.dp, MaterialTheme.colorScheme.onBackground, CircleShape)
+                                    .border(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.onBackground,
+                                        CircleShape
+                                    )
                                     .clickable {
                                         scope.launch {
                                             noteColorAnimatable.animateTo(
