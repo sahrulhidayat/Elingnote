@@ -33,12 +33,12 @@ fun ElingNoteTimePicker(
                     .background(
                         color = MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(16.dp),
+                    ),
                 horizontalAlignment = Alignment.End
             ) {
                 TimePicker(
                     state = state,
+                    modifier = Modifier.padding(16.dp),
                     layoutType = TimePickerLayoutType.Vertical
                 )
                 TextButton(

@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -125,8 +126,10 @@ fun SetAlarmDialog(
                     .padding(16.dp)
             ) {
                 Text(
+                    text = "Reminder",
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    text = "Reminder"
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -135,11 +138,16 @@ fun SetAlarmDialog(
                         modifier = Modifier
                             .clickable { showTimePicker.value = true }
                             .padding(start = 16.dp),
-                        text = String.format("%02d", hour) + ":" + String.format("%02d", minute)
+                        text = String.format("%02d", hour) + ":" + String.format("%02d", minute),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { showTimePicker.value = true }) {
-                        Icon(Icons.Default.AccessTimeFilled, contentDescription = "Pick time")
+                        Icon(
+                            imageVector = Icons.Default.AccessTimeFilled,
+                            contentDescription = "Pick time",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
                 Row(
@@ -149,11 +157,16 @@ fun SetAlarmDialog(
                         modifier = Modifier
                             .clickable { showDatePicker.value = true }
                             .padding(start = 16.dp),
-                        text = selectedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                        text = selectedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { showDatePicker.value = true }) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Pick date")
+                        Icon(
+                            imageVector = Icons.Default.CalendarMonth,
+                            contentDescription = "Pick date",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
                 Row(
