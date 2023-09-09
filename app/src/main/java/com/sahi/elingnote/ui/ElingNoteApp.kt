@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -32,14 +31,10 @@ fun ElingNoteApp(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (destination != null) {
-                BottomAppBar(
-                    actions = {
-                        ElingNoteBottomBar(
-                            destinations = appState.topLevelDestinations,
-                            onNavigateToDestination = appState::navigateToTopLevelDestination,
-                            currentDestination = appState.currentDestination,
-                        )
-                    }
+                ElingNoteBottomBar(
+                    destinations = appState.topLevelDestinations,
+                    onNavigateToDestination = appState::navigateToTopLevelDestination,
+                    currentDestination = appState.currentDestination,
                 )
             }
         },
