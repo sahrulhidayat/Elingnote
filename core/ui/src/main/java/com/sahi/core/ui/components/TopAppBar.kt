@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,16 +42,23 @@ fun ElingNoteTopAppBar(
     TopAppBar(
         modifier = modifier,
         navigationIcon = {
-            if (isSelectMode)
+            if (!isSelectMode) {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu button"
+                    )
+                }
+            } else {
                 IconButton(
                     onClick = onResetSelect
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = "Unselect"
                     )
                 }
+            }
         },
         actions = actions,
         title = {
