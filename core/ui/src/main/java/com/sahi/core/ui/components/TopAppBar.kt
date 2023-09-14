@@ -21,13 +21,14 @@ import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElingNoteTopAppBar(
+fun MainTopAppBar(
     modifier: Modifier = Modifier,
     title: String = "",
     actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior,
     isSelectMode: Boolean = false,
     selectedIndexes: SnapshotStateList<Boolean> = mutableStateListOf(),
+    onMenuClick: () -> Unit,
     onResetSelect: () -> Unit = {},
 ) {
 
@@ -43,7 +44,9 @@ fun ElingNoteTopAppBar(
         modifier = modifier,
         navigationIcon = {
             if (!isSelectMode) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = onMenuClick
+                ) {
                     Icon(
                         imageVector = Icons.Default.Menu,
                         contentDescription = "Menu button"

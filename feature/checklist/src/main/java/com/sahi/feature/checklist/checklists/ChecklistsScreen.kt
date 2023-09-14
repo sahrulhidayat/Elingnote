@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -28,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -37,14 +39,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.model.Entity.Checklist
 import com.sahi.core.ui.components.ChecklistCard
-import com.sahi.core.ui.components.ElingNoteTopAppBar
 import com.sahi.core.ui.components.EmptyStateAnimation
+import com.sahi.core.ui.components.MainTopAppBar
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
 @Composable
 fun ChecklistsRoute(
+    drawerState: DrawerState,
     onClickItem: (Checklist) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
@@ -79,6 +83,7 @@ fun ChecklistsRoute(
 
     ChecklistsScreen(
         checklistsState = checklistsState,
+        drawerState = drawerState,
         snackBarHostState = snackBarHostState,
         selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
@@ -92,6 +97,7 @@ fun ChecklistsRoute(
 @Composable
 fun ChecklistsScreen(
     checklistsState: ChecklistsState,
+    drawerState: DrawerState,
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
@@ -99,7 +105,6 @@ fun ChecklistsScreen(
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     var isSelectMode by rememberSaveable {
         mutableStateOf(false)
     }
@@ -114,6 +119,7 @@ fun ChecklistsScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -134,7 +140,7 @@ fun ChecklistsScreen(
             )
         },
         topBar = {
-            ElingNoteTopAppBar(
+            MainTopAppBar(
                 title = "My Checklists",
                 actions = {
                     if (isSelectMode) {
@@ -158,6 +164,11 @@ fun ChecklistsScreen(
                 scrollBehavior = scrollBehavior,
                 isSelectMode = isSelectMode,
                 selectedIndexes = selectedIndexes,
+                onMenuClick = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                },
                 onResetSelect = { resetSelected() }
             )
         },

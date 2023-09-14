@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.NoteAdd
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -28,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -36,15 +38,17 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.model.Entity.Note
-import com.sahi.core.ui.components.ElingNoteTopAppBar
+import com.sahi.core.ui.components.MainTopAppBar
 import com.sahi.core.ui.components.EmptyStateAnimation
 import com.sahi.core.ui.components.NoteCard
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.util.Collections
 
 @Composable
 fun NotesRoute(
+    drawerState: DrawerState,
     onClickItem: (Note) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
@@ -79,6 +83,7 @@ fun NotesRoute(
 
     NotesScreen(
         notesState = notesState,
+        drawerState = drawerState,
         snackBarHostState = snackBarHostState,
         selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
@@ -92,6 +97,7 @@ fun NotesRoute(
 @Composable
 fun NotesScreen(
     notesState: NotesState,
+    drawerState: DrawerState,
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (NotesEvent) -> Unit,
@@ -113,6 +119,7 @@ fun NotesScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -133,7 +140,7 @@ fun NotesScreen(
             )
         },
         topBar = {
-            ElingNoteTopAppBar(
+            MainTopAppBar(
                 title = "My Notes",
                 actions = {
                     if (isSelectMode) {
@@ -156,6 +163,11 @@ fun NotesScreen(
                 scrollBehavior = scrollBehavior,
                 isSelectMode = isSelectMode,
                 selectedIndexes = selectedIndexes,
+                onMenuClick = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                },
                 onResetSelect = { resetSelected() }
             )
         },
