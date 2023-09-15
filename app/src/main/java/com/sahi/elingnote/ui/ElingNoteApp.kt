@@ -55,6 +55,7 @@ fun ElingNoteApp(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = mainDestination != null,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.fillMaxWidth(0.75f)
