@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sahi.core.model.Entity.Note
+import com.sahi.core.model.entity.Note
 import com.sahi.core.ui.components.MainTopAppBar
 import com.sahi.core.ui.components.EmptyStateAnimation
 import com.sahi.core.ui.components.NoteCard

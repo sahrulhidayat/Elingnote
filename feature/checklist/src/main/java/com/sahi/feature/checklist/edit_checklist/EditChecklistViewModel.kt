@@ -9,8 +9,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.database.repository.ChecklistRepository
-import com.sahi.core.model.Entity.Checklist
-import com.sahi.core.model.Entity.ChecklistItem
+import com.sahi.core.model.entity.Checklist
+import com.sahi.core.model.entity.ChecklistItem
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

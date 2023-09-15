@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import com.sahi.core.notifications.AlarmScheduler
-import com.sahi.core.notifications.Notification
+import com.sahi.core.model.entity.Notification
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -55,6 +55,7 @@ import java.time.format.DateTimeFormatter
 fun SetAlarmDialog(
     title: String,
     content: String,
+    itemType: Notification.ItemType,
     showDialog: MutableState<Boolean>,
     onSetAlarm: () -> Unit
 ) {
@@ -178,7 +179,12 @@ fun SetAlarmDialog(
                         onClick = {
                             if (hasNotificationPermission) {
                                 alarmScheduler.schedule(
-                                    Notification(alarmDateTime, title, content)
+                                    Notification(
+                                        alarmDateTime,
+                                        title,
+                                        content,
+                                        itemType
+                                    )
                                 )
                             } else {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

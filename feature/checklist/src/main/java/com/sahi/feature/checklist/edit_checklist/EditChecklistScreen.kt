@@ -60,6 +60,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.sahi.core.model.entity.Notification
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
 import com.sahi.core.ui.components.EditModeTopAppBar
@@ -248,6 +249,7 @@ fun EditChecklistScreen(
         SetAlarmDialog(
             title = titleState.title,
             content = labelsString,
+            itemType = Notification.ItemType.CHECKLIST,
             showDialog = showSetAlarmDialog,
             onSetAlarm = { onEvent(EditChecklistEvent.SetAlarm) }
         )

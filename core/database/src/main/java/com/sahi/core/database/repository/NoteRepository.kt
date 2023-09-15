@@ -1,6 +1,6 @@
 package com.sahi.core.database.repository
 
-import com.sahi.core.model.Entity.Note
+import com.sahi.core.model.entity.Note
 import com.sahi.core.database.NoteDao
 import kotlinx.coroutines.flow.Flow
 

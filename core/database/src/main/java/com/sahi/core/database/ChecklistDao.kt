@@ -1,9 +1,9 @@
 package com.sahi.core.database
 
 import androidx.room.*
-import com.sahi.core.model.Entity.Checklist
-import com.sahi.core.model.Entity.ChecklistItem
-import com.sahi.core.model.Entity.ChecklistWithItems
+import com.sahi.core.model.entity.Checklist
+import com.sahi.core.model.entity.ChecklistItem
+import com.sahi.core.model.entity.ChecklistWithItems
 import kotlinx.coroutines.flow.Flow
 
 @Dao

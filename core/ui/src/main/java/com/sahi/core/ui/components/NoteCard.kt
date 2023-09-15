@@ -26,13 +26,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sahi.core.model.entity.Note
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteCard(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    note: com.sahi.core.model.Entity.Note,
+    note: Note,
     onClick: () -> Unit = { },
     onLongClick: (() -> Unit)? = null,
     onRestore: () -> Unit = { }

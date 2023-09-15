@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.sahi.core.model.Entity.ChecklistWithItems
+import com.sahi.core.model.entity.ChecklistWithItems
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

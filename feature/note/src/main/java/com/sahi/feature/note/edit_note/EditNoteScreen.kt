@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.sahi.core.model.entity.Notification
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
@@ -212,6 +213,7 @@ fun EditNoteScreen(
         SetAlarmDialog(
             title = titleState.text,
             content = contentState.text,
+            itemType = Notification.ItemType.NOTE,
             showDialog = showSetAlarmDialog,
             onSetAlarm = { onEvent(EditNoteEvent.SetAlarm) }
         )

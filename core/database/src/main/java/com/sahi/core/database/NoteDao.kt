@@ -3,7 +3,7 @@ package com.sahi.core.database
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.sahi.core.model.Entity.Note
+import com.sahi.core.model.entity.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -8,7 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.database.repository.NoteRepository
-import com.sahi.core.model.Entity.Note
+import com.sahi.core.model.entity.Note
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
