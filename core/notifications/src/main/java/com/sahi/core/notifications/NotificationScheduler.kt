@@ -5,26 +5,25 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.sahi.core.model.entity.Notification
 
 class AlarmScheduler(
-    private val context: Context
+    private val context: Context,
 ): IAlarmScheduler {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    override fun schedule(item: Notification) {
+    override fun schedule(requestCode: Int, title: String, content: String, time: Long) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("TITLE_EXTRA", item.title)
-            putExtra("CONTENT_EXTRA", item.content)
+            putExtra("TITLE_EXTRA", title)
+            putExtra("CONTENT_EXTRA", content)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                item.time,
+                time,
                 PendingIntent.getBroadcast(
                     context,
-                    item.hashCode(),
+                    requestCode,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -32,10 +31,10 @@ class AlarmScheduler(
         } else {
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
-                item.time,
+                time,
                 PendingIntent.getBroadcast(
                     context,
-                    item.hashCode(),
+                    requestCode,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -43,11 +42,11 @@ class AlarmScheduler(
         }
     }
 
-    override fun cancel(item: Notification) {
+    override fun cancel(requestCode: Int) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                item.hashCode(),
+                requestCode,
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -56,6 +55,6 @@ class AlarmScheduler(
 }
 
 interface IAlarmScheduler {
-    fun schedule(item: Notification)
-    fun cancel(item: Notification)
+    fun schedule(requestCode: Int, title: String, content: String, time: Long)
+    fun cancel(requestCode: Int)
 }

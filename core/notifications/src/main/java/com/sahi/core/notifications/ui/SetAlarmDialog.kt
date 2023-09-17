@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import com.sahi.core.notifications.AlarmScheduler
-import com.sahi.core.model.entity.Notification
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -55,7 +54,7 @@ import java.time.format.DateTimeFormatter
 fun SetAlarmDialog(
     title: String,
     content: String,
-    itemType: Notification.ItemType,
+    requestCode: Int,
     showDialog: MutableState<Boolean>,
     onSetAlarm: () -> Unit
 ) {
@@ -96,15 +95,9 @@ fun SetAlarmDialog(
     val selectedDate =
         Instant.ofEpochMilli(datePickerState.selectedDateMillis!!).atZone(ZoneId.systemDefault())
             .toLocalDate()
-    val year: Int = selectedDate.year
-    val month: Int = selectedDate.monthValue
-    val date: Int = selectedDate.dayOfMonth
-    val hour: Int = timePickerState.hour
-    val minute: Int = timePickerState.minute
 
     val alarmDateTime =
-        LocalDateTime.of(year, month, date, hour, minute).atZone(ZoneId.systemDefault()).toInstant()
-            .toEpochMilli()
+        selectedDateTimeMilli(selectedDate, timePickerState.hour, timePickerState.minute)
 
     ElingNoteTimePicker(
         state = timePickerState,
@@ -139,7 +132,7 @@ fun SetAlarmDialog(
                         modifier = Modifier
                             .clickable { showTimePicker.value = true }
                             .padding(start = 16.dp),
-                        text = String.format("%02d", hour) + ":" + String.format("%02d", minute),
+                        text = timeFormatter(timePickerState.hour, timePickerState.minute),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -158,7 +151,7 @@ fun SetAlarmDialog(
                         modifier = Modifier
                             .clickable { showDatePicker.value = true }
                             .padding(start = 16.dp),
-                        text = selectedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                        text = dateFormatter(selectedDate),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -179,20 +172,18 @@ fun SetAlarmDialog(
                         onClick = {
                             if (hasNotificationPermission) {
                                 alarmScheduler.schedule(
-                                    Notification(
-                                        alarmDateTime,
-                                        title,
-                                        content,
-                                        itemType
-                                    )
+                                    requestCode,
+                                    title,
+                                    content,
+                                    alarmDateTime
                                 )
+                                onSetAlarm()
+                                showDialog.value = false
                             } else {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                     permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                 }
                             }
-                            onSetAlarm()
-                            showDialog.value = false
                         }
                     ) {
                         Text(text = "Set Alarm", textAlign = TextAlign.Center)
@@ -205,5 +196,22 @@ fun SetAlarmDialog(
                 }
             }
         }
+
     }
 }
+
+fun selectedDateTimeMilli(localDate: LocalDate, hour: Int, minute: Int): Long {
+    val year: Int = localDate.year
+    val month: Int = localDate.monthValue
+    val date: Int = localDate.dayOfMonth
+
+    return LocalDateTime.of(year, month, date, hour, minute).atZone(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()
+}
+
+fun timeFormatter(hour: Int, minute: Int): String =
+    String.format("%02d", hour) + ":" + String.format("%02d", minute)
+
+fun dateFormatter(date: LocalDate): String =
+    date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
