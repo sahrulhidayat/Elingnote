@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface NoteRepository {
     fun getNotes(): Flow<List<Note>>
     suspend fun getNoteById(id: Int): Note?
-    suspend fun addNote(note: Note)
+    suspend fun addNote(note: Note): Long
     suspend fun deleteTrashNotes()
+    suspend fun deleteNote(note: Note)
 }
 
 class NoteRepositoryImpl(
@@ -20,10 +21,13 @@ class NoteRepositoryImpl(
     override suspend fun getNoteById(id: Int): Note? {
         return noteDao.getNoteById(id)
     }
-    override suspend fun addNote(note: Note) {
-        noteDao.addNote(note)
+    override suspend fun addNote(note: Note): Long {
+        return noteDao.addNote(note)
     }
     override suspend fun deleteTrashNotes() {
         noteDao.deleteTrashNotes()
+    }
+    override suspend fun deleteNote(note: Note) {
+        noteDao.deleteNote(note)
     }
 }

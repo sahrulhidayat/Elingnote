@@ -47,7 +47,7 @@ class EditChecklistViewModel(
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
 
-    private var currentChecklistId: Int? = null
+    var currentChecklistId: Int = 0
 
     init {
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
@@ -186,7 +186,7 @@ class EditChecklistViewModel(
                 viewModelScope.launch {
                     checklistRepository.addChecklistItem(
                         ChecklistItem(
-                            checklistId = currentChecklistId ?: 0,
+                            checklistId = currentChecklistId,
                             label = "",
                             checked = false
                         )
@@ -194,7 +194,7 @@ class EditChecklistViewModel(
                         items.add(
                             ChecklistItemState(
                                 itemId = itemId.toInt(),
-                                checklistId = currentChecklistId ?: 0,
+                                checklistId = currentChecklistId,
                                 label = "",
                                 checked = false,
                                 isFocused = true,

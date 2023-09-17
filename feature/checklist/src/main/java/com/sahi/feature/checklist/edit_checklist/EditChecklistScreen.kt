@@ -60,7 +60,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.sahi.core.model.entity.Notification
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
 import com.sahi.core.ui.components.EditModeTopAppBar
@@ -78,6 +77,7 @@ fun EditChecklistRoute(
     viewModel: EditChecklistViewModel = koinViewModel(),
     onBack: () -> Unit
 ) {
+    val checklistId = viewModel.currentChecklistId
     val titleState by viewModel.checklistTitle
     val itemsState by viewModel.itemsFlow.collectAsState()
     val context = LocalContext.current
@@ -100,6 +100,7 @@ fun EditChecklistRoute(
     EditChecklistScreen(
         titleState = titleState,
         itemsState = itemsState,
+        checklistId = checklistId,
         checklistColor = checklistColor,
         onEvent = viewModel::onEvent,
         itemEvent = viewModel::itemEvent,
@@ -113,6 +114,7 @@ fun EditChecklistRoute(
 fun EditChecklistScreen(
     titleState: EditChecklistState,
     itemsState: List<ChecklistItemState>,
+    checklistId: Int,
     checklistColor: Int,
     onEvent: (EditChecklistEvent) -> Unit,
     itemEvent: (ChecklistItemEvent) -> Unit,
@@ -249,7 +251,7 @@ fun EditChecklistScreen(
         SetAlarmDialog(
             title = titleState.title,
             content = labelsString,
-            itemType = Notification.ItemType.CHECKLIST,
+            requestCode = "2$checklistId".toInt(),
             showDialog = showSetAlarmDialog,
             onSetAlarm = { onEvent(EditChecklistEvent.SetAlarm) }
         )

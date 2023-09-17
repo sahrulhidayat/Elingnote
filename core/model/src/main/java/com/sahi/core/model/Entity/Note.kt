@@ -12,4 +12,6 @@ data class Note(
     val timestamp: Long,
     val color: Int,
     var isTrash: Boolean = false,
+    var hasReminder: Boolean = false,
+    val reminderTime: Long? = null
 )

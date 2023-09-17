@@ -32,14 +32,14 @@ class EditNoteViewModel(
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
 
-    private var currentNoteId: Int? = null
+    var currentNoteId: Int = 0
 
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
             if (noteId != -1) {
                 viewModelScope.launch {
                     noteRepository.getNoteById(noteId)?.also { note ->
-                        currentNoteId = note.id
+                        currentNoteId = noteId
                         noteTitle.value = noteTitle.value.copy(
                             text = note.title,
                             isHintVisible = note.title.isBlank()
@@ -49,6 +49,19 @@ class EditNoteViewModel(
                             isHintVisible = note.content.isBlank()
                         )
                         noteColor.intValue = note.color
+                    }
+                }
+            } else {
+                viewModelScope.launch {
+                    noteRepository.addNote(
+                        Note(
+                            title = noteTitle.value.text,
+                            content = noteContent.value.text,
+                            timestamp = System.currentTimeMillis(),
+                            color = noteColor.intValue
+                        )
+                    ).also { noteId ->
+                        currentNoteId = noteId.toInt()
                     }
                 }
             }
@@ -96,6 +109,8 @@ class EditNoteViewModel(
                     )
                     if (note.title.isNotBlank() || note.content.isNotBlank()) {
                         noteRepository.addNote(note)
+                    } else {
+                        noteRepository.deleteNote(note)
                     }
                 }
             }

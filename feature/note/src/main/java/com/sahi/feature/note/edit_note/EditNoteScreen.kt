@@ -56,7 +56,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import com.sahi.core.model.entity.Notification
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
@@ -90,12 +89,14 @@ fun EditNoteRoute(
         }
     }
 
+    val noteId = viewModel.currentNoteId
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
 
     EditNoteScreen(
         titleState = titleState,
         contentState = contentState,
+        noteId = noteId,
         noteColor = noteColor,
         onEvent = viewModel::onEvent,
         modifier = modifier,
@@ -109,6 +110,7 @@ fun EditNoteRoute(
 fun EditNoteScreen(
     titleState: EditNoteState,
     contentState: EditNoteState,
+    noteId: Int,
     noteColor: Int,
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -213,7 +215,7 @@ fun EditNoteScreen(
         SetAlarmDialog(
             title = titleState.text,
             content = contentState.text,
-            itemType = Notification.ItemType.NOTE,
+            requestCode = "1$noteId".toInt(),
             showDialog = showSetAlarmDialog,
             onSetAlarm = { onEvent(EditNoteEvent.SetAlarm) }
         )
