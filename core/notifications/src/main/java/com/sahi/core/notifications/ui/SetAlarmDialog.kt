@@ -41,13 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import com.sahi.core.notifications.AlarmScheduler
+import com.sahi.core.notifications.simpleFormat
+import com.sahi.core.notifications.timeFormatter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +57,7 @@ fun SetAlarmDialog(
     content: String,
     requestCode: Int,
     showDialog: MutableState<Boolean>,
-    onSetAlarm: () -> Unit
+    onSetAlarm: (alarmTime: Long) -> Unit
 ) {
     val context = LocalContext.current
     val alarmScheduler = AlarmScheduler(context)
@@ -151,7 +152,7 @@ fun SetAlarmDialog(
                         modifier = Modifier
                             .clickable { showDatePicker.value = true }
                             .padding(start = 16.dp),
-                        text = dateFormatter(selectedDate),
+                        text = selectedDate.simpleFormat(),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -177,7 +178,7 @@ fun SetAlarmDialog(
                                     content,
                                     alarmDateTime
                                 )
-                                onSetAlarm()
+                                onSetAlarm(alarmDateTime)
                                 showDialog.value = false
                             } else {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -186,7 +187,7 @@ fun SetAlarmDialog(
                             }
                         }
                     ) {
-                        Text(text = "Set Alarm", textAlign = TextAlign.Center)
+                        Text(text = "Set Reminder", textAlign = TextAlign.Center)
                     }
                     TextButton(
                         onClick = { showDialog.value = false }
@@ -209,9 +210,3 @@ fun selectedDateTimeMilli(localDate: LocalDate, hour: Int, minute: Int): Long {
         .toInstant()
         .toEpochMilli()
 }
-
-fun timeFormatter(hour: Int, minute: Int): String =
-    String.format("%02d", hour) + ":" + String.format("%02d", minute)
-
-fun dateFormatter(date: LocalDate): String =
-    date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
