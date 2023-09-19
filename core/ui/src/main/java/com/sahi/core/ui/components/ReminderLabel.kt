@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.sahi.utils.simpleDateTimeFormat
 
 @Composable
-fun ReminderLabel(reminderTime: Long) {
+fun ReminderLabel(modifier: Modifier = Modifier, reminderTime: Long) {
     Box(
-        modifier = Modifier.background(
+        modifier = modifier.background(
             color = MaterialTheme.colorScheme.surfaceVariant,
             shape = RoundedCornerShape(10.dp)
         )

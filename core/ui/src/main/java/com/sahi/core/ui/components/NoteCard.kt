@@ -2,6 +2,7 @@ package com.sahi.core.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,39 +60,48 @@ fun NoteCard(
             else -> null
         }
     ) {
-        Box(
-            modifier = Modifier
-                .padding(8.dp)
-                .heightIn(max = 200.dp)
-        ) {
-            Column {
-                if (note.title.isNotBlank())
-                    Text(
-                        text = note.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
-                Spacer(modifier = Modifier.height(4.dp))
-                if (note.content.isNotBlank())
-                    Text(
-                        text = note.content,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black,
-                        overflow = TextOverflow.Ellipsis
-                    )
-            }
-            if (note.isTrash) {
-                Spacer(modifier = Modifier.fillMaxWidth())
-                IconButton(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = onRestore
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Restore,
-                        contentDescription = "Restore from trash",
-                        tint = Color.Black
-                    )
+        Column(modifier = Modifier.padding(8.dp)) {
+            Box(
+                modifier = Modifier.heightIn(max = 200.dp)
+            ) {
+                Column {
+                    if (note.title.isNotBlank())
+                        Text(
+                            text = note.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
+                        )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    if (note.content.isNotBlank())
+                        Text(
+                            text = note.content,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Black,
+                            overflow = TextOverflow.Ellipsis
+                        )
                 }
+                if (note.isTrash) {
+                    Spacer(modifier = Modifier.fillMaxWidth())
+                    IconButton(
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .align(Alignment.TopEnd),
+                        onClick = onRestore
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Restore,
+                            contentDescription = "Restore from trash",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+            }
+            if (note.reminderTime != 0L) {
+                Spacer(modifier = Modifier.height(8.dp))
+                ReminderLabel(reminderTime = note.reminderTime)
             }
         }
     }
