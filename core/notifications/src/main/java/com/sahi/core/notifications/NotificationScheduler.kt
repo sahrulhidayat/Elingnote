@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 
-class AlarmScheduler(
+class NotificationSchedulerImpl(
     private val context: Context,
-): IAlarmScheduler {
+): NotificationScheduler {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -54,7 +54,7 @@ class AlarmScheduler(
     }
 }
 
-interface IAlarmScheduler {
+interface NotificationScheduler {
     fun schedule(requestCode: Int, title: String, content: String, time: Long)
     fun cancel(requestCode: Int)
 }

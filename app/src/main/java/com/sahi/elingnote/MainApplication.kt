@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.sahi.core.database.di.databaseModule
 import com.sahi.core.notifications.CHANNEL_ID
+import com.sahi.core.notifications.di.notificationModule
 import com.sahi.feature.checklist.di.checklistModule
 import com.sahi.feature.note.di.noteModule
 import com.sahi.feature.trash.di.trashModule
@@ -26,7 +27,8 @@ class MainApplication : Application() {
                     databaseModule,
                     noteModule,
                     checklistModule,
-                    trashModule
+                    trashModule,
+                    notificationModule
                 )
             )
         }

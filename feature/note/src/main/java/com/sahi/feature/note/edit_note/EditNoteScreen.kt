@@ -95,18 +95,14 @@ fun EditNoteRoute(
         }
     }
 
-    val noteId = viewModel.currentNoteId
     val titleState = viewModel.noteTitle.value
     val contentState = viewModel.noteContent.value
-    val hasReminder = viewModel.hasReminder.value
     val reminderTime = viewModel.reminderTime.longValue
 
     EditNoteScreen(
         titleState = titleState,
         contentState = contentState,
-        noteId = noteId,
         noteColor = noteColor,
-        hasReminder = hasReminder,
         reminderTime = reminderTime,
         onEvent = viewModel::onEvent,
         modifier = modifier,
@@ -120,9 +116,7 @@ fun EditNoteRoute(
 fun EditNoteScreen(
     titleState: EditNoteState,
     contentState: EditNoteState,
-    noteId: Int,
     noteColor: Int,
-    hasReminder: Boolean,
     reminderTime: Long?,
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -220,7 +214,7 @@ fun EditNoteScreen(
                         ),
                         modifier = Modifier.fillMaxHeight()
                     )
-                    if (hasReminder) {
+                    if (reminderTime != 0L) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Box(
                             modifier = Modifier.background(
@@ -253,11 +247,10 @@ fun EditNoteScreen(
             }
         }
         SetAlarmDialog(
-            title = titleState.text,
-            content = contentState.text,
-            requestCode = "1$noteId".toInt(),
             showDialog = showSetAlarmDialog,
-            onSetAlarm = { alarmTime -> onEvent(EditNoteEvent.SetAlarm(alarmTime)) }
+            onSetAlarm = { alarmDateTime ->
+                onEvent(EditNoteEvent.SetAlarm(alarmDateTime))
+            }
         )
         if (showColorSheet) {
             ModalBottomSheet(

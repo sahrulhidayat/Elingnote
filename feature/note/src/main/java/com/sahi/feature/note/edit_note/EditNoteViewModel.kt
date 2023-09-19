@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.database.repository.NoteRepository
 import com.sahi.core.model.entity.Note
+import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -22,13 +23,12 @@ data class EditNoteState(
 
 class EditNoteViewModel(
     private val noteRepository: NoteRepository,
+    private val notificationScheduler: NotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var noteTitle = mutableStateOf(EditNoteState(hint = "Note title"))
         private set
     var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
-        private set
-    var hasReminder = mutableStateOf(false)
         private set
     var reminderTime = mutableLongStateOf(0L)
         private set
@@ -37,7 +37,7 @@ class EditNoteViewModel(
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
 
-    var currentNoteId: Int = 0
+    private var currentNoteId: Int = 0
 
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
@@ -53,8 +53,7 @@ class EditNoteViewModel(
                             text = note.content,
                             isHintVisible = note.content.isBlank()
                         )
-                        hasReminder.value = note.hasReminder
-                        reminderTime.longValue = note.reminderTime ?: 0L
+                        reminderTime.longValue = note.reminderTime
                         noteColor.intValue = note.color
                     }
                 }
@@ -76,13 +75,13 @@ class EditNoteViewModel(
     }
 
     fun onEvent(event: EditNoteEvent) {
+        val alarmRequestCode = "1$currentNoteId".toInt()
         val note = Note(
             id = currentNoteId,
             title = noteTitle.value.text,
             content = noteContent.value.text,
             timestamp = System.currentTimeMillis(),
             color = noteColor.intValue,
-            hasReminder = hasReminder.value,
             reminderTime = reminderTime.longValue
         )
         when (event) {
@@ -118,6 +117,14 @@ class EditNoteViewModel(
                 viewModelScope.launch {
                     if (note.title.isNotBlank() || note.content.isNotBlank()) {
                         noteRepository.addNote(note)
+                        if (reminderTime.longValue > System.currentTimeMillis()) {
+                            notificationScheduler.schedule(
+                                requestCode = alarmRequestCode,
+                                title = noteTitle.value.text,
+                                content = noteContent.value.text,
+                                time = reminderTime.longValue
+                            )
+                        }
                     } else {
                         noteRepository.deleteNote(note)
                     }
@@ -125,11 +132,20 @@ class EditNoteViewModel(
             }
 
             is EditNoteEvent.SetAlarm -> {
-                hasReminder.value = true
-                reminderTime.longValue = event.time
+                reminderTime.longValue = event.dateTime
                 viewModelScope.launch {
                     noteRepository.addNote(note)
-                    eventFlow.emit(UiEvent.ShowToast(message = "Alarm has been set"))
+                    if (event.dateTime > System.currentTimeMillis()) {
+                        notificationScheduler.schedule(
+                            requestCode = alarmRequestCode,
+                            title = noteTitle.value.text,
+                            content = noteContent.value.text,
+                            time = event.dateTime
+                        )
+                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
+                    } else {
+                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder time has passed"))
+                    }
                 }
             }
         }
@@ -146,6 +162,6 @@ sealed class EditNoteEvent {
     data class EnteredContent(val value: String) : EditNoteEvent()
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
-    data class SetAlarm(val time: Long) : EditNoteEvent()
+    data class SetAlarm(val dateTime: Long) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
 }

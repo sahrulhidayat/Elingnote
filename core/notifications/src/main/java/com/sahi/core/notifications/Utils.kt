@@ -13,5 +13,5 @@ fun LocalDate.simpleFormat(): String =
 
 fun Long.simpleDateTimeFormat(): String {
     val dateTime = Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDateTime()
-    return dateTime.format(DateTimeFormatter.ofPattern("dd MMM, HH.mm"))
+    return dateTime.format(DateTimeFormatter.ofPattern("dd MMM, HH:mm"))
 }

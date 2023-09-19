@@ -100,7 +100,6 @@ fun EditChecklistRoute(
     EditChecklistScreen(
         titleState = titleState,
         itemsState = itemsState,
-        checklistId = checklistId,
         checklistColor = checklistColor,
         onEvent = viewModel::onEvent,
         itemEvent = viewModel::itemEvent,
@@ -114,7 +113,6 @@ fun EditChecklistRoute(
 fun EditChecklistScreen(
     titleState: EditChecklistState,
     itemsState: List<ChecklistItemState>,
-    checklistId: Int,
     checklistColor: Int,
     onEvent: (EditChecklistEvent) -> Unit,
     itemEvent: (ChecklistItemEvent) -> Unit,
@@ -249,9 +247,6 @@ fun EditChecklistScreen(
         val itemLabels = itemsState.map { it.label }
         val labelsString: String = itemLabels.joinToString("\n")
         SetAlarmDialog(
-            title = titleState.title,
-            content = labelsString,
-            requestCode = "2$checklistId".toInt(),
             showDialog = showSetAlarmDialog,
             onSetAlarm = { onEvent(EditChecklistEvent.SetAlarm) }
         )
