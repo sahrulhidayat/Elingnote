@@ -40,8 +40,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
-import com.sahi.core.notifications.simpleFormat
-import com.sahi.core.notifications.timeFormatter
+import com.sahi.utils.simpleFormat
+import com.sahi.utils.timeFormatter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -6,7 +6,7 @@ plugins {
 apply("./../../shared_dependencies.gradle")
 
 android {
-    namespace = "com.sahi.core.notifications"
+    namespace = "com.sahi.utils"
     compileSdk = 34
 
     defaultConfig {
@@ -33,15 +33,8 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
 }
 
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:utils"))
+
 }

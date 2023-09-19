@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,11 +23,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.FormatColorFill
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +34,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
@@ -49,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
@@ -61,10 +56,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import com.sahi.core.notifications.simpleDateTimeFormat
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
+import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
@@ -95,9 +90,9 @@ fun EditNoteRoute(
         }
     }
 
-    val titleState = viewModel.noteTitle.value
-    val contentState = viewModel.noteContent.value
-    val reminderTime = viewModel.reminderTime.longValue
+    val titleState by viewModel.noteTitle
+    val contentState by viewModel.noteContent
+    val reminderTime by viewModel.reminderTime
 
     EditNoteScreen(
         titleState = titleState,
@@ -117,7 +112,7 @@ fun EditNoteScreen(
     titleState: EditNoteState,
     contentState: EditNoteState,
     noteColor: Int,
-    reminderTime: Long?,
+    reminderTime: Long,
     onEvent: (EditNoteEvent) -> Unit,
     modifier: Modifier = Modifier,
     onBack: () -> Unit
@@ -216,31 +211,7 @@ fun EditNoteScreen(
                     )
                     if (reminderTime != 0L) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        Box(
-                            modifier = Modifier.background(
-                                color = MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Alarm,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    contentDescription = null
-                                )
-                                if (reminderTime != null) {
-                                    Text(
-                                        modifier = Modifier.padding(start = 4.dp),
-                                        text = reminderTime.simpleDateTimeFormat(),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
-                                }
-                            }
-                        }
+                        ReminderLabel(reminderTime = reminderTime)
                     }
                 }
                 Spacer(modifier = Modifier.height(250.dp))

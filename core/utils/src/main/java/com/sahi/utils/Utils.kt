@@ -1,4 +1,4 @@
-package com.sahi.core.notifications
+package com.sahi.utils
 
 import java.time.Instant
 import java.time.LocalDate
