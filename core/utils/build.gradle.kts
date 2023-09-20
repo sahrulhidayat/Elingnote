@@ -3,8 +3,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-apply("./../../shared_dependencies.gradle")
-
 android {
     namespace = "com.sahi.utils"
     compileSdk = 34
