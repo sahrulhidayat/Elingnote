@@ -2,6 +2,7 @@ package com.sahi.core.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,27 +98,37 @@ fun ChecklistCard(
             if (checklistWithItems.checklist.isTrash) {
                 Spacer(modifier = Modifier.fillMaxWidth())
                 IconButton(
-                    modifier = Modifier.align(Alignment.TopEnd),
+                    modifier = Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .align(Alignment.TopEnd),
                     onClick = onRestore
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Restore,
                         contentDescription = "Restore from trash",
-                        tint = Color.Black
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
         }
         val overflowItems = checklistWithItems.checklistItems.size - itemCount
         if (overflowItems > 0) {
-            Box(modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)) {
-                Text(
-                    text = "+ $overflowItems items",
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color.Black
-                    )
+            Text(
+                modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
+                text = "+ $overflowItems items",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color.Black
                 )
-            }
+            )
+        }
+        if (checklistWithItems.checklist.reminderTime != 0L) {
+            ReminderLabel(
+                modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
+                reminderTime = checklistWithItems.checklist.reminderTime
+            )
         }
     }
 }

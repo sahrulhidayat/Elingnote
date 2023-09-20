@@ -1,6 +1,7 @@
 package com.sahi.feature.checklist.edit_checklist
 
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.focus.FocusState
@@ -11,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.sahi.core.database.repository.ChecklistRepository
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistItem
+import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +36,7 @@ data class ChecklistItemState(
 
 class EditChecklistViewModel(
     private val checklistRepository: ChecklistRepository,
+    private val notificationScheduler: NotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var checklistTitle = mutableStateOf(EditChecklistState(hint = "Checklist title"))
@@ -42,12 +45,14 @@ class EditChecklistViewModel(
     private val items = mutableStateListOf<ChecklistItemState>()
     var itemsFlow = MutableStateFlow(items)
         private set
+    var reminderTime = mutableLongStateOf(0L)
+        private set
     private var checklistColor = mutableIntStateOf(itemColors[0].toArgb())
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
 
-    var currentChecklistId: Int = 0
+    private var currentChecklistId: Int = 0
 
     init {
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
@@ -70,6 +75,7 @@ class EditChecklistViewModel(
                                     )
                                 )
                             }
+                            reminderTime.longValue = checklistWithItems.checklist.reminderTime
                             checklistColor.intValue = checklistWithItems.checklist.color
                         }
                 }
@@ -90,6 +96,14 @@ class EditChecklistViewModel(
     }
 
     fun onEvent(event: EditChecklistEvent) {
+        val alarmRequestCode = "2$currentChecklistId".toInt()
+        val checklist = Checklist(
+            id = currentChecklistId,
+            title = checklistTitle.value.title,
+            timestamp = System.currentTimeMillis(),
+            color = checklistColor.intValue,
+            reminderTime = reminderTime.longValue
+        )
         when (event) {
             is EditChecklistEvent.EnteredTitle -> {
                 checklistTitle.value = checklistTitle.value.copy(
@@ -105,32 +119,29 @@ class EditChecklistViewModel(
             }
 
             is EditChecklistEvent.SaveChecklist -> {
-                val finalChecklist = Checklist(
-                    id = currentChecklistId,
-                    title = checklistTitle.value.title,
-                    timestamp = System.currentTimeMillis(),
-                    color = checklistColor.intValue
-                )
-
                 viewModelScope.launch {
-                    when {
-                        checklistTitle.value.title.isNotBlank() || items.isNotEmpty() -> {
-                            checklistRepository.addChecklist(finalChecklist)
-                            items.map {
-                                ChecklistItem(
-                                    itemId = it.itemId,
-                                    checklistId = it.checklistId,
-                                    label = it.label,
-                                    checked = it.checked
-                                )
-                            }.forEach {
-                                checklistRepository.updateChecklistItem(it)
-                            }
+                    if (checklistTitle.value.title.isNotBlank() || items.isNotEmpty()) {
+                        checklistRepository.addChecklist(checklist)
+                        items.map {
+                            ChecklistItem(
+                                itemId = it.itemId,
+                                checklistId = it.checklistId,
+                                label = it.label,
+                                checked = it.checked
+                            )
+                        }.forEach {
+                            checklistRepository.updateChecklistItem(it)
                         }
-
-                        checklistTitle.value.title.isBlank() && items.isEmpty() -> {
-                            checklistRepository.deleteChecklist(finalChecklist)
+                        if (reminderTime.longValue > System.currentTimeMillis()) {
+                            notificationScheduler.schedule(
+                                requestCode = alarmRequestCode,
+                                title = checklistTitle.value.title,
+                                content = items.joinToString("\n") { it.label },
+                                time = reminderTime.longValue
+                            )
                         }
+                    } else {
+                        checklistRepository.deleteChecklist(checklist)
                     }
                 }
             }
@@ -140,8 +151,20 @@ class EditChecklistViewModel(
             }
 
             is EditChecklistEvent.SetAlarm -> {
+                reminderTime.longValue = event.dateTime
                 viewModelScope.launch {
-                    eventFlow.emit(UiEvent.ShowToast(message = "Alarm has been set"))
+                    checklistRepository.addChecklist(checklist)
+                    if (event.dateTime > System.currentTimeMillis()) {
+                        notificationScheduler.schedule(
+                            requestCode = alarmRequestCode,
+                            title = checklistTitle.value.title,
+                            content = items.joinToString("\n") { it.label },
+                            time = event.dateTime
+                        )
+                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
+                    } else {
+                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder time has passed"))
+                    }
                 }
             }
         }
@@ -216,8 +239,8 @@ sealed class EditChecklistEvent {
     data class EnteredTitle(val value: String) : EditChecklistEvent()
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
     data class ChangeColor(val color: Int) : EditChecklistEvent()
+    data class SetAlarm(val dateTime: Long) : EditChecklistEvent()
     data object SaveChecklist : EditChecklistEvent()
-    data object SetAlarm : EditChecklistEvent()
 }
 
 sealed class ChecklistItemEvent {

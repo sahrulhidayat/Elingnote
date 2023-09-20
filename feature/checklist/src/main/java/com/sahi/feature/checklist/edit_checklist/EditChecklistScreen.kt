@@ -64,6 +64,7 @@ import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
+import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import kotlinx.coroutines.flow.collectLatest
@@ -77,9 +78,6 @@ fun EditChecklistRoute(
     viewModel: EditChecklistViewModel = koinViewModel(),
     onBack: () -> Unit
 ) {
-    val checklistId = viewModel.currentChecklistId
-    val titleState by viewModel.checklistTitle
-    val itemsState by viewModel.itemsFlow.collectAsState()
     val context = LocalContext.current
 
     LifecycleObserver(
@@ -97,10 +95,15 @@ fun EditChecklistRoute(
         }
     }
 
+    val titleState by viewModel.checklistTitle
+    val itemsState by viewModel.itemsFlow.collectAsState()
+    val reminderTime by viewModel.reminderTime
+
     EditChecklistScreen(
         titleState = titleState,
         itemsState = itemsState,
         checklistColor = checklistColor,
+        reminderTime = reminderTime,
         onEvent = viewModel::onEvent,
         itemEvent = viewModel::itemEvent,
         modifier = modifier,
@@ -114,6 +117,7 @@ fun EditChecklistScreen(
     titleState: EditChecklistState,
     itemsState: List<ChecklistItemState>,
     checklistColor: Int,
+    reminderTime: Long,
     onEvent: (EditChecklistEvent) -> Unit,
     itemEvent: (ChecklistItemEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -240,15 +244,19 @@ fun EditChecklistScreen(
                         )
                     }
                 }
+            }
+            item {
+                if (reminderTime != 0L) {
+                    ReminderLabel(modifier = Modifier.padding(16.dp), reminderTime = reminderTime)
+                }
                 Spacer(modifier = Modifier.height(250.dp))
             }
         }
-
-        val itemLabels = itemsState.map { it.label }
-        val labelsString: String = itemLabels.joinToString("\n")
         SetAlarmDialog(
             showDialog = showSetAlarmDialog,
-            onSetAlarm = { onEvent(EditChecklistEvent.SetAlarm) }
+            onSetAlarm = { alarmDateTime ->
+                onEvent(EditChecklistEvent.SetAlarm(alarmDateTime))
+            }
         )
         if (showColorSheet) {
             ModalBottomSheet(
