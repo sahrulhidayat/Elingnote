@@ -8,10 +8,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.repository.NoteRepository
 import com.sahi.core.model.entity.Note
 import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.core.ui.theme.itemColors
+import com.sahi.usecase.NoteUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
@@ -22,7 +22,7 @@ data class EditNoteState(
 )
 
 class EditNoteViewModel(
-    private val noteRepository: NoteRepository,
+    private val noteUseCase: NoteUseCase,
     private val notificationScheduler: NotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -43,7 +43,7 @@ class EditNoteViewModel(
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
             if (noteId != -1) {
                 viewModelScope.launch {
-                    noteRepository.getNoteById(noteId)?.also { note ->
+                    noteUseCase.getNoteById(noteId)?.also { note ->
                         currentNoteId = noteId
                         noteTitle.value = noteTitle.value.copy(
                             text = note.title,
@@ -59,7 +59,7 @@ class EditNoteViewModel(
                 }
             } else {
                 viewModelScope.launch {
-                    noteRepository.addNote(
+                    noteUseCase.addOrUpdateNote(
                         Note(
                             title = noteTitle.value.text,
                             content = noteContent.value.text,
@@ -116,7 +116,7 @@ class EditNoteViewModel(
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     if (note.title.isNotBlank() || note.content.isNotBlank()) {
-                        noteRepository.addNote(note)
+                        noteUseCase.addOrUpdateNote(note)
                         if (reminderTime.longValue > System.currentTimeMillis()) {
                             notificationScheduler.schedule(
                                 requestCode = alarmRequestCode,
@@ -126,7 +126,7 @@ class EditNoteViewModel(
                             )
                         }
                     } else {
-                        noteRepository.deleteNote(note)
+                        noteUseCase.deleteNote(note)
                     }
                 }
             }
@@ -134,7 +134,7 @@ class EditNoteViewModel(
             is EditNoteEvent.SetAlarm -> {
                 reminderTime.longValue = event.dateTime
                 viewModelScope.launch {
-                    noteRepository.addNote(note)
+                    noteUseCase.addOrUpdateNote(note)
                     if (event.dateTime > System.currentTimeMillis()) {
                         notificationScheduler.schedule(
                             requestCode = alarmRequestCode,

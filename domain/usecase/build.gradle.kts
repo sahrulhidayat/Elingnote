@@ -6,7 +6,7 @@ plugins {
 apply("./../../shared_dependencies.gradle")
 
 android {
-    namespace = "com.sahi.feature.checklist"
+    namespace = "com.sahi.usecase"
     compileSdk = 34
 
     defaultConfig {
@@ -27,18 +27,8 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
 }
 
 dependencies {
     implementation(project(":domain:model"))
-    implementation(project(":domain:usecase"))
-    implementation(project(":data:database"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:notifications"))
 }

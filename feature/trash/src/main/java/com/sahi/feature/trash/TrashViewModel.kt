@@ -2,11 +2,11 @@ package com.sahi.feature.trash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.repository.ChecklistRepository
-import com.sahi.core.database.repository.NoteRepository
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistWithItems
 import com.sahi.core.model.entity.Note
+import com.sahi.usecase.ChecklistUseCase
+import com.sahi.usecase.NoteUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +21,8 @@ data class TrashState(
 )
 
 class TrashViewModel(
-    private val noteRepository: NoteRepository,
-    private val checklistRepository: ChecklistRepository
+    private val noteUseCase: NoteUseCase,
+    private val checklistUseCase: ChecklistUseCase
 ) : ViewModel() {
     var state = MutableStateFlow(TrashState())
         private set
@@ -40,7 +40,7 @@ class TrashViewModel(
         when (event) {
             is TrashEvent.RestoreNote -> {
                 viewModelScope.launch {
-                    noteRepository.addNote(
+                    noteUseCase.addOrUpdateNote(
                         event.note.copy(isTrash = false)
                     )
                     eventFlow.emit(UiEvent.ShowSnackBar(message = "Note restored"))
@@ -49,7 +49,7 @@ class TrashViewModel(
 
             is TrashEvent.RestoreChecklist -> {
                 viewModelScope.launch {
-                    checklistRepository.addChecklist(
+                    checklistUseCase.addOrUpdateChecklist(
                         event.checklist.copy(isTrash = false)
                     )
                     eventFlow.emit(UiEvent.ShowSnackBar(message = "Checklist restored"))
@@ -58,8 +58,8 @@ class TrashViewModel(
 
             is TrashEvent.DeleteAll -> {
                 viewModelScope.launch {
-                    noteRepository.deleteTrashNotes()
-                    checklistRepository.deleteTrashChecklists()
+                    noteUseCase.deleteTrashNotes()
+                    checklistUseCase.deleteTrashChecklists()
                     eventFlow.emit(UiEvent.ShowSnackBar(message = "Items are deleted"))
                 }
             }
@@ -70,7 +70,7 @@ class TrashViewModel(
         getNotesJob?.cancel()
         getChecklistsJob?.cancel()
 
-        getNotesJob = noteRepository.getNotes()
+        getNotesJob = noteUseCase.getAllNotes()
             .onEach { notes ->
                 state.update { state ->
                     state.copy(
@@ -82,7 +82,7 @@ class TrashViewModel(
             }
             .launchIn(viewModelScope)
 
-        getChecklistsJob = checklistRepository.getChecklists()
+        getChecklistsJob = checklistUseCase.getAllChecklists()
             .onEach { checklists ->
                 state.update { state ->
                     state.copy(

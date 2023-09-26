@@ -3,8 +3,8 @@ package com.sahi.feature.note.notes
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.repository.NoteRepository
 import com.sahi.core.model.entity.Note
+import com.sahi.usecase.NoteUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ data class NotesState(
 )
 
 class NotesViewModel(
-    private val noteRepository: NoteRepository
+    private val noteUseCase: NoteUseCase
 ) : ViewModel() {
     var state = MutableStateFlow(NotesState())
         private set
@@ -40,7 +40,7 @@ class NotesViewModel(
                     recentlyDeletedNotes.clear()
                     event.notes.forEach { note ->
                         recentlyDeletedNotes.add(note)
-                        noteRepository.addNote(note.copy(isTrash = true))
+                        noteUseCase.addOrUpdateNote(note.copy(isTrash = true))
                     }
                     eventFlow.emit(
                         UiEvent.ShowSnackBar(
@@ -54,7 +54,7 @@ class NotesViewModel(
             NotesEvent.RestoreNotes -> {
                 viewModelScope.launch {
                     recentlyDeletedNotes.forEach { note ->
-                        noteRepository.addNote(note)
+                        noteUseCase.addOrUpdateNote(note)
                     }
                     recentlyDeletedNotes.clear()
                     eventFlow.emit(
@@ -69,7 +69,7 @@ class NotesViewModel(
 
     private fun getNotes() {
         getNotesJob?.cancel()
-        getNotesJob = noteRepository.getNotes()
+        getNotesJob = noteUseCase.getAllNotes()
             .onEach { notes ->
                 selectedIndexes.clear()
                 while (selectedIndexes.size < notes.size) {

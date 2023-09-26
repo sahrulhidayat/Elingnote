@@ -9,11 +9,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.repository.ChecklistRepository
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistItem
 import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.core.ui.theme.itemColors
+import com.sahi.usecase.ChecklistUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -35,7 +35,7 @@ data class ChecklistItemState(
 )
 
 class EditChecklistViewModel(
-    private val checklistRepository: ChecklistRepository,
+    private val checklistUseCase: ChecklistUseCase,
     private val notificationScheduler: NotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -58,7 +58,7 @@ class EditChecklistViewModel(
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
             if (checklistId != -1) {
                 viewModelScope.launch {
-                    checklistRepository.getChecklistWithItems(checklistId)
+                    checklistUseCase.getChecklistWithItems(checklistId)
                         .also { checklistWithItems ->
                             currentChecklistId = checklistId
                             checklistTitle.value = checklistTitle.value.copy(
@@ -81,7 +81,7 @@ class EditChecklistViewModel(
                 }
             } else {
                 viewModelScope.launch {
-                    checklistRepository.addChecklist(
+                    checklistUseCase.addOrUpdateChecklist(
                         Checklist(
                             title = checklistTitle.value.title,
                             timestamp = System.currentTimeMillis(),
@@ -121,7 +121,7 @@ class EditChecklistViewModel(
             is EditChecklistEvent.SaveChecklist -> {
                 viewModelScope.launch {
                     if (checklistTitle.value.title.isNotBlank() || items.isNotEmpty()) {
-                        checklistRepository.addChecklist(checklist)
+                        checklistUseCase.addOrUpdateChecklist(checklist)
                         items.map {
                             ChecklistItem(
                                 itemId = it.itemId,
@@ -130,7 +130,7 @@ class EditChecklistViewModel(
                                 checked = it.checked
                             )
                         }.forEach {
-                            checklistRepository.updateChecklistItem(it)
+                            checklistUseCase.updateChecklistItem(it)
                         }
                         if (reminderTime.longValue > System.currentTimeMillis()) {
                             notificationScheduler.schedule(
@@ -141,7 +141,7 @@ class EditChecklistViewModel(
                             )
                         }
                     } else {
-                        checklistRepository.deleteChecklist(checklist)
+                        checklistUseCase.deleteChecklist(checklist)
                     }
                 }
             }
@@ -153,7 +153,7 @@ class EditChecklistViewModel(
             is EditChecklistEvent.SetAlarm -> {
                 reminderTime.longValue = event.dateTime
                 viewModelScope.launch {
-                    checklistRepository.addChecklist(checklist)
+                    checklistUseCase.addOrUpdateChecklist(checklist)
                     if (event.dateTime > System.currentTimeMillis()) {
                         notificationScheduler.schedule(
                             requestCode = alarmRequestCode,
@@ -192,7 +192,7 @@ class EditChecklistViewModel(
             is ChecklistItemEvent.DeleteItem -> {
                 items.removeAt(event.index).also {
                     viewModelScope.launch {
-                        checklistRepository.deleteChecklistItem(
+                        checklistUseCase.deleteChecklistItem(
                             ChecklistItem(
                                 itemId = it.itemId,
                                 checklistId = it.checklistId,
@@ -207,7 +207,7 @@ class EditChecklistViewModel(
 
             is ChecklistItemEvent.AddItem -> {
                 viewModelScope.launch {
-                    checklistRepository.addChecklistItem(
+                    checklistUseCase.addChecklistItem(
                         ChecklistItem(
                             checklistId = currentChecklistId,
                             label = "",

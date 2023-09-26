@@ -7,11 +7,12 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.sahi.core.database.di.databaseModule
-import com.sahi.core.notifications.CHANNEL_ID
+import com.sahi.core.notifications.REMINDER_CHANNEL
 import com.sahi.core.notifications.di.notificationModule
 import com.sahi.feature.checklist.di.checklistModule
 import com.sahi.feature.note.di.noteModule
 import com.sahi.feature.trash.di.trashModule
+import com.sahi.usecase.di.useCaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -28,7 +29,8 @@ class MainApplication : Application() {
                     noteModule,
                     checklistModule,
                     trashModule,
-                    notificationModule
+                    notificationModule,
+                    useCaseModule
                 )
             )
         }
@@ -40,7 +42,7 @@ class MainApplication : Application() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannel() {
         val channel = NotificationChannel(
-            CHANNEL_ID,
+            REMINDER_CHANNEL,
             "Reminder",
             NotificationManager.IMPORTANCE_HIGH
         )

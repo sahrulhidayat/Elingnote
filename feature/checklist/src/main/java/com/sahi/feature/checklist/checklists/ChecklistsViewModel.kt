@@ -3,9 +3,9 @@ package com.sahi.feature.checklist.checklists
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sahi.core.database.repository.ChecklistRepository
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistWithItems
+import com.sahi.usecase.ChecklistUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ data class ChecklistsState(
 )
 
 class ChecklistsViewModel(
-    private val checklistRepository: ChecklistRepository
+    private val checklistUseCase: ChecklistUseCase
 ) : ViewModel() {
     var checklistsState = MutableStateFlow(ChecklistsState())
         private set
@@ -41,7 +41,7 @@ class ChecklistsViewModel(
                     recentlyDeletedChecklists.clear()
                     event.checklists.forEach { checklist ->
                         recentlyDeletedChecklists.add(checklist)
-                        checklistRepository.addChecklist(
+                        checklistUseCase.addOrUpdateChecklist(
                             checklist.copy(isTrash = true)
                         )
                     }
@@ -57,7 +57,7 @@ class ChecklistsViewModel(
             is ChecklistsEvent.RestoreChecklist -> {
                 viewModelScope.launch {
                     recentlyDeletedChecklists.forEach { checklist ->
-                        checklistRepository.addChecklist(checklist)
+                        checklistUseCase.addOrUpdateChecklist(checklist)
                     }
                     recentlyDeletedChecklists.clear()
                     eventFlow.emit(
@@ -72,7 +72,7 @@ class ChecklistsViewModel(
 
     private fun getChecklists() {
         getChecklistsJob?.cancel()
-        getChecklistsJob = checklistRepository.getChecklists()
+        getChecklistsJob = checklistUseCase.getAllChecklists()
             .onEach { checklists ->
                 selectedIndexes.clear()
                 while (selectedIndexes.size < checklists.size) {
