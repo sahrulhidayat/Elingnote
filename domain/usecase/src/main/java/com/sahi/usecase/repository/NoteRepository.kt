@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {
     fun getNotes(): Flow<List<Note>>
+    fun getScheduledNotes(defaultTime: Long): List<Note>
     suspend fun getNoteById(id: Int): Note?
     suspend fun addNote(note: Note): Long
     suspend fun deleteTrashNotes()

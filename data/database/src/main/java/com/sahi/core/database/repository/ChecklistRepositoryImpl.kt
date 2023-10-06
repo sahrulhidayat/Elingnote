@@ -13,6 +13,11 @@ class ChecklistRepositoryImpl(
     override fun getChecklists(): Flow<List<ChecklistWithItems>> {
         return checklistDao.getChecklists()
     }
+
+    override fun getScheduledChecklists(defaultTime: Long): List<ChecklistWithItems> {
+        return checklistDao.getScheduledChecklists(defaultTime)
+    }
+
     override suspend fun getChecklistWithItems(id: Int): ChecklistWithItems {
         return checklistDao.getChecklistWithItems(id)
     }

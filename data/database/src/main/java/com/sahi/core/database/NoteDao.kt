@@ -13,6 +13,9 @@ interface NoteDao {
     @Query(value = "SELECT * FROM Note")
     fun getNotes(): Flow<List<Note>>
 
+    @Query(value = "SELECT * FROM Note WHERE reminderTime != :defaultTime")
+    fun getScheduledNotes(defaultTime: Long): List<Note>
+
     @Query(value = "SELECT * FROM Note WHERE id = :noteId")
     suspend fun getNoteById(noteId: Int): Note?
 

@@ -43,5 +43,6 @@ android {
 
 dependencies {
     implementation(project(":domain:model"))
+    implementation(project(":domain:usecase"))
     implementation(project(":core:utils"))
 }

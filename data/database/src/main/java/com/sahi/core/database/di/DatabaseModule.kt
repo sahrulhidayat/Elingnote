@@ -17,7 +17,7 @@ val databaseModule = module {
             androidApplication(),
             ElingNoteDatabase::class.java,
             ElingNoteDatabase.DATABASE_NAME
-        ).build()
+        ).allowMainThreadQueries().build()
     }
     single {
         val database = get<ElingNoteDatabase>()
