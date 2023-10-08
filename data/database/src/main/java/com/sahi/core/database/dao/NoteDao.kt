@@ -1,4 +1,4 @@
-package com.sahi.core.database
+package com.sahi.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

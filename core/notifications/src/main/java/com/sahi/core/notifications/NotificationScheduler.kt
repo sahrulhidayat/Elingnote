@@ -14,7 +14,7 @@ class NotificationSchedulerImpl(
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    override fun schedule(requestCode: Int, title: String, content: String, time: Long) {
+    override fun schedule(requestCode: Int?, title: String, content: String, time: Long) {
         val receiver = ComponentName(context, NotificationReceiver::class.java)
         context.packageManager.setComponentEnabledSetting(
             receiver,
@@ -33,7 +33,7 @@ class NotificationSchedulerImpl(
                 time,
                 PendingIntent.getBroadcast(
                     context,
-                    requestCode,
+                    requestCode ?: 0,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -44,7 +44,7 @@ class NotificationSchedulerImpl(
                 time,
                 PendingIntent.getBroadcast(
                     context,
-                    requestCode,
+                    requestCode ?: 0,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -65,6 +65,6 @@ class NotificationSchedulerImpl(
 }
 
 interface NotificationScheduler {
-    fun schedule(requestCode: Int, title: String, content: String, time: Long)
+    fun schedule(requestCode: Int?, title: String, content: String, time: Long)
     fun cancel(requestCode: Int)
 }

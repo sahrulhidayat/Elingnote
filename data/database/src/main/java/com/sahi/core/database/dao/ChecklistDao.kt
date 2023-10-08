@@ -1,4 +1,4 @@
-package com.sahi.core.database
+package com.sahi.core.database.dao
 
 import androidx.room.*
 import com.sahi.core.model.entity.Checklist
