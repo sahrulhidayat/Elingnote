@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import com.sahi.core.model.entity.Notification
 
 class NotificationSchedulerImpl(
     private val context: Context,
@@ -14,7 +15,7 @@ class NotificationSchedulerImpl(
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    override fun schedule(requestCode: Int?, title: String, content: String, time: Long) {
+    override fun schedule(notification: Notification) {
         val receiver = ComponentName(context, NotificationReceiver::class.java)
         context.packageManager.setComponentEnabledSetting(
             receiver,
@@ -23,17 +24,17 @@ class NotificationSchedulerImpl(
         )
 
         val intent = Intent(context, NotificationReceiver::class.java).apply {
-            putExtra("TITLE_EXTRA", title)
-            putExtra("CONTENT_EXTRA", content)
-            putExtra("ID_EXTRA", requestCode)
+            putExtra("TITLE_EXTRA", notification.title)
+            putExtra("CONTENT_EXTRA", notification.content)
+            putExtra("ID_EXTRA", notification.id)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                time,
+                notification.time,
                 PendingIntent.getBroadcast(
                     context,
-                    requestCode ?: 0,
+                    notification.id ?: 0,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -41,10 +42,10 @@ class NotificationSchedulerImpl(
         } else {
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
-                time,
+                notification.time,
                 PendingIntent.getBroadcast(
                     context,
-                    requestCode ?: 0,
+                    notification.id ?: 0,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -65,6 +66,6 @@ class NotificationSchedulerImpl(
 }
 
 interface NotificationScheduler {
-    fun schedule(requestCode: Int?, title: String, content: String, time: Long)
+    fun schedule(notification: Notification)
     fun cancel(requestCode: Int)
 }

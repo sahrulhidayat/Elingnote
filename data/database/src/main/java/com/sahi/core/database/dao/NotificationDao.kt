@@ -12,7 +12,7 @@ interface NotificationDao {
     @Query(value = "SELECT * FROM Notification")
     fun getAllNotifications(): Flow<List<Notification>>
     @Upsert
-    fun addOrUpdateNotification(notification: Notification)
+    fun addOrUpdateNotification(notification: Notification): Long
     @Delete
     fun deleteNotification(notification: Notification)
 }

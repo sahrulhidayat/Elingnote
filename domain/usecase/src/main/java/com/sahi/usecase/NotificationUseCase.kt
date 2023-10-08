@@ -12,8 +12,18 @@ class NotificationUseCaseImpl(
         return notificationRepository.getAllNotifications()
     }
 
+    override fun addReminder(notification: Notification): Long {
+        return notificationRepository.addOrUpdateNotification(notification)
+    }
+
+    override fun deleteReminder(notification: Notification) {
+        return notificationRepository.deleteNotification(notification)
+    }
+
 }
 
 interface NotificationUseCase {
     suspend fun getAllNotifications(): Flow<List<Notification>>
+    fun addReminder(notification: Notification): Long
+    fun deleteReminder(notification: Notification)
 }

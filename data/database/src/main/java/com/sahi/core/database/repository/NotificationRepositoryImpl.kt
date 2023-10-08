@@ -12,7 +12,7 @@ class NotificationRepositoryImpl(
         return dao.getAllNotifications()
     }
 
-    override fun addOrUpdateNotification(notification: Notification) {
+    override fun addOrUpdateNotification(notification: Notification): Long {
         return dao.addOrUpdateNotification(notification)
     }
 
