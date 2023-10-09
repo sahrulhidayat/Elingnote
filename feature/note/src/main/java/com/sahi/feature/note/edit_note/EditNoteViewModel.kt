@@ -119,13 +119,15 @@ class EditNoteViewModel(
                 viewModelScope.launch {
                     if (note.title.isNotBlank() || note.content.isNotBlank()) {
                         noteUseCase.addOrUpdateNote(note)
-                        notificationScheduler.schedule(
-                            Notification(
-                                title = noteTitle.value.text,
-                                content = noteContent.value.text,
-                                time = reminderTime.longValue
+                        if (reminderTime.longValue > System.currentTimeMillis()) {
+                            notificationScheduler.schedule(
+                                Notification(
+                                    title = noteTitle.value.text,
+                                    content = noteContent.value.text,
+                                    time = reminderTime.longValue
+                                )
                             )
-                        )
+                        }
                     } else {
                         noteUseCase.deleteNote(note)
                     }
