@@ -11,7 +11,7 @@ import com.sahi.core.model.entity.Notification
 
 class NotificationSchedulerImpl(
     private val context: Context,
-): NotificationScheduler {
+) : NotificationScheduler {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -34,7 +34,7 @@ class NotificationSchedulerImpl(
                 notification.time,
                 PendingIntent.getBroadcast(
                     context,
-                    notification.id ?: 0,
+                    notification.id,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
@@ -45,7 +45,7 @@ class NotificationSchedulerImpl(
                 notification.time,
                 PendingIntent.getBroadcast(
                     context,
-                    notification.id ?: 0,
+                    notification.id,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )

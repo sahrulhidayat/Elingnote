@@ -141,11 +141,11 @@ class EditNoteViewModel(
                     id = notificationId,
                     title = noteTitle.value.text,
                     content = noteContent.value.text,
-                    time = event.notification.time
+                    time = event.time
                 )
                 viewModelScope.launch {
-                    if (event.notification.time > System.currentTimeMillis()) {
-                        reminderTime.longValue = event.notification.time
+                    if (event.time > System.currentTimeMillis()) {
+                        reminderTime.longValue = event.time
                         notificationUseCase.addReminder(notification)
                         notificationScheduler.schedule(notification)
                         noteUseCase.addOrUpdateNote(note)
@@ -169,6 +169,6 @@ sealed class EditNoteEvent {
     data class EnteredContent(val value: String) : EditNoteEvent()
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
-    data class SetReminder(val notification: Notification) : EditNoteEvent()
+    data class SetReminder(val time: Long) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
 }

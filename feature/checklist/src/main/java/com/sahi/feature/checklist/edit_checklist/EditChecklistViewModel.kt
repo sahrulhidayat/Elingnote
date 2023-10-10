@@ -160,11 +160,11 @@ class EditChecklistViewModel(
                     id = notificationId,
                     title = checklistTitle.value.title,
                     content = items.joinToString("\n") { it.label },
-                    time = event.notification.time
+                    time = event.time
                 )
                 viewModelScope.launch {
-                    if (event.notification.time > System.currentTimeMillis()) {
-                        reminderTime.longValue = event.notification.time
+                    if (event.time > System.currentTimeMillis()) {
+                        reminderTime.longValue = event.time
                         notificationUseCase.addReminder(notification)
                         notificationScheduler.schedule(notification)
                         checklistUseCase.addOrUpdateChecklist(checklist)
@@ -246,7 +246,7 @@ sealed class EditChecklistEvent {
     data class EnteredTitle(val value: String) : EditChecklistEvent()
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
     data class ChangeColor(val color: Int) : EditChecklistEvent()
-    data class SetReminder(val notification: Notification) : EditChecklistEvent()
+    data class SetReminder(val time: Long) : EditChecklistEvent()
     data object SaveChecklist : EditChecklistEvent()
 }
 
