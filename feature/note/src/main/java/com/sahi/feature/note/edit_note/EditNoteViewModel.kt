@@ -78,6 +78,7 @@ class EditNoteViewModel(
     }
 
     fun onEvent(event: EditNoteEvent) {
+        val notificationId: Int = "1$currentNoteId".toInt()
         val note = Note(
             id = currentNoteId,
             title = noteTitle.value.text,
@@ -116,17 +117,18 @@ class EditNoteViewModel(
             }
 
             is EditNoteEvent.SaveNote -> {
+                val notification = Notification(
+                    id = notificationId,
+                    title = noteTitle.value.text,
+                    content = noteContent.value.text,
+                    time = reminderTime.longValue
+                )
                 viewModelScope.launch {
                     if (note.title.isNotBlank() || note.content.isNotBlank()) {
                         noteUseCase.addOrUpdateNote(note)
                         if (reminderTime.longValue > System.currentTimeMillis()) {
-                            notificationScheduler.schedule(
-                                Notification(
-                                    title = noteTitle.value.text,
-                                    content = noteContent.value.text,
-                                    time = reminderTime.longValue
-                                )
-                            )
+                            notificationUseCase.addReminder(notification)
+                            notificationScheduler.schedule(notification)
                         }
                     } else {
                         noteUseCase.deleteNote(note)
@@ -136,22 +138,16 @@ class EditNoteViewModel(
 
             is EditNoteEvent.SetReminder -> {
                 val notification = Notification(
+                    id = notificationId,
                     title = noteTitle.value.text,
                     content = noteContent.value.text,
                     time = event.notification.time
                 )
-
                 viewModelScope.launch {
                     if (event.notification.time > System.currentTimeMillis()) {
                         reminderTime.longValue = event.notification.time
-                        notificationUseCase.addReminder(notification).also { notificationId ->
-                            notificationScheduler
-                                .schedule(
-                                    notification.copy(
-                                        id = notificationId.toInt()
-                                    )
-                                )
-                        }
+                        notificationUseCase.addReminder(notification)
+                        notificationScheduler.schedule(notification)
                         noteUseCase.addOrUpdateNote(note)
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {

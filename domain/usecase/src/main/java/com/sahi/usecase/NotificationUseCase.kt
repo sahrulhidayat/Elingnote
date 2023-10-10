@@ -8,22 +8,22 @@ class NotificationUseCaseImpl(
     private val notificationRepository: NotificationRepository
 ) : NotificationUseCase {
 
-    override suspend fun getAllNotifications(): Flow<List<Notification>> {
+    override fun getAllNotifications(): Flow<List<Notification>> {
         return notificationRepository.getAllNotifications()
     }
 
-    override fun addReminder(notification: Notification): Long {
+    override suspend fun addReminder(notification: Notification) {
         return notificationRepository.addOrUpdateNotification(notification)
     }
 
-    override fun deleteReminder(notification: Notification) {
-        return notificationRepository.deleteNotification(notification)
+    override suspend fun deleteReminder(id: Int) {
+        return notificationRepository.deleteNotification(id)
     }
 
 }
 
 interface NotificationUseCase {
-    suspend fun getAllNotifications(): Flow<List<Notification>>
-    fun addReminder(notification: Notification): Long
-    fun deleteReminder(notification: Notification)
+    fun getAllNotifications(): Flow<List<Notification>>
+    suspend fun addReminder(notification: Notification)
+    suspend fun deleteReminder(id: Int)
 }

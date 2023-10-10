@@ -14,10 +14,6 @@ interface ChecklistDao {
     fun getChecklists(): Flow<List<ChecklistWithItems>>
 
     @Transaction
-    @Query(value = "SELECT * FROM Checklist WHERE reminderTime != :defaultTime")
-    fun getScheduledChecklists(defaultTime: Long): List<ChecklistWithItems>
-
-    @Transaction
     @Query(value = "SELECT * FROM Checklist WHERE id = :checklistId")
     suspend fun getChecklistWithItems(checklistId: Int): ChecklistWithItems
 

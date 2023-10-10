@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val useCaseModule = module {
     single { NoteUseCaseImpl(get()) }
     single { ChecklistUseCaseImpl(get()) }
-    single { NotificationUseCaseImpl(get(), get()) }
+    single { NotificationUseCaseImpl(get()) }
 
     singleOf(::NoteUseCaseImpl) { bind<NoteUseCase>() }
     singleOf(::ChecklistUseCaseImpl) { bind<ChecklistUseCase>() }

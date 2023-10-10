@@ -99,6 +99,7 @@ class EditChecklistViewModel(
     }
 
     fun onEvent(event: EditChecklistEvent) {
+        val notificationId: Int = "2$currentChecklistId".toInt()
         val checklist = Checklist(
             id = currentChecklistId,
             title = checklistTitle.value.title,
@@ -121,6 +122,12 @@ class EditChecklistViewModel(
             }
 
             is EditChecklistEvent.SaveChecklist -> {
+                val notification = Notification(
+                    id = notificationId,
+                    title = checklistTitle.value.title,
+                    content = items.joinToString("\n") { it.label },
+                    time = reminderTime.longValue
+                )
                 viewModelScope.launch {
                     if (checklistTitle.value.title.isNotBlank() || items.isNotEmpty()) {
                         checklistUseCase.addOrUpdateChecklist(checklist)
@@ -135,13 +142,8 @@ class EditChecklistViewModel(
                             checklistUseCase.updateChecklistItem(it)
                         }
                         if (reminderTime.longValue > System.currentTimeMillis()) {
-                            notificationScheduler.schedule(
-                                Notification(
-                                    title = checklistTitle.value.title,
-                                    content = items.joinToString("\n") { it.label },
-                                    time = reminderTime.longValue
-                                )
-                            )
+                            notificationScheduler.schedule(notification)
+                            notificationUseCase.addReminder(notification)
                         }
                     } else {
                         checklistUseCase.deleteChecklist(checklist)
@@ -155,22 +157,16 @@ class EditChecklistViewModel(
 
             is EditChecklistEvent.SetReminder -> {
                 val notification = Notification(
+                    id = notificationId,
                     title = checklistTitle.value.title,
                     content = items.joinToString("\n") { it.label },
                     time = event.notification.time
                 )
-
                 viewModelScope.launch {
                     if (event.notification.time > System.currentTimeMillis()) {
                         reminderTime.longValue = event.notification.time
-                        notificationUseCase.addReminder(notification).also { notificationId ->
-                            notificationScheduler
-                                .schedule(
-                                    notification.copy(
-                                        id = notificationId.toInt()
-                                    )
-                                )
-                        }
+                        notificationUseCase.addReminder(notification)
+                        notificationScheduler.schedule(notification)
                         checklistUseCase.addOrUpdateChecklist(checklist)
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {

@@ -1,7 +1,7 @@
 package com.sahi.core.database.di
 
-import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.room.Room
 import com.sahi.core.database.ElingNoteDatabase
 import com.sahi.core.database.NotificationDatabase
@@ -34,15 +34,28 @@ val databaseModule = module {
     }
 
     single {
-        var context: Context = androidApplication()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context = context.createDeviceProtectedStorageContext()
+            var context = androidApplication().createDeviceProtectedStorageContext()
+            if (!context.moveDatabaseFrom(
+                    androidApplication(),
+                    NotificationDatabase.DATABASE_NAME
+                )
+            ) {
+                Log.w("Notification Database", "Failed to migrate database.")
+                context = androidApplication()
+            }
+            Room.databaseBuilder(
+                context,
+                NotificationDatabase::class.java,
+                NotificationDatabase.DATABASE_NAME
+            ).build()
+        } else {
+            Room.databaseBuilder(
+                androidApplication(),
+                NotificationDatabase::class.java,
+                NotificationDatabase.DATABASE_NAME
+            ).build()
         }
-        Room.databaseBuilder(
-            context,
-            NotificationDatabase::class.java,
-            NotificationDatabase.DATABASE_NAME
-        ).build()
     }
     single {
         val database = get<NotificationDatabase>()

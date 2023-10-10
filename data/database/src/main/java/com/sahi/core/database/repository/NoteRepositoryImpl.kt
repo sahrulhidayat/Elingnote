@@ -11,11 +11,6 @@ class NoteRepositoryImpl(
     override fun getNotes(): Flow<List<Note>> {
         return noteDao.getNotes()
     }
-
-    override fun getScheduledNotes(defaultTime: Long): List<Note> {
-        return noteDao.getScheduledNotes(defaultTime)
-    }
-
     override suspend fun getNoteById(id: Int): Note? {
         return noteDao.getNoteById(id)
     }
