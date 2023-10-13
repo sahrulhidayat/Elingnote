@@ -8,15 +8,9 @@
     <application>
         <receiver
             android:name=".NotificationReceiver"
-            android:directBootAware="true"
-            android:enabled="true" />
-        <receiver
-            android:name=".BootBroadcastReceiver"
-            android:directBootAware="true"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.LOCKED.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>

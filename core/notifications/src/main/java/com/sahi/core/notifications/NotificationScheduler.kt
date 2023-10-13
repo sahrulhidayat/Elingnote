@@ -16,7 +16,7 @@ class NotificationSchedulerImpl(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(notification: Notification) {
-        val receiver = ComponentName(context, BootBroadcastReceiver::class.java)
+        val receiver = ComponentName(context, NotificationReceiver::class.java)
         context.packageManager.setComponentEnabledSetting(
             receiver,
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
