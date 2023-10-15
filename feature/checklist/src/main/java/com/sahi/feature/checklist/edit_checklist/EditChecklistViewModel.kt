@@ -170,8 +170,17 @@ class EditChecklistViewModel(
                         checklistUseCase.addOrUpdateChecklist(checklist)
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {
-                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder time has passed"))
+                        eventFlow.emit(UiEvent.ShowToast(message = "The time has passed"))
                     }
+                }
+            }
+
+            EditChecklistEvent.DeleteReminder -> {
+                viewModelScope.launch {
+                    reminderTime.longValue = 0L
+                    notificationUseCase.deleteReminder(notificationId)
+                    notificationScheduler.cancel(notificationId)
+                    eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been deleted"))
                 }
             }
         }
@@ -246,8 +255,9 @@ sealed class EditChecklistEvent {
     data class EnteredTitle(val value: String) : EditChecklistEvent()
     data class ChangeTitleFocus(val focusState: FocusState) : EditChecklistEvent()
     data class ChangeColor(val color: Int) : EditChecklistEvent()
-    data class SetReminder(val time: Long) : EditChecklistEvent()
     data object SaveChecklist : EditChecklistEvent()
+    data class SetReminder(val time: Long) : EditChecklistEvent()
+    data object DeleteReminder : EditChecklistEvent()
 }
 
 sealed class ChecklistItemEvent {

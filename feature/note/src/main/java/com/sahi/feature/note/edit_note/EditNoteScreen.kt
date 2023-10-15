@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
@@ -127,6 +128,7 @@ fun EditNoteScreen(
     )
 
     val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
+    val showEditDeleteAlarmDialog = rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -211,7 +213,12 @@ fun EditNoteScreen(
                     )
                     if (reminderTime != 0L) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        ReminderLabel(reminderTime = reminderTime)
+                        ReminderLabel(
+                            modifier = Modifier.clickable {
+                                showEditDeleteAlarmDialog.value = true
+                            },
+                            reminderTime = reminderTime
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(250.dp))
@@ -223,6 +230,18 @@ fun EditNoteScreen(
                 onEvent(
                     EditNoteEvent.SetReminder(time = alarmDateTime)
                 )
+            }
+        )
+        EditDeleteAlarmDialog(
+            reminderTime = reminderTime,
+            showDialog = showEditDeleteAlarmDialog,
+            onEditAlarm = {
+                showEditDeleteAlarmDialog.value = false
+                showSetAlarmDialog.value = true
+            },
+            onDeleteAlarm = {
+                showEditDeleteAlarmDialog.value = false
+                onEvent(EditNoteEvent.DeleteReminder)
             }
         )
         if (showColorSheet) {

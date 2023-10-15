@@ -60,6 +60,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
 import com.sahi.core.ui.components.EditModeTopAppBar
@@ -133,6 +134,7 @@ fun EditChecklistScreen(
     )
 
     val showSetAlarmDialog = rememberSaveable { mutableStateOf(false) }
+    val showEditDeleteAlarmDialog = rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -258,6 +260,18 @@ fun EditChecklistScreen(
                 onEvent(
                     EditChecklistEvent.SetReminder(time = alarmDateTime)
                 )
+            }
+        )
+        EditDeleteAlarmDialog(
+            reminderTime = reminderTime,
+            showDialog = showEditDeleteAlarmDialog,
+            onEditAlarm = {
+                showEditDeleteAlarmDialog.value = false
+                showSetAlarmDialog.value = true
+            },
+            onDeleteAlarm = {
+                showEditDeleteAlarmDialog.value = false
+                onEvent(EditChecklistEvent.DeleteReminder)
             }
         )
         if (showColorSheet) {

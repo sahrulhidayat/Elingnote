@@ -151,8 +151,17 @@ class EditNoteViewModel(
                         noteUseCase.addOrUpdateNote(note)
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {
-                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder time has passed"))
+                        eventFlow.emit(UiEvent.ShowToast(message = "The time has passed"))
                     }
+                }
+            }
+
+            is EditNoteEvent.DeleteReminder -> {
+                viewModelScope.launch {
+                    reminderTime.longValue = 0L
+                    notificationUseCase.deleteReminder(notificationId)
+                    notificationScheduler.cancel(notificationId)
+                    eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been deleted"))
                 }
             }
         }
@@ -169,6 +178,7 @@ sealed class EditNoteEvent {
     data class EnteredContent(val value: String) : EditNoteEvent()
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
-    data class SetReminder(val time: Long) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
+    data class SetReminder(val time: Long) : EditNoteEvent()
+    data object DeleteReminder : EditNoteEvent()
 }
