@@ -11,8 +11,8 @@ fun NavController.navigateToTrashScreen(navOptions: NavOptions? = null) {
     this.navigate(trashNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.trashScreen() {
+fun NavGraphBuilder.trashScreen(onBack: () -> Unit) {
     composable(route = trashNavigationRoute) {
-        TrashRoute()
+        TrashRoute(onBack = onBack)
     }
 }

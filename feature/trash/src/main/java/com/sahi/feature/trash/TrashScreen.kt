@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 fun TrashRoute(
     modifier: Modifier = Modifier,
     viewModel: TrashViewModel = koinViewModel(),
+    onBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -63,6 +65,7 @@ fun TrashRoute(
         state = state,
         snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
+        onBack = onBack,
         modifier = modifier
     )
 }
@@ -73,6 +76,7 @@ fun TrashScreen(
     state: TrashState,
     snackBarHostState: SnackbarHostState,
     onEvent: (TrashEvent) -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -108,6 +112,11 @@ fun TrashScreen(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Trash") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
                 actions = {
                     if (state.trashNotes.isNotEmpty() || state.trashChecklist.isNotEmpty())
                         IconButton(onClick = { showDeleteDialog = true }) {
