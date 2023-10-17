@@ -1,7 +1,7 @@
 package com.sahi.core.database.repository
 
 import com.sahi.core.model.entity.Note
-import com.sahi.core.database.NoteDao
+import com.sahi.core.database.dao.NoteDao
 import com.sahi.usecase.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -11,11 +11,6 @@ class NoteRepositoryImpl(
     override fun getNotes(): Flow<List<Note>> {
         return noteDao.getNotes()
     }
-
-    override fun getScheduledNotes(defaultTime: Long): List<Note> {
-        return noteDao.getScheduledNotes(defaultTime)
-    }
-
     override suspend fun getNoteById(id: Int): Note? {
         return noteDao.getNoteById(id)
     }

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChecklistRepository {
     fun getChecklists(): Flow<List<ChecklistWithItems>>
-    fun getScheduledChecklists(defaultTime: Long): List<ChecklistWithItems>
     suspend fun getChecklistWithItems(id: Int): ChecklistWithItems
     suspend fun addChecklist(checklist: Checklist): Long
     suspend fun deleteTrashChecklists()

@@ -9,9 +9,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.model.entity.Note
+import com.sahi.core.model.entity.Notification
 import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.usecase.NoteUseCase
+import com.sahi.usecase.NotificationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
@@ -23,6 +25,7 @@ data class EditNoteState(
 
 class EditNoteViewModel(
     private val noteUseCase: NoteUseCase,
+    private val notificationUseCase: NotificationUseCase,
     private val notificationScheduler: NotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -30,9 +33,9 @@ class EditNoteViewModel(
         private set
     var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
         private set
+    private var noteColor = mutableIntStateOf(itemColors[0].toArgb())
     var reminderTime = mutableLongStateOf(0L)
         private set
-    private var noteColor = mutableIntStateOf(itemColors[0].toArgb())
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set
@@ -53,8 +56,8 @@ class EditNoteViewModel(
                             text = note.content,
                             isHintVisible = note.content.isBlank()
                         )
-                        reminderTime.longValue = note.reminderTime
                         noteColor.intValue = note.color
+                        reminderTime.longValue = note.reminderTime
                     }
                 }
             } else {
@@ -75,7 +78,7 @@ class EditNoteViewModel(
     }
 
     fun onEvent(event: EditNoteEvent) {
-        val alarmRequestCode = "1$currentNoteId".toInt()
+        val notificationId: Int = "1$currentNoteId".toInt()
         val note = Note(
             id = currentNoteId,
             title = noteTitle.value.text,
@@ -114,16 +117,18 @@ class EditNoteViewModel(
             }
 
             is EditNoteEvent.SaveNote -> {
+                val notification = Notification(
+                    id = notificationId,
+                    title = noteTitle.value.text,
+                    content = noteContent.value.text,
+                    time = reminderTime.longValue
+                )
                 viewModelScope.launch {
                     if (note.title.isNotBlank() || note.content.isNotBlank()) {
                         noteUseCase.addOrUpdateNote(note)
                         if (reminderTime.longValue > System.currentTimeMillis()) {
-                            notificationScheduler.schedule(
-                                requestCode = alarmRequestCode,
-                                title = noteTitle.value.text,
-                                content = noteContent.value.text,
-                                time = reminderTime.longValue
-                            )
+                            notificationUseCase.addReminder(notification)
+                            notificationScheduler.schedule(notification)
                         }
                     } else {
                         noteUseCase.deleteNote(note)
@@ -131,21 +136,32 @@ class EditNoteViewModel(
                 }
             }
 
-            is EditNoteEvent.SetAlarm -> {
-                reminderTime.longValue = event.dateTime
+            is EditNoteEvent.SetReminder -> {
+                val notification = Notification(
+                    id = notificationId,
+                    title = noteTitle.value.text,
+                    content = noteContent.value.text,
+                    time = event.time
+                )
                 viewModelScope.launch {
-                    noteUseCase.addOrUpdateNote(note)
-                    if (event.dateTime > System.currentTimeMillis()) {
-                        notificationScheduler.schedule(
-                            requestCode = alarmRequestCode,
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            time = event.dateTime
-                        )
+                    if (event.time > System.currentTimeMillis()) {
+                        reminderTime.longValue = event.time
+                        notificationUseCase.addReminder(notification)
+                        notificationScheduler.schedule(notification)
+                        noteUseCase.addOrUpdateNote(note)
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {
-                        eventFlow.emit(UiEvent.ShowToast(message = "Reminder time has passed"))
+                        eventFlow.emit(UiEvent.ShowToast(message = "The time has passed"))
                     }
+                }
+            }
+
+            is EditNoteEvent.DeleteReminder -> {
+                viewModelScope.launch {
+                    reminderTime.longValue = 0L
+                    notificationUseCase.deleteReminder(notificationId)
+                    notificationScheduler.cancel(notificationId)
+                    eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been deleted"))
                 }
             }
         }
@@ -162,6 +178,7 @@ sealed class EditNoteEvent {
     data class EnteredContent(val value: String) : EditNoteEvent()
     data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
-    data class SetAlarm(val dateTime: Long) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
+    data class SetReminder(val time: Long) : EditNoteEvent()
+    data object DeleteReminder : EditNoteEvent()
 }

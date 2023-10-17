@@ -45,13 +45,13 @@ import com.sahi.utils.timeFormatter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetAlarmDialog(
+    initialDateTime: LocalDateTime = LocalDateTime.now(),
     showDialog: MutableState<Boolean>,
     onSetAlarm: (alarmTime: Long) -> Unit
 ) {
@@ -73,14 +73,14 @@ fun SetAlarmDialog(
         }
     )
 
-    val currentDate = LocalDate.now().atStartOfDay(ZoneOffset.UTC)
+    val currentDate = initialDateTime.toLocalDate().atStartOfDay(ZoneOffset.UTC)
     val showDatePicker = rememberSaveable { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = currentDate.toInstant().toEpochMilli(),
         initialDisplayedMonthMillis = null
     )
 
-    val currentTime = LocalTime.now()
+    val currentTime = initialDateTime.toLocalTime()
     val showTimePicker = rememberSaveable { mutableStateOf(false) }
     val timePickerState = rememberTimePickerState(
         is24Hour = true,

@@ -3,7 +3,7 @@ package com.sahi.core.database.repository
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistItem
 import com.sahi.core.model.entity.ChecklistWithItems
-import com.sahi.core.database.ChecklistDao
+import com.sahi.core.database.dao.ChecklistDao
 import com.sahi.usecase.repository.ChecklistRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -13,11 +13,6 @@ class ChecklistRepositoryImpl(
     override fun getChecklists(): Flow<List<ChecklistWithItems>> {
         return checklistDao.getChecklists()
     }
-
-    override fun getScheduledChecklists(defaultTime: Long): List<ChecklistWithItems> {
-        return checklistDao.getScheduledChecklists(defaultTime)
-    }
-
     override suspend fun getChecklistWithItems(id: Int): ChecklistWithItems {
         return checklistDao.getChecklistWithItems(id)
     }

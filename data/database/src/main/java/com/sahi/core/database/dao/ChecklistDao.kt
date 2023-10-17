@@ -1,4 +1,4 @@
-package com.sahi.core.database
+package com.sahi.core.database.dao
 
 import androidx.room.*
 import com.sahi.core.model.entity.Checklist
@@ -12,10 +12,6 @@ interface ChecklistDao {
     @Transaction
     @Query(value = "SELECT * FROM Checklist")
     fun getChecklists(): Flow<List<ChecklistWithItems>>
-
-    @Transaction
-    @Query(value = "SELECT * FROM Checklist WHERE reminderTime != :defaultTime")
-    fun getScheduledChecklists(defaultTime: Long): List<ChecklistWithItems>
 
     @Transaction
     @Query(value = "SELECT * FROM Checklist WHERE id = :checklistId")
