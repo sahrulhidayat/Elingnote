@@ -124,7 +124,7 @@ fun EditNoteScreen(
     
     var backgroundColor = Color(noteColor)
     if (isSystemInDarkTheme()) {
-        backgroundColor = Color(darkenColor(noteColor, 0.4f))
+        backgroundColor = Color(darkenColor(noteColor))
     }
     val noteColorAnimatable = remember { Animatable(backgroundColor) }
 
@@ -272,7 +272,7 @@ fun EditNoteScreen(
                         items(itemColors) {
                             var color = it
                             if (isSystemInDarkTheme()) {
-                                color = Color(darkenColor(it.toArgb(), 0.4f))
+                                color = Color(darkenColor(it.toArgb()))
                             }
 
                             Spacer(modifier = Modifier.width(8.dp))

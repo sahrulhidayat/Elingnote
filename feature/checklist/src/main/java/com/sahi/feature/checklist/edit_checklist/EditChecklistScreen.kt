@@ -130,7 +130,7 @@ fun EditChecklistScreen(
 
     var backgroundColor = Color(checklistColor)
     if (isSystemInDarkTheme()) {
-        backgroundColor = Color(darkenColor(checklistColor, 0.4f))
+        backgroundColor = Color(darkenColor(checklistColor))
     }
     val checklistColorAnimatable = remember { Animatable(backgroundColor) }
 
@@ -319,7 +319,7 @@ fun EditChecklistScreen(
                         items(itemColors) {
                             var color = it
                             if (isSystemInDarkTheme()) {
-                                color = Color(darkenColor(it.toArgb(), 0.4f))
+                                color = Color(darkenColor(it.toArgb()))
                             }
 
                             Spacer(modifier = Modifier.width(8.dp))

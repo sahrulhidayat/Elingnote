@@ -4,7 +4,7 @@ import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 
 @ColorInt
-fun darkenColor(@ColorInt color: Int, value: Float): Int {
+fun darkenColor(@ColorInt color: Int, value: Float = 0.5f): Int {
     val hsl = FloatArray(3)
     ColorUtils.colorToHSL(color, hsl)
     hsl[2] -= value

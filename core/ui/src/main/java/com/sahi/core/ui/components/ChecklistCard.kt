@@ -50,7 +50,7 @@ fun ChecklistCard(
 
     var backgroundColor = Color(checklistColor)
     if (isSystemInDarkTheme()) {
-        backgroundColor = Color(darkenColor(checklistColor, 0.4f))
+        backgroundColor = Color(darkenColor(checklistColor))
     }
 
     Card(

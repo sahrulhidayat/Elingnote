@@ -45,7 +45,7 @@ fun NoteCard(
 
     var backgroundColor = Color(note.color)
     if (isSystemInDarkTheme()) {
-        backgroundColor = Color(darkenColor(note.color, 0.4f))
+        backgroundColor = Color(darkenColor(note.color))
     }
 
     Card(
