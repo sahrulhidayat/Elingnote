@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.sahi.core.model.entity.ChecklistWithItems
+import com.sahi.utils.darkenColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -46,6 +48,11 @@ fun ChecklistCard(
     val checklistColor = checklistWithItems.checklist.color
     val isWhiteBackground = Color(checklistColor) == Color.White
 
+    var backgroundColor = Color(checklistColor)
+    if (isSystemInDarkTheme()) {
+        backgroundColor = Color(darkenColor(checklistColor, 0.4f))
+    }
+
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
@@ -55,7 +62,7 @@ fun ChecklistCard(
             ),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(checklistColor)),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = when {
             isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
             isWhiteBackground -> BorderStroke(
