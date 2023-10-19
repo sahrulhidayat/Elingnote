@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sahi.core.model.entity.Note
+import com.sahi.utils.darkenColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -40,6 +42,12 @@ fun NoteCard(
     onRestore: () -> Unit = { }
 ) {
     val isWhiteBackground = Color(note.color) == Color.White
+
+    var backgroundColor = Color(note.color)
+    if (isSystemInDarkTheme()) {
+        backgroundColor = Color(darkenColor(note.color, 0.4f))
+    }
+
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
@@ -49,7 +57,7 @@ fun NoteCard(
             ),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(note.color)),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = when {
             isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
             isWhiteBackground -> BorderStroke(

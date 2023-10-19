@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -38,8 +38,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.model.entity.Note
-import com.sahi.core.ui.components.MainTopAppBar
 import com.sahi.core.ui.components.EmptyStateAnimation
+import com.sahi.core.ui.components.MainTopAppBar
 import com.sahi.core.ui.components.NoteCard
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -133,7 +133,7 @@ fun NotesScreen(
                 containerColor = MaterialTheme.colorScheme.primary,
                 content = {
                     Icon(
-                        imageVector = Icons.Default.NoteAdd,
+                        imageVector = Icons.AutoMirrored.Default.NoteAdd,
                         contentDescription = "New note"
                     )
                 }

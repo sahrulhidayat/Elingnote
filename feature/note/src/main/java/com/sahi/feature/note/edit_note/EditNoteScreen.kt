@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -63,6 +64,7 @@ import com.sahi.core.ui.components.LifecycleObserver
 import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
+import com.sahi.utils.darkenColor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -119,8 +121,13 @@ fun EditNoteScreen(
     onBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    
+    var backgroundColor = Color(noteColor)
+    if (isSystemInDarkTheme()) {
+        backgroundColor = Color(darkenColor(noteColor, 0.4f))
+    }
+    val noteColorAnimatable = remember { Animatable(backgroundColor) }
 
-    val noteColorAnimatable = remember { Animatable(Color(noteColor)) }
     val scope = rememberCoroutineScope()
     var showColorSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
@@ -262,7 +269,12 @@ fun EditNoteScreen(
                         item {
                             Spacer(modifier = Modifier.width(8.dp))
                         }
-                        items(itemColors) { color ->
+                        items(itemColors) {
+                            var color = it
+                            if (isSystemInDarkTheme()) {
+                                color = Color(darkenColor(it.toArgb(), 0.4f))
+                            }
+
                             Spacer(modifier = Modifier.width(8.dp))
                             Box(
                                 modifier = Modifier
@@ -284,7 +296,7 @@ fun EditNoteScreen(
                                                 )
                                             )
                                         }
-                                        onEvent(EditNoteEvent.ChangeColor(color.toArgb()))
+                                        onEvent(EditNoteEvent.ChangeColor(it.toArgb()))
                                     }
                             )
                         }
