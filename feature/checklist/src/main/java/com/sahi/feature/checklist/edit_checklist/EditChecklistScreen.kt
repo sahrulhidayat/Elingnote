@@ -249,7 +249,15 @@ fun EditChecklistScreen(
             }
             item {
                 if (reminderTime != 0L) {
-                    ReminderLabel(modifier = Modifier.padding(16.dp), reminderTime = reminderTime)
+                    ReminderLabel(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clickable {
+                                showEditDeleteAlarmDialog.value = true
+                            }
+                        ,
+                        reminderTime = reminderTime
+                    )
                 }
                 Spacer(modifier = Modifier.height(250.dp))
             }

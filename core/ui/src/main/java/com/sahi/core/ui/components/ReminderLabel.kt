@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.sahi.utils.simpleDateTimeFormat
 
@@ -29,7 +31,11 @@ fun ReminderLabel(modifier: Modifier = Modifier, reminderTime: Long) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Alarm,
+                imageVector = if (reminderTime < System.currentTimeMillis()) {
+                    Icons.Default.Check
+                } else {
+                    Icons.Default.Alarm
+                },
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 contentDescription = null
             )
@@ -37,7 +43,12 @@ fun ReminderLabel(modifier: Modifier = Modifier, reminderTime: Long) {
                 modifier = Modifier.padding(start = 4.dp),
                 text = reminderTime.simpleDateTimeFormat(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
+                textDecoration = if (reminderTime < System.currentTimeMillis()) {
+                    TextDecoration.LineThrough
+                } else {
+                    TextDecoration.None
+                }
             )
         }
     }
