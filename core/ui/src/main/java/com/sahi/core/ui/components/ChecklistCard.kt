@@ -83,9 +83,7 @@ fun ChecklistCard(
                 if (title.isNotBlank()) {
                     Text(
                         text = checklistWithItems.checklist.title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            color = Color.Black
-                        )
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -126,9 +124,7 @@ fun ChecklistCard(
             Text(
                 modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
                 text = "+ $overflowItems items",
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.Black
-                )
+                style = MaterialTheme.typography.bodySmall
             )
         }
         if (checklistWithItems.checklist.reminderTime != 0L) {

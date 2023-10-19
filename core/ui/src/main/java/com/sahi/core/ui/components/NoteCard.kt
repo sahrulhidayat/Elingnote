@@ -76,15 +76,13 @@ fun NoteCard(
                     if (note.title.isNotBlank())
                         Text(
                             text = note.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.Black
+                            style = MaterialTheme.typography.titleMedium
                         )
                     Spacer(modifier = Modifier.height(4.dp))
                     if (note.content.isNotBlank())
                         Text(
                             text = note.content,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black,
                             overflow = TextOverflow.Ellipsis
                         )
                 }

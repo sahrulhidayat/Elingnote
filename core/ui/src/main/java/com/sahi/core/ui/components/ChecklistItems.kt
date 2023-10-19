@@ -97,7 +97,7 @@ fun ChecklistItem(
             border = if (checked) {
                 BorderStroke(1.3.dp, color = MaterialTheme.colorScheme.primary)
             } else {
-                BorderStroke(1.3.dp, color = Color.Black)
+                BorderStroke(1.3.dp, color = MaterialTheme.colorScheme.onBackground)
             }
         ) {
             Box(
@@ -117,9 +117,7 @@ fun ChecklistItem(
         Box(modifier = modifier) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.Black
-                ),
+                style = MaterialTheme.typography.bodyMedium,
                 textDecoration = if (checked) TextDecoration.LineThrough else TextDecoration.None,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -157,7 +155,7 @@ fun EditChecklistItem(
         Checkbox(
             checked = checked,
             colors = CheckboxDefaults.colors(
-                uncheckedColor = Color.Black
+                uncheckedColor = MaterialTheme.colorScheme.onBackground
             ),
             onCheckedChange = onCheckedChange
         )
@@ -172,10 +170,12 @@ fun EditChecklistItem(
                 textStyle =
                 if (checked)
                     MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground,
                         textDecoration = TextDecoration.LineThrough
                     )
                 else
                     MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground,
                         textDecoration = TextDecoration.None
                     ),
                 isHintVisible = isHintVisible,
@@ -189,7 +189,8 @@ fun EditChecklistItem(
         }
         if (isFocused) {
             IconButton(
-                colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Black),
+                colors = IconButtonDefaults
+                    .iconButtonColors(contentColor = MaterialTheme.colorScheme.onBackground),
                 onClick = {
                     focusManager.moveFocus(FocusDirection.Up)
                     onDelete()

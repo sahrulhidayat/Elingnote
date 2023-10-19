@@ -192,7 +192,7 @@ fun EditNoteScreen(
                         },
                         isHintVisible = titleState.isHintVisible,
                         textStyle = MaterialTheme.typography.titleMedium.copy(
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.onBackground
                         ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions {
@@ -213,7 +213,7 @@ fun EditNoteScreen(
                         },
                         isHintVisible = contentState.isHintVisible,
                         textStyle = MaterialTheme.typography.bodyMedium.copy(
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.onBackground,
                             lineHeight = 1.2.em,
                         ),
                         modifier = Modifier.fillMaxHeight()

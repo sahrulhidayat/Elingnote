@@ -199,7 +199,9 @@ fun EditChecklistScreen(
                         onEvent(EditChecklistEvent.ChangeTitleFocus(it))
                     },
                     isHintVisible = titleState.isHintVisible,
-                    textStyle = MaterialTheme.typography.titleMedium,
+                    textStyle = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
                 )
@@ -246,10 +248,17 @@ fun EditChecklistScreen(
                         itemsState.lastOrNull()?.label?.isNotEmpty() == true
                         || itemsState.isEmpty()
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add checklist item")
+                        Icon(
+                            Icons.Default.Add,
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            contentDescription = "Add checklist item"
+                        )
                         Text(
                             text = "New item",
-                            modifier = Modifier.padding(8.dp)
+                            modifier = Modifier.padding(8.dp),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
                         )
                     }
                 }
