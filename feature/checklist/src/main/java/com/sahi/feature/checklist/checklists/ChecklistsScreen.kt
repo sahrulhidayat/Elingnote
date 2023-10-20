@@ -49,7 +49,7 @@ import java.util.Collections
 @Composable
 fun ChecklistsRoute(
     drawerState: DrawerState,
-    onClickItem: (Checklist) -> Unit,
+    onClickItem: (id: Int) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChecklistsViewModel = koinViewModel(),
@@ -101,7 +101,7 @@ fun ChecklistsScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
-    onClickItem: (Checklist) -> Unit,
+    onClickItem: (id: Int) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -191,7 +191,7 @@ fun ChecklistsScreen(
                             if (isSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
-                                onClickItem(checklistWithItems.checklist)
+                                onClickItem(checklistWithItems.checklist.id ?: -1)
                         },
                         onLongClick = {
                             isSelectMode = true

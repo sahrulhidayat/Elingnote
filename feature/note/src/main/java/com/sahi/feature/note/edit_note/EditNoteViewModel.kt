@@ -33,7 +33,8 @@ class EditNoteViewModel(
         private set
     var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
         private set
-    private var noteColor = mutableIntStateOf(itemColors[0].toArgb())
+    var noteColor = mutableIntStateOf(itemColors[0].toArgb())
+        private set
     var reminderTime = mutableLongStateOf(0L)
         private set
 

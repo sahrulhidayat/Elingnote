@@ -49,7 +49,7 @@ import java.util.Collections
 @Composable
 fun NotesRoute(
     drawerState: DrawerState,
-    onClickItem: (Note) -> Unit,
+    onClickItem: (id: Int) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NotesViewModel = koinViewModel(),
@@ -101,7 +101,7 @@ fun NotesScreen(
     snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (NotesEvent) -> Unit,
-    onClickItem: (Note) -> Unit,
+    onClickItem: (id: Int) -> Unit,
     onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -190,7 +190,7 @@ fun NotesScreen(
                             if (isSelectMode)
                                 selectedIndexes[index] = !selectedIndexes[index]
                             else
-                                onClickItem(note)
+                                onClickItem(note.id ?: -1)
                         },
                         onLongClick = {
                             isSelectMode = true

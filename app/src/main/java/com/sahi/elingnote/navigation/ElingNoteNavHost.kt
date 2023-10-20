@@ -30,9 +30,9 @@ fun ElingNoteNavHost(
     ) {
         notesScreen(
             drawerState = drawerState,
-            onClickItem = { note ->
+            onClickItem = { id ->
                 navController.navigate(
-                    "$editNoteNavigationRoute?noteId=${note.id}&noteColor=${note.color}"
+                    "$editNoteNavigationRoute?noteId=$id"
                 )
             },
             onClickFab = {
@@ -42,9 +42,9 @@ fun ElingNoteNavHost(
         editNoteScreen(onBack = { navController.popBackStack() })
         checklistsScreen(
             drawerState = drawerState,
-            onClickItem = { checklist ->
+            onClickItem = { id ->
                 navController.navigate(
-                    "$editChecklistNavigationRoute?checklistId=${checklist.id}&checklistColor=${checklist.color}"
+                    "$editChecklistNavigationRoute?checklistId=$id"
                 )
             },
             onClickFab = {

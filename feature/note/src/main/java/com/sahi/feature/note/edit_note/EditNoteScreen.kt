@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +41,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,7 +73,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditNoteRoute(
-    noteColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditNoteViewModel = koinViewModel(),
     onBack: () -> Unit
@@ -96,6 +97,7 @@ fun EditNoteRoute(
     val titleState by viewModel.noteTitle
     val contentState by viewModel.noteContent
     val reminderTime by viewModel.reminderTime
+    val noteColor by viewModel.noteColor
 
     EditNoteScreen(
         titleState = titleState,
@@ -121,14 +123,25 @@ fun EditNoteScreen(
     onBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
     
     var backgroundColor = Color(noteColor)
     if (isSystemInDarkTheme()) {
         backgroundColor = Color(darkenColor(noteColor))
     }
     val noteColorAnimatable = remember { Animatable(backgroundColor) }
+    SideEffect {
+        scope.launch {
+            noteColorAnimatable.animateTo(
+                targetValue = backgroundColor,
+                animationSpec = tween(
+                    durationMillis = 100,
+                    easing = FastOutLinearInEasing
+                )
+            )
+        }
+    }
 
-    val scope = rememberCoroutineScope()
     var showColorSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -253,16 +266,19 @@ fun EditNoteScreen(
         )
         if (showColorSheet) {
             ModalBottomSheet(
+                onDismissRequest = {
+                    showColorSheet = false
+                },
                 sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
                 scrimColor = Color.Transparent,
                 windowInsets = WindowInsets(0, 0, 0, 0),
-                dragHandle = {},
-                onDismissRequest = {
-                    showColorSheet = false
-                }
+                dragHandle = {}
             ) {
-                Box(modifier = Modifier.padding(bottom = 50.dp)) {
+                Box(modifier = Modifier
+                    .padding(bottom = 50.dp)
+                    .fillMaxWidth()
+                ) {
                     LazyRow(
                         modifier = Modifier.padding(vertical = 16.dp)
                     ) {

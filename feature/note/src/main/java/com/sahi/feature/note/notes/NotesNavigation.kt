@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.sahi.core.model.entity.Note
 
 const val notesNavigationRoute = "notes_route"
 
@@ -15,7 +14,7 @@ fun NavController.navigateToNotes(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.notesScreen(
     drawerState: DrawerState,
-    onClickItem: (Note) -> Unit,
+    onClickItem: (id: Int) -> Unit,
     onClickFab: () -> Unit
 ) {
     composable(route = notesNavigationRoute) {

@@ -50,7 +50,8 @@ class EditChecklistViewModel(
         private set
     var reminderTime = mutableLongStateOf(0L)
         private set
-    private var checklistColor = mutableIntStateOf(itemColors[0].toArgb())
+    var checklistColor = mutableIntStateOf(itemColors[0].toArgb())
+        private set
 
     var eventFlow = MutableSharedFlow<UiEvent>()
         private set

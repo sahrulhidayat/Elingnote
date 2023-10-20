@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +44,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,7 +78,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditChecklistRoute(
-    checklistColor: Int,
     modifier: Modifier = Modifier,
     viewModel: EditChecklistViewModel = koinViewModel(),
     onBack: () -> Unit
@@ -101,6 +102,7 @@ fun EditChecklistRoute(
     val titleState by viewModel.checklistTitle
     val itemsState by viewModel.itemsFlow.collectAsState()
     val reminderTime by viewModel.reminderTime
+    val checklistColor by viewModel.checklistColor
 
     EditChecklistScreen(
         titleState = titleState,
@@ -127,14 +129,25 @@ fun EditChecklistScreen(
     onBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     var backgroundColor = Color(checklistColor)
     if (isSystemInDarkTheme()) {
         backgroundColor = Color(darkenColor(checklistColor))
     }
     val checklistColorAnimatable = remember { Animatable(backgroundColor) }
+    SideEffect {
+        scope.launch {
+            checklistColorAnimatable.animateTo(
+                targetValue = backgroundColor,
+                animationSpec = tween(
+                    durationMillis = 100,
+                    easing = FastOutLinearInEasing
+                )
+            )
+        }
+    }
 
-    val scope = rememberCoroutineScope()
     var showColorSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -270,8 +283,7 @@ fun EditChecklistScreen(
                             .padding(16.dp)
                             .clickable {
                                 showEditDeleteAlarmDialog.value = true
-                            }
-                        ,
+                            },
                         reminderTime = reminderTime
                     )
                 }
@@ -300,16 +312,19 @@ fun EditChecklistScreen(
         )
         if (showColorSheet) {
             ModalBottomSheet(
+                onDismissRequest = {
+                    showColorSheet = false
+                },
                 sheetState = sheetState,
                 shape = CutCornerShape(0.dp),
                 scrimColor = Color.Transparent,
                 windowInsets = WindowInsets(0, 0, 0, 0),
-                dragHandle = {},
-                onDismissRequest = {
-                    showColorSheet = false
-                }
+                dragHandle = {}
             ) {
-                Box(modifier = Modifier.padding(bottom = 50.dp)) {
+                Box(modifier = Modifier
+                    .padding(bottom = 50.dp)
+                    .fillMaxWidth()
+                ) {
                     LazyRow(
                         modifier = Modifier.padding(vertical = 16.dp)
                     ) {
