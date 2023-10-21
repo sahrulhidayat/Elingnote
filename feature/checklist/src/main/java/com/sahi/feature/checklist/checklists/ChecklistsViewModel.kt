@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistWithItems
+import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.usecase.ChecklistUseCase
+import com.sahi.usecase.NotificationUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,9 @@ data class ChecklistsState(
 )
 
 class ChecklistsViewModel(
-    private val checklistUseCase: ChecklistUseCase
+    private val checklistUseCase: ChecklistUseCase,
+    private val notificationUseCase: NotificationUseCase,
+    private val notificationScheduler: NotificationScheduler,
 ) : ViewModel() {
     var checklistsState = MutableStateFlow(ChecklistsState())
         private set
@@ -42,8 +46,14 @@ class ChecklistsViewModel(
                     event.checklists.forEach { checklist ->
                         recentlyDeletedChecklists.add(checklist)
                         checklistUseCase.addOrUpdateChecklist(
-                            checklist.copy(isTrash = true)
+                            checklist.copy(
+                                isTrash = true,
+                                reminderTime = 0L
+                            )
                         )
+                        val checklistId = "2${checklist.id}".toInt()
+                        notificationUseCase.deleteReminder(checklistId)
+                        notificationScheduler.cancel(checklistId)
                     }
                     eventFlow.emit(
                         UiEvent.ShowSnackBar(
@@ -57,7 +67,7 @@ class ChecklistsViewModel(
             is ChecklistsEvent.RestoreChecklist -> {
                 viewModelScope.launch {
                     recentlyDeletedChecklists.forEach { checklist ->
-                        checklistUseCase.addOrUpdateChecklist(checklist)
+                        checklistUseCase.addOrUpdateChecklist(checklist.copy(reminderTime = 0L))
                     }
                     recentlyDeletedChecklists.clear()
                     eventFlow.emit(

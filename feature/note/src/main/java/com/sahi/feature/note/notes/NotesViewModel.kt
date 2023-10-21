@@ -4,7 +4,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahi.core.model.entity.Note
+import com.sahi.core.notifications.NotificationScheduler
 import com.sahi.usecase.NoteUseCase
+import com.sahi.usecase.NotificationUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,9 @@ data class NotesState(
 )
 
 class NotesViewModel(
-    private val noteUseCase: NoteUseCase
+    private val noteUseCase: NoteUseCase,
+    private val notificationUseCase: NotificationUseCase,
+    private val notificationScheduler: NotificationScheduler,
 ) : ViewModel() {
     var state = MutableStateFlow(NotesState())
         private set
@@ -40,7 +44,16 @@ class NotesViewModel(
                     recentlyDeletedNotes.clear()
                     event.notes.forEach { note ->
                         recentlyDeletedNotes.add(note)
-                        noteUseCase.addOrUpdateNote(note.copy(isTrash = true))
+                        noteUseCase.addOrUpdateNote(
+                            note.copy(
+                                isTrash = true,
+                                reminderTime = 0L
+                            )
+                        )
+
+                        val notificationId = "1${note.id}".toInt()
+                        notificationUseCase.deleteReminder(notificationId)
+                        notificationScheduler.cancel(notificationId)
                     }
                     eventFlow.emit(
                         UiEvent.ShowSnackBar(
@@ -54,7 +67,7 @@ class NotesViewModel(
             NotesEvent.RestoreNotes -> {
                 viewModelScope.launch {
                     recentlyDeletedNotes.forEach { note ->
-                        noteUseCase.addOrUpdateNote(note)
+                        noteUseCase.addOrUpdateNote(note.copy(reminderTime = 0L))
                     }
                     recentlyDeletedNotes.clear()
                     eventFlow.emit(
