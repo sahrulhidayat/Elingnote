@@ -4,10 +4,10 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-apply("./../../shared_dependencies.gradle")
+apply("../shared_dependencies.gradle")
 
 android {
-    namespace = "com.sahi.core.database"
+    namespace = "com.sahi.di"
     compileSdk = 34
 
     defaultConfig {
@@ -36,8 +36,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain:model"))
     implementation(project(":domain:usecase"))
+    implementation(project(":data:database"))
+    implementation(project(":core:notifications"))
+    implementation(project(":feature:note"))
+    implementation(project(":feature:checklist"))
+    implementation(project(":feature:trash"))
 
     // Room
     val roomVersion = "2.6.0"

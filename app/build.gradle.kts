@@ -52,12 +52,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain:model"))
-    implementation(project(":domain:usecase"))
-    implementation(project(":data:database"))
     implementation(project(":core:ui"))
-    implementation(project(":core:notifications"))
     implementation(project(":feature:note"))
     implementation(project(":feature:checklist"))
     implementation(project(":feature:trash"))
+    implementation(project(":di"))
 }

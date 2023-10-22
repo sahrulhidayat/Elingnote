@@ -1,4 +1,4 @@
-package com.sahi.feature.note.di
+package com.sahi.di
 
 import com.sahi.feature.note.edit_note.EditNoteViewModel
 import com.sahi.feature.note.notes.NotesViewModel

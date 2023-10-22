@@ -1,4 +1,4 @@
-package com.sahi.usecase.di
+package com.sahi.di
 
 import com.sahi.usecase.ChecklistUseCase
 import com.sahi.usecase.ChecklistUseCaseImpl

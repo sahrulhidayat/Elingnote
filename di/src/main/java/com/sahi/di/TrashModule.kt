@@ -1,4 +1,4 @@
-package com.sahi.feature.trash.di
+package com.sahi.di
 
 import com.sahi.feature.trash.TrashViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf

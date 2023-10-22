@@ -1,4 +1,4 @@
-package com.sahi.core.database.di
+package com.sahi.di
 
 import androidx.room.Room
 import com.sahi.core.database.ElingNoteDatabase

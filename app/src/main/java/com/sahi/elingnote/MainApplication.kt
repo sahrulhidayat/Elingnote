@@ -6,13 +6,12 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.sahi.core.database.di.databaseModule
-import com.sahi.core.notifications.REMINDER_CHANNEL
-import com.sahi.core.notifications.di.notificationModule
-import com.sahi.feature.checklist.di.checklistModule
-import com.sahi.feature.note.di.noteModule
-import com.sahi.feature.trash.di.trashModule
-import com.sahi.usecase.di.useCaseModule
+import com.sahi.di.notificationModule
+import com.sahi.di.checklistModule
+import com.sahi.di.databaseModule
+import com.sahi.di.noteModule
+import com.sahi.di.trashModule
+import com.sahi.di.useCaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -48,5 +47,9 @@ class MainApplication : Application() {
         )
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+    }
+
+    companion object {
+        const val REMINDER_CHANNEL = "reminder_channel"
     }
 }

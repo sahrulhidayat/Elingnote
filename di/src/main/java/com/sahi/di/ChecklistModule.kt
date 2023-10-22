@@ -1,4 +1,4 @@
-package com.sahi.feature.checklist.di
+package com.sahi.di
 
 import com.sahi.feature.checklist.checklists.ChecklistsViewModel
 import com.sahi.feature.checklist.edit_checklist.EditChecklistViewModel
