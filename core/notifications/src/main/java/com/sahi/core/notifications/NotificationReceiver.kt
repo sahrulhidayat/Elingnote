@@ -18,11 +18,10 @@ import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-const val REMINDER_CHANNEL = "reminder_channel"
-
 class NotificationReceiver : BroadcastReceiver(), KoinComponent {
     private val notificationUseCase: NotificationUseCase by inject()
     private val notificationScheduler: NotificationScheduler by inject()
+    private val notificationIntentService: NotificationIntentService by inject()
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         Log.i(
@@ -61,6 +60,8 @@ class NotificationReceiver : BroadcastReceiver(), KoinComponent {
             .setContentText(content)
             .setSmallIcon(R.drawable.ic_quill)
             .setStyle(NotificationCompat.BigTextStyle())
+            .setContentIntent(notificationIntentService.get())
+            .setAutoCancel(true)
             .build()
 
         val notificationManager =
@@ -72,6 +73,7 @@ class NotificationReceiver : BroadcastReceiver(), KoinComponent {
     }
 
     companion object {
+        const val REMINDER_CHANNEL = "reminder_channel"
         private const val TAG = "NotificationReceiver"
     }
 }
