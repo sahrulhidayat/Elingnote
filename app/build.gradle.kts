@@ -53,6 +53,7 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
+    implementation(project(":data:database"))
     implementation(project(":feature:note"))
     implementation(project(":feature:checklist"))
     implementation(project(":feature:trash"))

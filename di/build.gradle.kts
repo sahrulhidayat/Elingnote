@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
 }
 
 apply("../shared_dependencies.gradle")
@@ -42,10 +41,4 @@ dependencies {
     implementation(project(":feature:note"))
     implementation(project(":feature:checklist"))
     implementation(project(":feature:trash"))
-
-    // Room
-    val roomVersion = "2.6.0"
-    implementation("androidx.room:room-ktx:$roomVersion")
-    implementation("androidx.room:room-runtime:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
 }
