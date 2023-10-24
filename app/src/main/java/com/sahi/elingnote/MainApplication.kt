@@ -8,7 +8,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.sahi.di.notificationModule
 import com.sahi.di.checklistModule
-import com.sahi.di.databaseModule
+import com.sahi.core.database.di.databaseModule
 import com.sahi.di.noteModule
 import com.sahi.di.trashModule
 import com.sahi.di.useCaseModule

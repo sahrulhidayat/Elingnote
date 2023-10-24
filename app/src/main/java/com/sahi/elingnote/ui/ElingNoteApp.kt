@@ -1,5 +1,6 @@
 package com.sahi.elingnote.ui
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,7 +83,7 @@ fun ElingNoteApp(
                         },
                         selected = false,
                         icon = {
-                            Icon( imageVector = item.selectedIcon, contentDescription = item.title)
+                            Icon(imageVector = item.selectedIcon, contentDescription = item.title)
                         },
                         onClick = {
                             appState.navigateToMenuItemScreen(item)
@@ -109,15 +111,24 @@ fun ElingNoteApp(
                 }
             },
         ) { padding ->
+            val configuration = LocalConfiguration.current
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
                     .consumeWindowInsets(padding)
                     .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal,
-                        ),
+                        when (configuration.orientation) {
+                            Configuration.ORIENTATION_PORTRAIT -> {
+                                WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal,
+                                )
+                            }
+
+                            else -> {
+                                WindowInsets(0, 0, 0, 0)
+                            }
+                        },
                     ),
             ) {
                 ElingNoteNavHost(navController = appState.navController, drawerState = drawerState)
