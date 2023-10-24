@@ -146,7 +146,9 @@ fun TrashScreen(
                         )
                     }
                 }
-                if (state.trashNotes.isEmpty()) {
+            }
+            if (state.trashNotes.isEmpty()) {
+                item {
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 8.dp)
@@ -159,19 +161,20 @@ fun TrashScreen(
                         )
                     }
                 }
-            }
-            items(state.trashNotes) { note ->
-                NoteCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 8.dp),
-                    note = note,
-                    onRestore = {
-                        onEvent(
-                            TrashEvent.RestoreNote(note = note)
-                        )
-                    }
-                )
+            } else {
+                items(state.trashNotes) { note ->
+                    NoteCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 8.dp),
+                        note = note,
+                        onRestore = {
+                            onEvent(
+                                TrashEvent.RestoreNote(note = note)
+                            )
+                        }
+                    )
+                }
             }
             item {
                 Column(
@@ -186,7 +189,9 @@ fun TrashScreen(
                         )
                     }
                 }
-                if (state.trashChecklist.isEmpty()) {
+            }
+            if (state.trashChecklist.isEmpty()) {
+                item {
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 8.dp)
@@ -199,19 +204,20 @@ fun TrashScreen(
                         )
                     }
                 }
-            }
-            items(state.trashChecklist) { checklistWithItems ->
-                ChecklistCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp, horizontal = 8.dp),
-                    checklistWithItems = checklistWithItems,
-                    onRestore = {
-                        onEvent(
-                            TrashEvent.RestoreChecklist(checklist = checklistWithItems.checklist)
-                        )
-                    }
-                )
+            } else {
+                items(state.trashChecklist) { checklistWithItems ->
+                    ChecklistCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 8.dp),
+                        checklistWithItems = checklistWithItems,
+                        onRestore = {
+                            onEvent(
+                                TrashEvent.RestoreChecklist(checklist = checklistWithItems.checklist)
+                            )
+                        }
+                    )
+                }
             }
         }
     }
