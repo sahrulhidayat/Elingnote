@@ -129,25 +129,44 @@ class EditChecklistViewModel(
                     content = items.joinToString("\n") { it.label },
                     time = reminderTime.longValue
                 )
+                val title = checklist.title
                 viewModelScope.launch {
-                    if (checklistTitle.value.title.isNotBlank() || items.isNotEmpty()) {
-                        checklistUseCase.addOrUpdateChecklist(checklist)
-                        items.map {
-                            ChecklistItem(
-                                itemId = it.itemId,
-                                checklistId = it.checklistId,
-                                label = it.label,
-                                checked = it.checked
-                            )
-                        }.forEach {
-                            checklistUseCase.updateChecklistItem(it)
+                    when {
+                        title.isNotBlank() || items.isNotEmpty() -> {
+                            checklistUseCase.addOrUpdateChecklist(checklist)
+                            items.map {
+                                ChecklistItem(
+                                    itemId = it.itemId,
+                                    checklistId = it.checklistId,
+                                    label = it.label,
+                                    checked = it.checked
+                                )
+                            }.forEach {
+                                checklistUseCase.updateChecklistItem(it)
+                            }
+                            if (reminderTime.longValue > System.currentTimeMillis()) {
+                                notificationUseCase.addReminder(notification)
+                                notificationScheduler.schedule(notification)
+                            }
                         }
-                        if (reminderTime.longValue > System.currentTimeMillis()) {
-                            notificationScheduler.schedule(notification)
-                            notificationUseCase.addReminder(notification)
+                        title.isBlank() && items.isEmpty() && checklist.reminderTime != 0L -> {
+                            if (reminderTime.longValue > System.currentTimeMillis()) {
+                                checklistUseCase.addOrUpdateChecklist(
+                                    checklist.copy(
+                                        title = "Unnamed Reminder"
+                                    )
+                                )
+                                notificationUseCase.addReminder(
+                                    notification.copy(title = "Unnamed Reminder")
+                                )
+                                notificationScheduler.schedule(
+                                    notification.copy(title = "Unnamed Reminder")
+                                )
+                            }
                         }
-                    } else {
-                        checklistUseCase.deleteChecklist(checklist)
+                        else -> {
+                            checklistUseCase.deleteChecklist(checklist)
+                        }
                     }
                 }
             }

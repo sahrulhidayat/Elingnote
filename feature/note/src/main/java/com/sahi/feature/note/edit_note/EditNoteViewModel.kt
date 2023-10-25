@@ -124,16 +124,37 @@ class EditNoteViewModel(
                     content = noteContent.value.text,
                     time = reminderTime.longValue
                 )
+                val title = note.title
+                val content = note.content
                 viewModelScope.launch {
-                    if (note.title.isNotBlank() || note.content.isNotBlank()) {
-                        noteUseCase.addOrUpdateNote(note)
-                        if (reminderTime.longValue > System.currentTimeMillis()) {
-                            notificationUseCase.addReminder(notification)
-                            notificationScheduler.schedule(notification)
+                    when {
+                        title.isNotBlank() || content.isNotBlank() -> {
+                            noteUseCase.addOrUpdateNote(note)
+                            if (reminderTime.longValue > System.currentTimeMillis()) {
+                                notificationUseCase.addReminder(notification)
+                                notificationScheduler.schedule(notification)
+                            }
                         }
-                    } else {
-                        noteUseCase.deleteNote(note)
+                        title.isBlank() && content.isBlank() && notification.time != 0L -> {
+                            if (reminderTime.longValue > System.currentTimeMillis()) {
+                                noteUseCase.addOrUpdateNote(
+                                    note.copy(
+                                        title = "Unnamed reminder"
+                                    )
+                                )
+                                notificationUseCase.addReminder(
+                                    notification.copy(title = "Unnamed reminder")
+                                )
+                                notificationScheduler.schedule(
+                                    notification.copy(title = "Unnamed reminder")
+                                )
+                            }
+                        }
+                        else -> {
+                            noteUseCase.deleteNote(note)
+                        }
                     }
+
                 }
             }
 
