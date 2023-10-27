@@ -45,7 +45,6 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +62,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditChecklistItem
@@ -100,7 +100,7 @@ fun EditChecklistRoute(
     }
 
     val titleState by viewModel.checklistTitle
-    val itemsState by viewModel.itemsFlow.collectAsState()
+    val itemsState by viewModel.itemsFlow.collectAsStateWithLifecycle()
     val reminderTime by viewModel.reminderTime
     val checklistColor by viewModel.checklistColor
 
