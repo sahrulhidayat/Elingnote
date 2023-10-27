@@ -1,9 +1,9 @@
 package com.sahi.elingnote.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.automirrored.filled.Assignment
+import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.filled.NoteAlt
-import androidx.compose.material.icons.outlined.Assignment
 import androidx.compose.material.icons.outlined.NoteAlt
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.sahi.elingnote.R
@@ -21,8 +21,8 @@ enum class TopLevelDestination(
         titleTextId = R.string.note,
     ),
     CHECKLIST(
-        selectedIcon = Icons.Filled.Assignment,
-        unselectedIcon = Icons.Outlined.Assignment,
+        selectedIcon = Icons.AutoMirrored.Filled.Assignment,
+        unselectedIcon = Icons.AutoMirrored.Outlined.Assignment,
         iconTextId = R.string.checklist,
         titleTextId = R.string.checklist,
     )
