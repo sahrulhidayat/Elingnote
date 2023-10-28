@@ -1,6 +1,7 @@
 package com.sahi.elingnote.navigation
 
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -18,6 +19,7 @@ import com.sahi.feature.trash.trashScreen
 fun ElingNoteNavHost(
     navController: NavHostController,
     drawerState: DrawerState,
+    snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     startDestination: String = notesNavigationRoute,
 ) {
@@ -28,6 +30,7 @@ fun ElingNoteNavHost(
     ) {
         notesScreen(
             drawerState = drawerState,
+            snackBarHostState = snackBarHostState,
             onClickItem = { id ->
                 navController.navigate(
                     "$editNoteNavigationRoute?noteId=$id"
@@ -37,6 +40,7 @@ fun ElingNoteNavHost(
         editNoteScreen(onBack = { navController.popBackStack() })
         checklistsScreen(
             drawerState = drawerState,
+            snackBarHostState = snackBarHostState,
             onClickItem = { id ->
                 navController.navigate(
                     "$editChecklistNavigationRoute?checklistId=$id"

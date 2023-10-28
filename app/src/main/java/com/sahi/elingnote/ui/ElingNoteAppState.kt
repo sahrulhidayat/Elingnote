@@ -23,7 +23,7 @@ import com.sahi.feature.trash.navigateToTrashScreen
 
 @Composable
 fun rememberElingNoteAppState(
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController = rememberNavController()
 ): ElingNoteAppState {
     return remember(navController) {
         ElingNoteAppState(navController)

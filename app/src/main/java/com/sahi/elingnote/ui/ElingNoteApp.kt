@@ -29,9 +29,12 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +54,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ElingNoteApp(
-    appState: ElingNoteAppState = rememberElingNoteAppState()
+    appState: ElingNoteAppState = rememberElingNoteAppState(),
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val mainDestination = appState.currentTopLevelDestination
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -142,6 +146,7 @@ fun ElingNoteApp(
                     else -> {}
                 }
             },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             bottomBar = {
                 if (mainDestination != null) {
                     ElingNoteBottomBar(
@@ -171,7 +176,11 @@ fun ElingNoteApp(
                         },
                     ),
             ) {
-                ElingNoteNavHost(navController = appState.navController, drawerState = drawerState)
+                ElingNoteNavHost(
+                    drawerState = drawerState,
+                    snackBarHostState = snackBarHostState,
+                    navController = appState.navController
+                )
             }
         }
     }

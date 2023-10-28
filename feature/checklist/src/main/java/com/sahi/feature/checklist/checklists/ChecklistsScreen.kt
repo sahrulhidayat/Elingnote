@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -45,13 +43,13 @@ import java.util.Collections
 @Composable
 fun ChecklistsRoute(
     drawerState: DrawerState,
+    snackBarHostState: SnackbarHostState,
     onClickItem: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChecklistsViewModel = koinViewModel(),
 ) {
     val checklistsState by viewModel.checklistsState.collectAsStateWithLifecycle()
     val selectedIndexes = viewModel.selectedIndexes
-    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -79,7 +77,6 @@ fun ChecklistsRoute(
     ChecklistsScreen(
         checklistsState = checklistsState,
         drawerState = drawerState,
-        snackBarHostState = snackBarHostState,
         selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
         onClickItem = onClickItem,
@@ -92,7 +89,6 @@ fun ChecklistsRoute(
 fun ChecklistsScreen(
     checklistsState: ChecklistsState,
     drawerState: DrawerState,
-    snackBarHostState: SnackbarHostState,
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
     onClickItem: (id: Int) -> Unit,
@@ -116,9 +112,6 @@ fun ChecklistsScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        },
         topBar = {
             MainTopAppBar(
                 title = "My Checklists",
