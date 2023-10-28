@@ -15,7 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.NoteAdd
+import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +45,8 @@ import com.sahi.core.ui.components.ElingNoteNavigationBar
 import com.sahi.core.ui.components.ElingNoteNavigationBarItem
 import com.sahi.elingnote.navigation.ElingNoteNavHost
 import com.sahi.elingnote.navigation.TopLevelDestination
+import com.sahi.feature.checklist.edit_checklist.navigateToEditChecklist
+import com.sahi.feature.note.edit_note.navigateToEditNote
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,6 +55,7 @@ fun ElingNoteApp(
 ) {
     val mainDestination = appState.currentTopLevelDestination
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val configuration = LocalConfiguration.current
     val scope = rememberCoroutineScope()
 
     BackHandler(enabled = drawerState.isOpen) {
@@ -101,6 +109,39 @@ fun ElingNoteApp(
         Scaffold(
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            floatingActionButton = {
+                when (mainDestination) {
+                    TopLevelDestination.NOTE -> {
+                        FloatingActionButton(
+                            onClick = { appState.navController.navigateToEditNote() },
+                            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.NoteAdd,
+                                    contentDescription = "New checklist"
+                                )
+                            }
+                        )
+                    }
+
+                    TopLevelDestination.CHECKLIST -> {
+                        FloatingActionButton(
+                            onClick = { appState.navController.navigateToEditChecklist() },
+                            elevation = FloatingActionButtonDefaults.elevation(0.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.AddTask,
+                                    contentDescription = "New checklist"
+                                )
+                            }
+                        )
+                    }
+
+                    else -> {}
+                }
+            },
             bottomBar = {
                 if (mainDestination != null) {
                     ElingNoteBottomBar(
@@ -111,7 +152,6 @@ fun ElingNoteApp(
                 }
             },
         ) { padding ->
-            val configuration = LocalConfiguration.current
             Column(
                 modifier = Modifier
                     .fillMaxSize()

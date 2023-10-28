@@ -8,10 +8,8 @@ import androidx.navigation.compose.NavHost
 import com.sahi.feature.checklist.checklists.checklistsScreen
 import com.sahi.feature.checklist.edit_checklist.editChecklistNavigationRoute
 import com.sahi.feature.checklist.edit_checklist.editChecklistScreen
-import com.sahi.feature.checklist.edit_checklist.navigateToEditChecklist
 import com.sahi.feature.note.edit_note.editNoteNavigationRoute
 import com.sahi.feature.note.edit_note.editNoteScreen
-import com.sahi.feature.note.edit_note.navigateToEditNote
 import com.sahi.feature.note.notes.notesNavigationRoute
 import com.sahi.feature.note.notes.notesScreen
 import com.sahi.feature.trash.trashScreen
@@ -34,9 +32,6 @@ fun ElingNoteNavHost(
                 navController.navigate(
                     "$editNoteNavigationRoute?noteId=$id"
                 )
-            },
-            onClickFab = {
-                navController.navigateToEditNote()
             }
         )
         editNoteScreen(onBack = { navController.popBackStack() })
@@ -46,9 +41,6 @@ fun ElingNoteNavHost(
                 navController.navigate(
                     "$editChecklistNavigationRoute?checklistId=$id"
                 )
-            },
-            onClickFab = {
-                navController.navigateToEditChecklist()
             }
         )
         editChecklistScreen(onBack = { navController.popBackStack() })

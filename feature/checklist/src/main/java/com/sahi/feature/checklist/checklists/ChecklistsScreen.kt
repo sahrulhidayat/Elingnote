@@ -9,15 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -50,7 +46,6 @@ import java.util.Collections
 fun ChecklistsRoute(
     drawerState: DrawerState,
     onClickItem: (id: Int) -> Unit,
-    onClickFab: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChecklistsViewModel = koinViewModel(),
 ) {
@@ -88,7 +83,6 @@ fun ChecklistsRoute(
         selectedIndexes = selectedIndexes,
         onEvent = viewModel::onEvent,
         onClickItem = onClickItem,
-        onClickFab = onClickFab,
         modifier = modifier,
     )
 }
@@ -102,7 +96,6 @@ fun ChecklistsScreen(
     selectedIndexes: SnapshotStateList<Boolean>,
     onEvent: (ChecklistsEvent) -> Unit,
     onClickItem: (id: Int) -> Unit,
-    onClickFab: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isSelectMode by rememberSaveable {
@@ -125,19 +118,6 @@ fun ChecklistsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onClickFab,
-                elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                content = {
-                    Icon(
-                        imageVector = Icons.Default.AddTask,
-                        contentDescription = "New checklist"
-                    )
-                }
-            )
         },
         topBar = {
             MainTopAppBar(

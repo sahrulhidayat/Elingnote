@@ -14,14 +14,12 @@ fun NavController.navigateToNotes(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.notesScreen(
     drawerState: DrawerState,
-    onClickItem: (id: Int) -> Unit,
-    onClickFab: () -> Unit
+    onClickItem: (id: Int) -> Unit
 ) {
     composable(route = notesNavigationRoute) {
         NotesRoute(
             drawerState = drawerState,
             onClickItem = onClickItem,
-            onClickFab = onClickFab
         )
     }
 }
