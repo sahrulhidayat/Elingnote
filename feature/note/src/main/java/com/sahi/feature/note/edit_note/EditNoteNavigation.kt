@@ -1,5 +1,7 @@
 package com.sahi.feature.note.edit_note
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -15,6 +17,18 @@ fun NavController.navigateToEditNote(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.editNoteScreen(onBack: () -> Unit) {
     composable(
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(200)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(200)
+            )
+        },
         route = "$editNoteNavigationRoute?noteId={noteId}",
         arguments = listOf(
             navArgument(name = "noteId") {

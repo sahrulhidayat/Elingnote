@@ -1,5 +1,7 @@
 package com.sahi.feature.checklist.edit_checklist
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -15,6 +17,18 @@ fun NavController.navigateToEditChecklist(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.editChecklistScreen(onBack: () -> Unit) {
     composable(
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(200)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(200)
+            )
+        },
         route = "$editChecklistNavigationRoute?checklistId={checklistId}",
         arguments = listOf(
             navArgument(name = "checklistId") {
