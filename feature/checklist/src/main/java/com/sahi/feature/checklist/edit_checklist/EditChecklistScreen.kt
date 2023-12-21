@@ -61,6 +61,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
@@ -72,6 +73,7 @@ import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.utils.darkenColor
+import com.sahi.utils.simpleDateTimeFormat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -99,13 +101,13 @@ fun EditChecklistRoute(
         }
     }
 
-    val titleState by viewModel.checklistTitle
+    val checklistState by viewModel.checklist
     val itemsState by viewModel.itemsFlow.collectAsStateWithLifecycle()
     val reminderTime by viewModel.reminderTime
     val checklistColor by viewModel.checklistColor
 
     EditChecklistScreen(
-        titleState = titleState,
+        checklistState = checklistState,
         itemsState = itemsState,
         checklistColor = checklistColor,
         reminderTime = reminderTime,
@@ -119,7 +121,7 @@ fun EditChecklistRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditChecklistScreen(
-    titleState: EditChecklistState,
+    checklistState: EditChecklistState,
     itemsState: List<ChecklistItemState>,
     checklistColor: Int,
     reminderTime: Long,
@@ -187,6 +189,15 @@ fun EditChecklistScreen(
                     ) {
                         Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (checklistState.timestamp != 0L) {
+                        Text(
+                            modifier = Modifier.padding(end = 12.dp),
+                            text = "Last edited:\n${checklistState.timestamp.simpleDateTimeFormat()}",
+                            textAlign = TextAlign.Right,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 },
                 contentPadding = PaddingValues(4.dp)
             )
@@ -203,15 +214,15 @@ fun EditChecklistScreen(
             item {
                 TransparentHintTextField(
                     modifier = Modifier.padding(16.dp),
-                    text = titleState.title,
-                    hint = titleState.hint,
+                    text = checklistState.title,
+                    hint = checklistState.hint,
                     onValueChange = {
                         onEvent(EditChecklistEvent.EnteredTitle(it))
                     },
                     onFocusChange = {
                         onEvent(EditChecklistEvent.ChangeTitleFocus(it))
                     },
-                    isHintVisible = titleState.isHintVisible,
+                    isHintVisible = checklistState.isHintVisible,
                     textStyle = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.onBackground
                     ),

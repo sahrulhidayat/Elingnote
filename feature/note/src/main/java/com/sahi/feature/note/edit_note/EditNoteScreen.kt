@@ -36,6 +36,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
@@ -57,6 +58,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
@@ -67,6 +69,7 @@ import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.utils.darkenColor
+import com.sahi.utils.simpleDateTimeFormat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -181,6 +184,15 @@ fun EditNoteScreen(
                         }
                     ) {
                         Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (contentState.timestamp != 0L) {
+                        Text(
+                            modifier = Modifier.padding(end = 12.dp),
+                            text = "Last edited:\n${contentState.timestamp.simpleDateTimeFormat()}",
+                            textAlign = TextAlign.Right,
+                            style = MaterialTheme.typography.labelMedium
+                        )
                     }
                 },
                 contentPadding = PaddingValues(4.dp),

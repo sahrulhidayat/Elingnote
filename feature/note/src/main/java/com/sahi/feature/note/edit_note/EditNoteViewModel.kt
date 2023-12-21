@@ -21,6 +21,7 @@ data class EditNoteState(
     val text: String = "",
     val hint: String = "",
     val isHintVisible: Boolean = true,
+    val timestamp: Long = 0L
 )
 
 class EditNoteViewModel(
@@ -42,6 +43,7 @@ class EditNoteViewModel(
         private set
 
     private var currentNoteId: Int = 0
+    private lateinit var initialNote: Note
 
     init {
         savedStateHandle.get<Int>("noteId")?.let { noteId ->
@@ -51,14 +53,17 @@ class EditNoteViewModel(
                         currentNoteId = noteId
                         noteTitle.value = noteTitle.value.copy(
                             text = note.title,
-                            isHintVisible = note.title.isBlank()
+                            isHintVisible = note.title.isBlank(),
+                            timestamp = note.timestamp
                         )
                         noteContent.value = noteContent.value.copy(
                             text = note.content,
-                            isHintVisible = note.content.isBlank()
+                            isHintVisible = note.content.isBlank(),
+                            timestamp = note.timestamp
                         )
                         noteColor.intValue = note.color
                         reminderTime.longValue = note.reminderTime
+                        initialNote = note.copy(timestamp = 0L)
                     }
                 }
             } else {
@@ -84,7 +89,7 @@ class EditNoteViewModel(
             id = currentNoteId,
             title = noteTitle.value.text,
             content = noteContent.value.text,
-            timestamp = System.currentTimeMillis(),
+            timestamp = 0L,
             color = noteColor.intValue,
             reminderTime = reminderTime.longValue
         )
@@ -128,18 +133,28 @@ class EditNoteViewModel(
                 val content = note.content
                 viewModelScope.launch {
                     when {
+                        initialNote == note -> {
+                            return@launch
+                        }
+
                         title.isNotBlank() || content.isNotBlank() -> {
-                            noteUseCase.addOrUpdateNote(note)
+                            noteUseCase.addOrUpdateNote(
+                                note.copy(
+                                    timestamp = System.currentTimeMillis()
+                                )
+                            )
                             if (reminderTime.longValue > System.currentTimeMillis()) {
                                 notificationUseCase.addReminder(notification)
                                 notificationScheduler.schedule(notification)
                             }
                         }
+
                         title.isBlank() && content.isBlank() && notification.time != 0L -> {
                             if (reminderTime.longValue > System.currentTimeMillis()) {
                                 noteUseCase.addOrUpdateNote(
                                     note.copy(
-                                        title = "Unnamed reminder"
+                                        title = "Unnamed reminder",
+                                        timestamp = System.currentTimeMillis()
                                     )
                                 )
                                 notificationUseCase.addReminder(
@@ -150,11 +165,11 @@ class EditNoteViewModel(
                                 )
                             }
                         }
+
                         else -> {
                             noteUseCase.deleteNote(note)
                         }
                     }
-
                 }
             }
 
@@ -170,7 +185,9 @@ class EditNoteViewModel(
                         reminderTime.longValue = event.time
                         notificationUseCase.addReminder(notification)
                         notificationScheduler.schedule(notification)
-                        noteUseCase.addOrUpdateNote(note)
+                        noteUseCase.addOrUpdateNote(
+                            note.copy(timestamp = System.currentTimeMillis())
+                        )
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {
                         eventFlow.emit(UiEvent.ShowToast(message = "The time has passed"))

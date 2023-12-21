@@ -24,6 +24,7 @@ data class EditChecklistState(
     val title: String = "",
     val hint: String = "",
     val isHintVisible: Boolean = true,
+    val timestamp: Long = 0L
 )
 
 data class ChecklistItemState(
@@ -42,7 +43,7 @@ class EditChecklistViewModel(
     private val notificationScheduler: NotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    var checklistTitle = mutableStateOf(EditChecklistState(hint = "Checklist title"))
+    var checklist = mutableStateOf(EditChecklistState(hint = "Checklist title"))
         private set
 
     private val items = mutableStateListOf<ChecklistItemState>()
@@ -57,6 +58,8 @@ class EditChecklistViewModel(
         private set
 
     private var currentChecklistId: Int = 0
+    private lateinit var initialChecklist: Checklist
+    private var initialItems = mutableStateListOf<ChecklistItem>()
 
     init {
         savedStateHandle.get<Int>("checklistId")?.let { checklistId ->
@@ -65,9 +68,10 @@ class EditChecklistViewModel(
                     checklistUseCase.getChecklistWithItems(checklistId)
                         .also { checklistWithItems ->
                             currentChecklistId = checklistId
-                            checklistTitle.value = checklistTitle.value.copy(
+                            checklist.value = checklist.value.copy(
                                 title = checklistWithItems.checklist.title,
-                                isHintVisible = checklistWithItems.checklist.title.isBlank()
+                                isHintVisible = checklistWithItems.checklist.title.isBlank(),
+                                timestamp = checklistWithItems.checklist.timestamp
                             )
                             checklistWithItems.checklistItems.forEach { item ->
                                 items.add(
@@ -78,16 +82,18 @@ class EditChecklistViewModel(
                                         checklistId = item.checklistId
                                     )
                                 )
+                                initialItems.add(item)
                             }
                             reminderTime.longValue = checklistWithItems.checklist.reminderTime
                             checklistColor.intValue = checklistWithItems.checklist.color
+                            initialChecklist = checklistWithItems.checklist.copy(timestamp = 0L)
                         }
                 }
             } else {
                 viewModelScope.launch {
                     checklistUseCase.addOrUpdateChecklist(
                         Checklist(
-                            title = checklistTitle.value.title,
+                            title = checklist.value.title,
                             timestamp = System.currentTimeMillis(),
                             color = checklistColor.intValue
                         )
@@ -103,45 +109,52 @@ class EditChecklistViewModel(
         val notificationId: Int = "2$currentChecklistId".toInt()
         val checklist = Checklist(
             id = currentChecklistId,
-            title = checklistTitle.value.title,
-            timestamp = System.currentTimeMillis(),
+            title = checklist.value.title,
+            timestamp = 0L,
             color = checklistColor.intValue,
             reminderTime = reminderTime.longValue
         )
+        val currentItems = items.map {
+            ChecklistItem(
+                itemId = it.itemId,
+                checklistId = it.checklistId,
+                label = it.label,
+                checked = it.checked
+            )
+        }
         when (event) {
             is EditChecklistEvent.EnteredTitle -> {
-                checklistTitle.value = checklistTitle.value.copy(
+                this.checklist.value = this.checklist.value.copy(
                     title = event.value
                 )
             }
 
             is EditChecklistEvent.ChangeTitleFocus -> {
-                checklistTitle.value = checklistTitle.value.copy(
+                this.checklist.value = this.checklist.value.copy(
                     isHintVisible = !event.focusState.isFocused &&
-                            checklistTitle.value.title.isBlank()
+                            this.checklist.value.title.isBlank()
                 )
             }
 
             is EditChecklistEvent.SaveChecklist -> {
                 val notification = Notification(
                     id = notificationId,
-                    title = checklistTitle.value.title,
+                    title = this.checklist.value.title,
                     content = items.joinToString("\n") { it.label },
                     time = reminderTime.longValue
                 )
                 val title = checklist.title
                 viewModelScope.launch {
                     when {
+                        initialChecklist == checklist && initialItems.toList() == currentItems -> {
+                            return@launch
+                        }
+
                         title.isNotBlank() || items.isNotEmpty() -> {
-                            checklistUseCase.addOrUpdateChecklist(checklist)
-                            items.map {
-                                ChecklistItem(
-                                    itemId = it.itemId,
-                                    checklistId = it.checklistId,
-                                    label = it.label,
-                                    checked = it.checked
-                                )
-                            }.forEach {
+                            checklistUseCase.addOrUpdateChecklist(
+                                checklist.copy(timestamp = System.currentTimeMillis())
+                            )
+                            currentItems.forEach {
                                 checklistUseCase.updateChecklistItem(it)
                             }
                             if (reminderTime.longValue > System.currentTimeMillis()) {
@@ -149,11 +162,13 @@ class EditChecklistViewModel(
                                 notificationScheduler.schedule(notification)
                             }
                         }
+
                         title.isBlank() && items.isEmpty() && checklist.reminderTime != 0L -> {
                             if (reminderTime.longValue > System.currentTimeMillis()) {
                                 checklistUseCase.addOrUpdateChecklist(
                                     checklist.copy(
-                                        title = "Unnamed Reminder"
+                                        title = "Unnamed Reminder",
+                                        timestamp = System.currentTimeMillis()
                                     )
                                 )
                                 notificationUseCase.addReminder(
@@ -164,6 +179,7 @@ class EditChecklistViewModel(
                                 )
                             }
                         }
+
                         else -> {
                             checklistUseCase.deleteChecklist(checklist)
                         }
@@ -178,7 +194,7 @@ class EditChecklistViewModel(
             is EditChecklistEvent.SetReminder -> {
                 val notification = Notification(
                     id = notificationId,
-                    title = checklistTitle.value.title,
+                    title = this.checklist.value.title,
                     content = items.joinToString("\n") { it.label },
                     time = event.time
                 )
@@ -187,7 +203,9 @@ class EditChecklistViewModel(
                         reminderTime.longValue = event.time
                         notificationUseCase.addReminder(notification)
                         notificationScheduler.schedule(notification)
-                        checklistUseCase.addOrUpdateChecklist(checklist)
+                        checklistUseCase.addOrUpdateChecklist(
+                            checklist.copy(timestamp = System.currentTimeMillis())
+                        )
                         eventFlow.emit(UiEvent.ShowToast(message = "Reminder has been set"))
                     } else {
                         eventFlow.emit(UiEvent.ShowToast(message = "The time has passed"))
