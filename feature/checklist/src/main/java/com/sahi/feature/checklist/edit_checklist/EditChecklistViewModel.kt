@@ -91,15 +91,15 @@ class EditChecklistViewModel(
                 }
             } else {
                 viewModelScope.launch {
-                    checklistUseCase.addOrUpdateChecklist(
-                        Checklist(
-                            title = checklist.value.title,
-                            timestamp = System.currentTimeMillis(),
-                            color = checklistColor.intValue
-                        )
-                    ).also { checklistId ->
+                    val checklist = Checklist(
+                        title = checklist.value.title,
+                        timestamp = System.currentTimeMillis(),
+                        color = checklistColor.intValue
+                    )
+                    checklistUseCase.addOrUpdateChecklist(checklist).also { checklistId ->
                         currentChecklistId = checklistId.toInt()
                     }
+                    initialChecklist = checklist
                 }
             }
         }

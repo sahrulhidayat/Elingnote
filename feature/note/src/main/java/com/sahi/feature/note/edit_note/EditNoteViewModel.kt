@@ -68,16 +68,16 @@ class EditNoteViewModel(
                 }
             } else {
                 viewModelScope.launch {
-                    noteUseCase.addOrUpdateNote(
-                        Note(
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            timestamp = System.currentTimeMillis(),
-                            color = noteColor.intValue
-                        )
-                    ).also { noteId ->
+                    val note = Note(
+                        title = noteTitle.value.text,
+                        content = noteContent.value.text,
+                        timestamp = System.currentTimeMillis(),
+                        color = noteColor.intValue
+                    )
+                    noteUseCase.addOrUpdateNote(note).also { noteId ->
                         currentNoteId = noteId.toInt()
                     }
+                    initialNote = note
                 }
             }
         }
