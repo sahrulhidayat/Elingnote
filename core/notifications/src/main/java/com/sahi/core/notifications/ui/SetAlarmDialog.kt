@@ -77,7 +77,8 @@ fun SetAlarmDialog(
     val showDatePicker = rememberSaveable { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = currentDate.toInstant().toEpochMilli(),
-        initialDisplayedMonthMillis = null
+        initialDisplayedMonthMillis = null,
+        yearRange = IntRange(currentDate.year, currentDate.year+5)
     )
 
     val currentTime = initialDateTime.toLocalTime()
