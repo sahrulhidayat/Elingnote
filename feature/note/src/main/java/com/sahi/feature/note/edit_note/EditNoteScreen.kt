@@ -29,15 +29,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatColorFill
+import androidx.compose.material.icons.filled.FormatItalic
+import androidx.compose.material.icons.filled.FormatUnderlined
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -156,6 +160,10 @@ fun EditNoteScreen(
     val showEditDeleteAlarmDialog = rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    val isCurrentSelectionBold = contentState.currentStyles.contains(Style.Bold)
+    val isCurrentSelectionItalic = contentState.currentStyles.contains(Style.Italic)
+    val isCurrentSelectionUnderlined = contentState.currentStyles.contains(Style.Underline)
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = noteColorAnimatable.value,
@@ -181,19 +189,38 @@ fun EditNoteScreen(
                 modifier = Modifier,
                 actions = {
                     IconButton(
-                        onClick = {
-                            showColorSheet = true
-                        }
+                        onClick = { showColorSheet = true }
                     ) {
-                        Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
+                        Icon(
+                            Icons.Default.FormatColorFill,
+                            contentDescription = "Background color"
+                        )
                     }
+                    VerticalDivider()
+
+                    @Composable
+                    fun setIconColors(isActive: Boolean) = IconButtonDefaults.iconButtonColors(
+                        contentColor = if (isActive) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    )
                     IconButton(
-                        onClick = {
-                            onEvent(EditNoteEvent.InsertStyle(Style.Bold))
-                        }
+                        onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Bold)) },
+                        colors = setIconColors(isActive = isCurrentSelectionBold),
+                    ) { Icon(Icons.Default.FormatBold, contentDescription = "Format Bold") }
+                    IconButton(
+                        onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Italic)) },
+                        colors = setIconColors(isActive = isCurrentSelectionItalic),
+                    ) { Icon(Icons.Default.FormatItalic, contentDescription = "Format Italic") }
+                    IconButton(
+                        onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Underline)) },
+                        colors = setIconColors(isActive = isCurrentSelectionUnderlined),
                     ) {
-                        Icon(Icons.Default.FormatBold, contentDescription = "Format Bold")
+                        Icon(
+                            Icons.Default.FormatUnderlined,
+                            contentDescription = "Format Underlined"
+                        )
                     }
+
                     Spacer(modifier = Modifier.weight(1f))
                     if (titleState.timestamp != 0L) {
                         Text(
@@ -244,7 +271,7 @@ fun EditNoteScreen(
                         },
                         textFieldStyle = defaultRichTextFieldStyle().copy(
                             textColor = MaterialTheme.colorScheme.onBackground,
-                            textStyle = MaterialTheme.typography.titleMedium,
+                            textStyle = MaterialTheme.typography.bodyMedium,
                             placeholder = "Note content",
                             placeholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             cursorColor = MaterialTheme.colorScheme.onBackground
