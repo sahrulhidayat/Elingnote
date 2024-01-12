@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pointlessapps.rt_editor.model.RichTextValue
+import com.pointlessapps.rt_editor.model.Style
 import com.sahi.core.model.entity.Note
 import com.sahi.core.model.entity.Notification
 import com.sahi.core.notifications.NotificationScheduler
@@ -32,7 +34,7 @@ class EditNoteViewModel(
 ) : ViewModel() {
     var noteTitle = mutableStateOf(EditNoteState(hint = "Note title"))
         private set
-    var noteContent = mutableStateOf(EditNoteState(hint = "Note content"))
+    var noteContent = mutableStateOf(RichTextValue.get())
         private set
     var noteColor = mutableIntStateOf(itemColors[0].toArgb())
         private set
@@ -56,11 +58,7 @@ class EditNoteViewModel(
                             isHintVisible = note.title.isBlank(),
                             timestamp = note.timestamp
                         )
-                        noteContent.value = noteContent.value.copy(
-                            text = note.content,
-                            isHintVisible = note.content.isBlank(),
-                            timestamp = note.timestamp
-                        )
+                        noteContent.value = RichTextValue.fromSnapshot(note.content)
                         noteColor.intValue = note.color
                         reminderTime.longValue = note.reminderTime
                         initialNote = note.copy(timestamp = 0L)
@@ -70,7 +68,7 @@ class EditNoteViewModel(
                 viewModelScope.launch {
                     val note = Note(
                         title = noteTitle.value.text,
-                        content = noteContent.value.text,
+                        content = noteContent.value.getLastSnapshot(),
                         timestamp = System.currentTimeMillis(),
                         color = noteColor.intValue
                     )
@@ -88,7 +86,7 @@ class EditNoteViewModel(
         val note = Note(
             id = currentNoteId,
             title = noteTitle.value.text,
-            content = noteContent.value.text,
+            content = noteContent.value.getLastSnapshot(),
             timestamp = 0L,
             color = noteColor.intValue,
             reminderTime = reminderTime.longValue
@@ -107,15 +105,11 @@ class EditNoteViewModel(
             }
 
             is EditNoteEvent.EnteredContent -> {
-                noteContent.value = noteContent.value.copy(
-                    text = event.value
-                )
+                noteContent.value = event.value
             }
 
-            is EditNoteEvent.ChangeContentFocus -> {
-                noteContent.value = noteContent.value.copy(
-                    isHintVisible = !event.focusState.isFocused && noteContent.value.text.isBlank()
-                )
+            is EditNoteEvent.InsertStyle -> {
+                noteContent.value = noteContent.value.insertStyle(event.style)
             }
 
             is EditNoteEvent.ChangeColor -> {
@@ -126,11 +120,11 @@ class EditNoteViewModel(
                 val notification = Notification(
                     id = notificationId,
                     title = noteTitle.value.text,
-                    content = noteContent.value.text,
+                    content = noteContent.value.getLastSnapshot().text,
                     time = reminderTime.longValue
                 )
                 val title = note.title
-                val content = note.content
+                val content = note.content.text
                 viewModelScope.launch {
                     when {
                         initialNote == note -> {
@@ -177,7 +171,7 @@ class EditNoteViewModel(
                 val notification = Notification(
                     id = notificationId,
                     title = noteTitle.value.text,
-                    content = noteContent.value.text,
+                    content = noteContent.value.getLastSnapshot().text,
                     time = event.time
                 )
                 viewModelScope.launch {
@@ -214,8 +208,8 @@ sealed class UiEvent {
 sealed class EditNoteEvent {
     data class EnteredTitle(val value: String) : EditNoteEvent()
     data class ChangeTitleFocus(val focusState: FocusState) : EditNoteEvent()
-    data class EnteredContent(val value: String) : EditNoteEvent()
-    data class ChangeContentFocus(val focusState: FocusState) : EditNoteEvent()
+    data class EnteredContent(val value: RichTextValue) : EditNoteEvent()
+    data class InsertStyle(val style: Style) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
     data class SetReminder(val time: Long) : EditNoteEvent()

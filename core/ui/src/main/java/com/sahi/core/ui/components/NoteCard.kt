@@ -26,8 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.pointlessapps.rt_editor.model.RichTextValue
+import com.pointlessapps.rt_editor.ui.RichText
+import com.pointlessapps.rt_editor.ui.defaultRichTextStyle
 import com.sahi.core.model.entity.Note
 import com.sahi.utils.darkenColor
 
@@ -79,11 +81,13 @@ fun NoteCard(
                             style = MaterialTheme.typography.titleMedium
                         )
                     Spacer(modifier = Modifier.height(4.dp))
-                    if (note.content.isNotBlank())
-                        Text(
-                            text = note.content,
-                            style = MaterialTheme.typography.bodyMedium,
-                            overflow = TextOverflow.Ellipsis
+                    if (note.content.text.isNotBlank())
+                        RichText(
+                            value = RichTextValue.fromSnapshot(note.content),
+                            textStyle = defaultRichTextStyle().copy(
+                                textColor = MaterialTheme.colorScheme.onBackground,
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                            )
                         )
                 }
                 if (note.isTrash) {

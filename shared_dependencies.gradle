@@ -14,7 +14,13 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended"
 
     // Koin
+    def koinVersion = "3.4.6"
     implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
+
+    // RichText Compose Support
+    implementation "com.github.pChochura:richtext-compose:1.2.2"
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.20"
 
     // Visual
     implementation "com.airbnb.android:lottie-compose:6.1.0"

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +27,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatColorFill
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,12 +60,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
+import com.pointlessapps.rt_editor.model.RichTextValue
+import com.pointlessapps.rt_editor.model.Style
+import com.pointlessapps.rt_editor.ui.RichTextEditor
+import com.pointlessapps.rt_editor.ui.defaultRichTextFieldStyle
 import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
 import com.sahi.core.notifications.ui.SetAlarmDialog
 import com.sahi.core.ui.components.EditModeTopAppBar
 import com.sahi.core.ui.components.LifecycleObserver
-import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.utils.darkenColor
@@ -118,7 +120,7 @@ fun EditNoteRoute(
 @Composable
 fun EditNoteScreen(
     titleState: EditNoteState,
-    contentState: EditNoteState,
+    contentState: RichTextValue,
     noteColor: Int,
     reminderTime: Long,
     onEvent: (EditNoteEvent) -> Unit,
@@ -127,7 +129,7 @@ fun EditNoteScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
-    
+
     var backgroundColor = Color(noteColor)
     if (isSystemInDarkTheme()) {
         backgroundColor = Color(darkenColor(noteColor))
@@ -185,11 +187,18 @@ fun EditNoteScreen(
                     ) {
                         Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
                     }
+                    IconButton(
+                        onClick = {
+                            onEvent(EditNoteEvent.InsertStyle(Style.Bold))
+                        }
+                    ) {
+                        Icon(Icons.Default.FormatBold, contentDescription = "Format Bold")
+                    }
                     Spacer(modifier = Modifier.weight(1f))
-                    if (contentState.timestamp != 0L) {
+                    if (titleState.timestamp != 0L) {
                         Text(
                             modifier = Modifier.padding(end = 12.dp),
-                            text = "Last edited:\n${contentState.timestamp.simpleDateTimeFormat()}",
+                            text = "Last edited:\n${titleState.timestamp.simpleDateTimeFormat()}",
                             textAlign = TextAlign.Right,
                             style = MaterialTheme.typography.labelMedium
                         )
@@ -227,31 +236,20 @@ fun EditNoteScreen(
                         },
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    TransparentHintTextField(
-                        text = contentState.text,
-                        hint = contentState.hint,
+                    RichTextEditor(
+                        modifier = Modifier.background(noteColorAnimatable.value),
+                        value = contentState,
                         onValueChange = {
                             onEvent(EditNoteEvent.EnteredContent(it))
                         },
-                        onFocusChange = {
-                            onEvent(EditNoteEvent.ChangeContentFocus(it))
-                        },
-                        isHintVisible = contentState.isHintVisible,
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            lineHeight = 1.2.em,
-                        ),
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                    if (reminderTime != 0L) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ReminderLabel(
-                            modifier = Modifier.clickable {
-                                showEditDeleteAlarmDialog.value = true
-                            },
-                            reminderTime = reminderTime
+                        textFieldStyle = defaultRichTextFieldStyle().copy(
+                            textColor = MaterialTheme.colorScheme.onBackground,
+                            textStyle = MaterialTheme.typography.titleMedium,
+                            placeholder = "Note content",
+                            placeholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            cursorColor = MaterialTheme.colorScheme.onBackground
                         )
-                    }
+                    )
                 }
                 Spacer(modifier = Modifier.height(250.dp))
             }
@@ -287,9 +285,10 @@ fun EditNoteScreen(
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 dragHandle = {}
             ) {
-                Box(modifier = Modifier
-                    .padding(bottom = 50.dp)
-                    .fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 50.dp)
+                        .fillMaxWidth()
                 ) {
                     LazyRow(
                         modifier = Modifier.padding(vertical = 16.dp)

@@ -12,6 +12,7 @@ val nunitoSansFamily = FontFamily(
     Font(R.font.nunitosans_condensed_regular, FontWeight.Normal),
     Font(R.font.nunitosans_condensed_medium, FontWeight.Medium),
     Font(R.font.nunitosans_condensed_semibold, FontWeight.SemiBold),
+    Font(R.font.nunitosans_condensed_bold, FontWeight.Bold),
 )
 
 val Typography = Typography(
