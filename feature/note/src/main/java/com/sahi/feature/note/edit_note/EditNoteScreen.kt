@@ -27,6 +27,8 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatColorFill
 import androidx.compose.material.icons.filled.FormatItalic
@@ -39,7 +41,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -62,7 +63,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pointlessapps.rt_editor.model.RichTextValue
 import com.pointlessapps.rt_editor.model.Style
@@ -75,7 +75,6 @@ import com.sahi.core.ui.components.LifecycleObserver
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.utils.darkenColor
-import com.sahi.utils.simpleDateTimeFormat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -160,9 +159,12 @@ fun EditNoteScreen(
     val showEditDeleteAlarmDialog = rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
+    var showFormattingOptions by remember { mutableStateOf(true) }
     val isCurrentSelectionBold = contentState.currentStyles.contains(Style.Bold)
     val isCurrentSelectionItalic = contentState.currentStyles.contains(Style.Italic)
     val isCurrentSelectionUnderlined = contentState.currentStyles.contains(Style.Underline)
+    val isUndoAvailable = contentState.isUndoAvailable
+    val isRedoAvailable = contentState.isRedoAvailable
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -181,12 +183,13 @@ fun EditNoteScreen(
                         scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                     )
                 },
+                timeStamp = titleState.timestamp,
                 onBack = onBack
             )
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier,
+                modifier = Modifier.height(50.dp),
                 actions = {
                     IconButton(
                         onClick = { showColorSheet = true }
@@ -197,38 +200,48 @@ fun EditNoteScreen(
                         )
                     }
                     VerticalDivider()
-
-                    @Composable
-                    fun setIconColors(isActive: Boolean) = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (isActive) MaterialTheme.colorScheme.onSurface
-                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                    )
-                    IconButton(
-                        onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Bold)) },
-                        colors = setIconColors(isActive = isCurrentSelectionBold),
-                    ) { Icon(Icons.Default.FormatBold, contentDescription = "Format Bold") }
-                    IconButton(
-                        onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Italic)) },
-                        colors = setIconColors(isActive = isCurrentSelectionItalic),
-                    ) { Icon(Icons.Default.FormatItalic, contentDescription = "Format Italic") }
-                    IconButton(
-                        onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Underline)) },
-                        colors = setIconColors(isActive = isCurrentSelectionUnderlined),
-                    ) {
-                        Icon(
-                            Icons.Default.FormatUnderlined,
-                            contentDescription = "Format Underlined"
+                    if (showFormattingOptions) {
+                        @Composable
+                        fun setIconColors(isActive: Boolean) = IconButtonDefaults.iconButtonColors(
+                            contentColor = if (isActive) MaterialTheme.colorScheme.onSurface
+                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                         )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (titleState.timestamp != 0L) {
-                        Text(
-                            modifier = Modifier.padding(end = 12.dp),
-                            text = "Last edited:\n${titleState.timestamp.simpleDateTimeFormat()}",
-                            textAlign = TextAlign.Right,
-                            style = MaterialTheme.typography.labelMedium
-                        )
+                        IconButton(
+                            onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Bold)) },
+                            colors = setIconColors(isActive = isCurrentSelectionBold),
+                        ) { Icon(Icons.Default.FormatBold, contentDescription = "Format Bold") }
+                        IconButton(
+                            onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Italic)) },
+                            colors = setIconColors(isActive = isCurrentSelectionItalic),
+                        ) { Icon(Icons.Default.FormatItalic, contentDescription = "Format Italic") }
+                        IconButton(
+                            onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Underline)) },
+                            colors = setIconColors(isActive = isCurrentSelectionUnderlined),
+                        ) {
+                            Icon(
+                                Icons.Default.FormatUnderlined,
+                                contentDescription = "Format Underlined"
+                            )
+                        }
+                        VerticalDivider()
+                        IconButton(
+                            onClick = { onEvent(EditNoteEvent.Undo) },
+                            enabled = isUndoAvailable,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Default.Undo,
+                                contentDescription = "Undo"
+                            )
+                        }
+                        IconButton(
+                            onClick = { onEvent(EditNoteEvent.Redo) },
+                            enabled = isRedoAvailable
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Default.Redo,
+                                contentDescription = "Redo"
+                            )
+                        }
                     }
                 },
                 contentPadding = PaddingValues(4.dp),
@@ -250,6 +263,7 @@ fun EditNoteScreen(
                         },
                         onFocusChange = {
                             onEvent(EditNoteEvent.ChangeTitleFocus(it))
+                            showFormattingOptions = !it.isFocused
                         },
                         isHintVisible = titleState.isHintVisible,
                         textStyle = MaterialTheme.typography.titleMedium.copy(
@@ -264,7 +278,8 @@ fun EditNoteScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     RichTextEditor(
-                        modifier = Modifier.background(noteColorAnimatable.value),
+                        modifier = Modifier
+                            .background(noteColorAnimatable.value),
                         value = contentState,
                         onValueChange = {
                             onEvent(EditNoteEvent.EnteredContent(it))

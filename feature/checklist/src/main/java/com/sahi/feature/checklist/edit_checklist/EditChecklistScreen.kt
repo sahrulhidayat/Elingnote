@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -61,7 +60,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
@@ -73,7 +71,6 @@ import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.utils.darkenColor
-import com.sahi.utils.simpleDateTimeFormat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -176,11 +173,13 @@ fun EditChecklistScreen(
                         scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                     )
                 },
+                timeStamp = checklistState.timestamp,
                 onBack = onBack
             )
         },
         bottomBar = {
             BottomAppBar(
+                modifier = Modifier.height(50.dp),
                 actions = {
                     IconButton(
                         onClick = {
@@ -189,24 +188,12 @@ fun EditChecklistScreen(
                     ) {
                         Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (checklistState.timestamp != 0L) {
-                        Text(
-                            modifier = Modifier.padding(end = 12.dp),
-                            text = "Last edited:\n${checklistState.timestamp.simpleDateTimeFormat()}",
-                            textAlign = TextAlign.Right,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
                 },
-                contentPadding = PaddingValues(4.dp)
+                contentPadding = PaddingValues(4.dp),
             )
         }
     ) { padding ->
-        val listState = rememberLazyListState()
-        if (listState.isScrollInProgress) focusManager.clearFocus()
         LazyColumn(
-            state = listState,
             modifier = modifier
                 .padding(padding)
                 .fillMaxSize()
