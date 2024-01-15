@@ -7,7 +7,6 @@ import com.sahi.core.database.dao.ChecklistDao
 import com.sahi.core.database.dao.NoteDao
 import com.sahi.core.model.entity.Checklist
 import com.sahi.core.model.entity.ChecklistItem
-import com.sahi.core.model.entity.Converters
 import com.sahi.core.model.entity.Note
 
 @Database(
