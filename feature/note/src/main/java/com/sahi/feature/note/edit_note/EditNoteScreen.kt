@@ -10,12 +10,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +36,7 @@ import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatColorFill
 import androidx.compose.material.icons.filled.FormatItalic
 import androidx.compose.material.icons.filled.FormatUnderlined
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -120,7 +124,7 @@ fun EditNoteRoute(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditNoteScreen(
     titleState: EditNoteState,
@@ -170,6 +174,7 @@ fun EditNoteScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = noteColorAnimatable.value,
+        contentWindowInsets = WindowInsets.navigationBars,
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
@@ -187,6 +192,13 @@ fun EditNoteScreen(
                 timeStamp = titleState.timestamp,
                 onBack = onBack
             )
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.height(
+                    if (!WindowInsets.isImeVisible) 48.dp else 0.dp
+                )
+            ) {}
         }
     ) { padding ->
         Column(
@@ -252,7 +264,7 @@ fun EditNoteScreen(
             }
             Row(
                 modifier = Modifier
-                    .height(50.dp)
+                    .height(48.dp)
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)),
                 verticalAlignment = Alignment.CenterVertically
@@ -262,10 +274,11 @@ fun EditNoteScreen(
                 ) {
                     Icon(
                         Icons.Default.FormatColorFill,
-                        contentDescription = "Background color"
+                        contentDescription = "Background color",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                VerticalDivider()
+                VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 if (showFormattingOptions) {
                     @Composable
                     fun setIconColors(isActive: Boolean) = IconButtonDefaults.iconButtonColors(
@@ -275,7 +288,12 @@ fun EditNoteScreen(
                     IconButton(
                         onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Bold)) },
                         colors = setIconColors(isActive = isCurrentSelectionBold),
-                    ) { Icon(Icons.Default.FormatBold, contentDescription = "Format Bold") }
+                    ) {
+                        Icon(
+                            Icons.Default.FormatBold,
+                            contentDescription = "Format Bold"
+                        )
+                    }
                     IconButton(
                         onClick = { onEvent(EditNoteEvent.InsertStyle(Style.Italic)) },
                         colors = setIconColors(isActive = isCurrentSelectionItalic),
@@ -289,23 +307,29 @@ fun EditNoteScreen(
                             contentDescription = "Format Underlined"
                         )
                     }
-                    VerticalDivider()
+                    VerticalDivider(modifier = Modifier.padding(vertical = 8.dp))
                     IconButton(
                         onClick = { onEvent(EditNoteEvent.Undo) },
                         enabled = isUndoAvailable,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
                     ) {
                         Icon(
                             Icons.AutoMirrored.Default.Undo,
-                            contentDescription = "Undo"
+                            contentDescription = "Undo",
                         )
                     }
                     IconButton(
                         onClick = { onEvent(EditNoteEvent.Redo) },
-                        enabled = isRedoAvailable
+                        enabled = isRedoAvailable,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
                     ) {
                         Icon(
                             Icons.AutoMirrored.Default.Redo,
-                            contentDescription = "Redo"
+                            contentDescription = "Redo",
                         )
                     }
                 }

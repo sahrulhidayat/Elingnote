@@ -10,12 +10,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +33,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FormatColorFill
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -114,7 +118,7 @@ fun EditChecklistRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditChecklistScreen(
     checklistState: EditChecklistState,
@@ -158,6 +162,7 @@ fun EditChecklistScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = checklistColorAnimatable.value,
+        contentWindowInsets = WindowInsets.navigationBars,
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
@@ -176,6 +181,13 @@ fun EditChecklistScreen(
                 onBack = onBack
             )
         },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.height(
+                    if (!WindowInsets.isImeVisible) 48.dp else 0.dp
+                )
+            ) {}
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -266,7 +278,7 @@ fun EditChecklistScreen(
             }
             Row(
                 modifier = Modifier
-                    .height(50.dp)
+                    .height(48.dp)
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)),
                 verticalAlignment = Alignment.CenterVertically
@@ -276,7 +288,11 @@ fun EditChecklistScreen(
                         showColorSheet = true
                     }
                 ) {
-                    Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
+                    Icon(
+                        Icons.Default.FormatColorFill,
+                        contentDescription = "Background color",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
 
             }
