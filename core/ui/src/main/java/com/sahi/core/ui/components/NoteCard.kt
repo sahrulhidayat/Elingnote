@@ -80,7 +80,7 @@ fun NoteCard(
                             text = note.title,
                             style = MaterialTheme.typography.titleMedium
                         )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     if (note.content.text.isNotBlank())
                         RichText(
                             value = RichTextValue.fromSnapshot(note.content),

@@ -116,6 +116,14 @@ class EditNoteViewModel(
                 noteColor.intValue = event.color
             }
 
+            is EditNoteEvent.Undo -> {
+                noteContent.value = noteContent.value.undo()
+            }
+
+            is EditNoteEvent.Redo -> {
+                noteContent.value = noteContent.value.redo()
+            }
+
             is EditNoteEvent.SaveNote -> {
                 val notification = Notification(
                     id = notificationId,
@@ -211,6 +219,8 @@ sealed class EditNoteEvent {
     data class EnteredContent(val value: RichTextValue) : EditNoteEvent()
     data class InsertStyle(val style: Style) : EditNoteEvent()
     data class ChangeColor(val color: Int) : EditNoteEvent()
+    data object Undo : EditNoteEvent()
+    data object Redo : EditNoteEvent()
     data object SaveNote : EditNoteEvent()
     data class SetReminder(val time: Long) : EditNoteEvent()
     data object DeleteReminder : EditNoteEvent()

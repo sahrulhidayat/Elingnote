@@ -9,13 +9,16 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -61,7 +63,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahi.core.notifications.ui.EditDeleteAlarmDialog
@@ -73,7 +74,6 @@ import com.sahi.core.ui.components.ReminderLabel
 import com.sahi.core.ui.components.TransparentHintTextField
 import com.sahi.core.ui.theme.itemColors
 import com.sahi.utils.darkenColor
-import com.sahi.utils.simpleDateTimeFormat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -118,7 +118,7 @@ fun EditChecklistRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditChecklistScreen(
     checklistState: EditChecklistState,
@@ -162,6 +162,7 @@ fun EditChecklistScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = checklistColorAnimatable.value,
+        contentWindowInsets = WindowInsets.navigationBars,
         topBar = {
             EditModeTopAppBar(
                 showSetAlarmDialog = showSetAlarmDialog,
@@ -176,129 +177,124 @@ fun EditChecklistScreen(
                         scrolledContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
                     )
                 },
+                timeStamp = checklistState.timestamp,
                 onBack = onBack
             )
         },
         bottomBar = {
             BottomAppBar(
-                actions = {
-                    IconButton(
-                        onClick = {
-                            showColorSheet = true
-                        }
-                    ) {
-                        Icon(Icons.Default.FormatColorFill, contentDescription = "Background color")
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (checklistState.timestamp != 0L) {
-                        Text(
-                            modifier = Modifier.padding(end = 12.dp),
-                            text = "Last edited:\n${checklistState.timestamp.simpleDateTimeFormat()}",
-                            textAlign = TextAlign.Right,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                },
-                contentPadding = PaddingValues(4.dp)
-            )
+                modifier = Modifier.height(
+                    if (!WindowInsets.isImeVisible) 48.dp else 0.dp
+                )
+            ) {}
         }
     ) { padding ->
-        val listState = rememberLazyListState()
-        if (listState.isScrollInProgress) focusManager.clearFocus()
-        LazyColumn(
-            state = listState,
-            modifier = modifier
+        Column(
+            modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
         ) {
-            item {
-                TransparentHintTextField(
-                    modifier = Modifier.padding(16.dp),
-                    text = checklistState.title,
-                    hint = checklistState.hint,
-                    onValueChange = {
-                        onEvent(EditChecklistEvent.EnteredTitle(it))
-                    },
-                    onFocusChange = {
-                        onEvent(EditChecklistEvent.ChangeTitleFocus(it))
-                    },
-                    isHintVisible = checklistState.isHintVisible,
-                    textStyle = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    ),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
-                )
-            }
-            itemsIndexed(itemsState) { index, item ->
-                EditChecklistItem(
-                    modifier = Modifier.padding(end = 16.dp),
-                    checked = item.checked,
-                    isHintVisible = item.isHintVisible,
-                    isFocused = item.isFocused,
-                    label = item.label,
-                    hint = item.hint,
-                    onCheckedChange = {
-                        itemEvent(
-                            ChecklistItemEvent.ChangeChecked(
-                                index,
-                                it
-                            )
-                        )
-                    },
-                    onValueChange = { itemEvent(ChecklistItemEvent.EnteredLabel(index, it)) },
-                    onFocusChange = {
-                        itemEvent(
-                            ChecklistItemEvent.ChangeLabelFocus(
-                                index,
-                                it
-                            )
-                        )
-                    },
-                    onAdd = { itemEvent(ChecklistItemEvent.AddItem) },
-                    onDelete = { itemEvent(ChecklistItemEvent.DeleteItem(index)) }
-                )
-            }
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .clickable {
-                            itemEvent(ChecklistItemEvent.AddItem)
+            LazyColumn(
+                modifier = modifier.weight(1f)
+            ) {
+                item {
+                    TransparentHintTextField(
+                        modifier = Modifier.padding(16.dp),
+                        text = checklistState.title,
+                        hint = checklistState.hint,
+                        onValueChange = {
+                            onEvent(EditChecklistEvent.EnteredTitle(it))
                         },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (
-                        itemsState.lastOrNull()?.label?.isNotEmpty() == true
-                        || itemsState.isEmpty()
-                    ) {
-                        Icon(
-                            Icons.Default.Add,
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            contentDescription = "Add checklist item"
-                        )
-                        Text(
-                            text = "New item",
-                            modifier = Modifier.padding(8.dp),
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        )
-                    }
-                }
-            }
-            item {
-                if (reminderTime != 0L) {
-                    ReminderLabel(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .clickable {
-                                showEditDeleteAlarmDialog.value = true
-                            },
-                        reminderTime = reminderTime
+                        onFocusChange = {
+                            onEvent(EditChecklistEvent.ChangeTitleFocus(it))
+                        },
+                        isHintVisible = checklistState.isHintVisible,
+                        textStyle = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.onBackground
+                        ),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions { focusManager.moveFocus(FocusDirection.Next) },
                     )
                 }
-                Spacer(modifier = Modifier.height(250.dp))
+                itemsIndexed(itemsState) { index, item ->
+                    EditChecklistItem(
+                        modifier = Modifier.padding(end = 16.dp),
+                        checked = item.checked,
+                        isFocused = item.isFocused,
+                        label = item.label,
+                        onCheckedChange = {
+                            itemEvent(ChecklistItemEvent.ChangeChecked(index, it))
+                        },
+                        onValueChange = { itemEvent(ChecklistItemEvent.EnteredLabel(index, it)) },
+                        onFocusChange = {
+                            itemEvent(ChecklistItemEvent.ChangeLabelFocus(index, it))
+                        },
+                        onDelete = { itemEvent(ChecklistItemEvent.DeleteItem(index)) },
+                        onAdd = { itemEvent(ChecklistItemEvent.AddItem) },
+                    )
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable {
+                                itemEvent(ChecklistItemEvent.AddItem)
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val lastItemLabel = itemsState.lastOrNull()?.label
+                        if (
+                            lastItemLabel?.isNotEmpty() == true
+                            || itemsState.isEmpty()
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                tint = MaterialTheme.colorScheme.onBackground,
+                                contentDescription = "Add checklist item"
+                            )
+                            Text(
+                                text = "New item",
+                                modifier = Modifier.padding(8.dp),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            )
+                        }
+                    }
+                }
+                item {
+                    if (reminderTime != 0L) {
+                        ReminderLabel(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clickable {
+                                    showEditDeleteAlarmDialog.value = true
+                                },
+                            reminderTime = reminderTime
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(250.dp))
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .height(48.dp)
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = {
+                        showColorSheet = true
+                    }
+                ) {
+                    Icon(
+                        Icons.Default.FormatColorFill,
+                        contentDescription = "Background color",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
             }
         }
         SetAlarmDialog(
@@ -332,9 +328,10 @@ fun EditChecklistScreen(
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 dragHandle = {}
             ) {
-                Box(modifier = Modifier
-                    .padding(bottom = 50.dp)
-                    .fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 50.dp)
+                        .fillMaxWidth()
                 ) {
                     LazyRow(
                         modifier = Modifier.padding(vertical = 16.dp)
