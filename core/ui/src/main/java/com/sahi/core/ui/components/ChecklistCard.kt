@@ -83,6 +83,7 @@ fun ChecklistCard(
                 if (title.isNotBlank()) {
                     Text(
                         text = checklistWithItems.checklist.title,
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleMedium
                     )
                 }

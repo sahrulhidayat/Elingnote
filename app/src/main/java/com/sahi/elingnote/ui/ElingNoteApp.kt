@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -109,7 +108,6 @@ fun ElingNoteApp(
         }
     ) {
         Scaffold(
-            containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
                 when (mainDestination) {
@@ -118,10 +116,12 @@ fun ElingNoteApp(
                             onClick = { appState.navController.navigateToEditNote() },
                             elevation = FloatingActionButtonDefaults.elevation(0.dp),
                             containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             content = {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.NoteAdd,
-                                    contentDescription = "New checklist"
+                                    contentDescription = "New checklist",
+                                    tint = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         )
@@ -135,7 +135,8 @@ fun ElingNoteApp(
                             content = {
                                 Icon(
                                     imageVector = Icons.Default.AddTask,
-                                    contentDescription = "New checklist"
+                                    contentDescription = "New checklist",
+                                    tint = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         )

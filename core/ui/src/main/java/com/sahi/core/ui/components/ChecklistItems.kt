@@ -117,6 +117,7 @@ fun ChecklistItem(
         Box(modifier = modifier) {
             Text(
                 text = label,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
                 textDecoration = if (checked) TextDecoration.LineThrough else TextDecoration.None,
                 maxLines = 1,

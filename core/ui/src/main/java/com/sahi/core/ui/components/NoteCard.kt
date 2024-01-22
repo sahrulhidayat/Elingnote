@@ -78,6 +78,7 @@ fun NoteCard(
                     if (note.title.isNotBlank())
                         Text(
                             text = note.title,
+                            color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleMedium
                         )
                     Spacer(modifier = Modifier.height(8.dp))

@@ -312,7 +312,8 @@ fun EditNoteScreen(
                         onClick = { onEvent(EditNoteEvent.Undo) },
                         enabled = isUndoAvailable,
                         colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onSurface
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                         )
                     ) {
                         Icon(
@@ -324,7 +325,8 @@ fun EditNoteScreen(
                         onClick = { onEvent(EditNoteEvent.Redo) },
                         enabled = isRedoAvailable,
                         colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onSurface
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                         )
                     ) {
                         Icon(
