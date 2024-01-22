@@ -1,2 +1,1 @@
--dontwarn javax.annotation.Nullable
--keepnames class com.pointlessapps.rt_editor.**
+-keep class com.pointlessapps.** { *; }
